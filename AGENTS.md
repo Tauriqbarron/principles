@@ -9,10 +9,13 @@ A curated collection of software engineering principles as self-contained, dark-
 ## Files
 
 | File | Contents |
-|---|---|
+|---|---|---|
 | `software-principles.html` | General software engineering principles (DRY, KISS, YAGNI, separation of concerns, etc.) |
 | `solid-principles.html` | SOLID principles — Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion |
 | `database-principles.html` | Database design principles — normalization, indexing, query optimization, schema design |
+| `api-design-principles.html` | API design — REST conventions, GraphQL schema-first, versioning, error handling, pagination, auth patterns |
+| `testing-principles.html` | Testing — the test pyramid, unit/integration/E2E strategy, mocking philosophy, coverage pragmatism |
+| `security-principles.html` | Security — defence in depth, OWASP Top 10 mindset, input validation, secrets management, secure defaults |
 
 ## How This Repository Is Used
 
@@ -27,7 +30,10 @@ A curated collection of software engineering principles as self-contained, dark-
 | Reviewing code architecture | `software-principles.html` |
 | Checking class/interface design | `solid-principles.html` |
 | Reviewing database schema | `database-principles.html` |
-| All three | Read all — they complement each other |
+| Designing APIs | `api-design-principles.html` |
+| Writing or reviewing tests | `testing-principles.html` |
+| Security review | `security-principles.html` |
+| All six | Read all — they complement each other |
 
 ## Contributing
 
