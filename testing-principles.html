@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --text: #e2e2f0;
+    --muted: #6b6b8a;
+    --bad: #ff4d6d;
+    --bad-bg: #1a0810;
+    --bad-border: #3d1020;
+    --good: #00e5a0;
+    --good-bg: #021a10;
+    --good-border: #0a3d28;
+    --accent: #7c6dfa;
+    --code-bg: #0d0d18;
+
+    --pyramid: #f59e0b;
+    --pyramid-bg: #1a1200;
+    --pyramid-border: #3d2d00;
+    --unit: #38bdf8;
+    --unit-bg: #001a26;
+    --unit-border: #003d5c;
+    --integration: #34d399;
+    --integration-bg: #011a10;
+    --integration-border: #083d28;
+    --e2e: #e535ab;
+    --e2e-bg: #1a0012;
+    --e2e-border: #3d0029;
+    --mocking: #a78bfa;
+    --mocking-bg: #0d0a1a;
+    --mocking-border: #2a1f4d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 80px 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+
+  .header-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  .header-line {
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+    width: 80px;
+    height: 3px;
+    background: var(--good);
+  }
+
+  nav {
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  nav ul {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+    overflow-x: auto;
+  }
+
+  nav a {
+    display: block;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+
+  nav a:hover, nav a.active {
+    color: var(--text);
+    border-bottom-color: var(--good);
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  section {
+    margin-bottom: 72px;
+  }
+
+  .section-header {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .intro {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 700px;
+    margin-bottom: 48px;
+    line-height: 1.8;
+  }
+
+  .principle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+
+  .principle-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .principle-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .good .principle-icon { background: var(--good-bg); border: 1px solid var(--good-border); }
+  .bad .principle-icon  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  }
+  .pyramid .principle-icon { background: var(--pyramid-bg); border: 1px solid var(--pyramid-border); }
+  .unit .principle-icon { background: var(--unit-bg); border: 1px solid var(--unit-border); }
+  .integration .principle-icon { background: var(--integration-bg); border: 1px solid var(--integration-border); }
+  .e2e .principle-icon { background: var(--e2e-bg); border: 1px solid var(--e2e-border); }
+  .mocking .principle-icon { background: var(--mocking-bg); border: 1px solid var(--mocking-border); }
+
+  .principle h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .good h3 { color: var(--good); }
+  .bad h3  { color: var(--bad);  }
+  .pyramid h3 { color: var(--pyramid); }
+  .unit h3 { color: var(--unit); }
+  .integration h3 { color: var(--integration); }
+  .e2e h3 { color: var(--e2e); }
+  .mocking h3 { color: var(--mocking); }
+
+  .principle p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    padding-left: 52px;
+  }
+
+  .principle code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--text);
+  }
+
+  .badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-left: 52px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border); }
+  .badge-bad  { background: var(--bad-bg);  color: var(--bad);  border: 1px solid var(--bad-border);  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--good); }
+
+  @media (max-width: 640px) {
+    header, main, footer, nav ul { padding-left: 20px; padding-right: 20px; }
+    .principle p, .badges { padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">Testing</span>
+  <h1>Testing Principles</h1>
+  <p class="header-sub">What to test, how to test it, and how to know when you've written a good test. Covers the test pyramid, mocking philosophy, and coverage pragmatism.</p>
+  <div class="header-line"></div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#pyramid" class="active">Pyramid</a></li>
+    <li><a href="#unit">Unit Tests</a></li>
+    <li><a href="#integration">Integration Tests</a></li>
+    <li><a href="#e2e">End-to-End</a></li>
+    <li><a href="#mocking">Mocking</a></li>
+    <li><a href="#coverage">Coverage</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="intro">
+    Tests are a communication medium. A good test documents what the code does, what edge cases are handled, and what the intended behaviour is. Tests that don't communicate clearly are liabilities — they break for the wrong reasons and hide real bugs.
+  </div>
+
+  <!-- Test Pyramid -->
+  <section id="pyramid">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--pyramid)">Test Pyramid</span>
+      <h2>The Foundation: Fast, Focused, Many</h2>
+    </div>
+
+    <div class="principle good pyramid">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Write tests in this order: unit → integration → e2e</h3>
+      </div>
+      <p>Unit tests are fast, cheap, and precise. Write the most of those. Integration tests verify that parts work together. E2E tests verify critical user journeys — sparingly.</p>
+    </div>
+
+    <div class="principle bad pyramid">
+      <div class="principle-header">
+        <div class="principle-icon">✗</div>
+        <h3>Don't build an ice-cream cone or hourglass</h3>
+      </div>
+      <p>Too many E2E tests: slow, brittle, expensive to maintain. Too many integration tests: medium cost, medium brittleness. The pyramid shape exists for a reason — it reflects cost and feedback speed.</p>
+    </div>
+
+    <div class="principle good pyramid">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Tests should run in isolation</h3>
+      </div>
+      <p>No test should depend on another test running before it. Randomise test order. Parallelise where possible. A test that fails only when run in suite X is a hidden time bomb.</p>
+    </div>
+
+  </section>
+
+  <!-- Unit Tests -->
+  <section id="unit">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--unit)">Unit Tests</span>
+      <h2>Fast Feedback on Small Logic</h2>
+    </div>
+
+    <div class="principle good unit">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>One concept per test</h3>
+      </div>
+      <div class="badges">
+        <span class="badge badge-good">Arrange → Act → Assert</span>
+      </div>
+      <p>Each test should verify one behaviour. If you find yourself writing "and also..." in a test name, split it. Readable test names act as documentation: <code>it_returns_404_when_user_not_found</code>.</p>
+    </div>
+
+    <div class="principle good unit">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Test behaviour, not implementation</h3>
+      </div>
+      <p>Tests that know how the code is implemented break when you refactor — even if behaviour is preserved. Test inputs and outputs. Don't test private methods, internal state, or constructor calls.</p>
+    </div>
+
+    <div class="principle bad unit">
+      <div class="principle-header">
+        <div class="principle-icon">✗</div>
+        <h3>Don't assert on dates, random values, or time without freezing them</h3>
+      </div>
+      <p>Flaky tests are worse than no tests. Freeze time, seed randomness, mock the clock. A test that fails 5% of the time will be ignored 100% of the time.</p>
+    </div>
+
+    <div class="principle good unit">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Use descriptive, full-sentence test names</h3>
+      </div>
+      <p>Test names are documentation. <code>test_user_with_negative_balance_cannot_withdraw</code> is better than <code>testWithdraw</code>. When a test fails in a report, the name should explain what broke.</p>
+    </div>
+
+  </section>
+
+  <!-- Integration Tests -->
+  <section id="integration">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--integration)">Integration Tests</span>
+      <h2>Verifying That Parts Work Together</h2>
+    </div>
+
+    <div class="principle good integration">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Test the boundary between your code and the outside world</h3>
+      </div>
+      <p>Your database queries, HTTP clients, file system calls — these are where integration tests live. Verify that your code correctly queries, sends, and receives from real dependencies.</p>
+    </div>
+
+    <div class="principle good integration">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Use real databases in integration tests — not mocks</h3>
+      </div>
+      <p>If you mock the database, you're not testing integration. Use test containers, in-memory databases (for simple cases), or a dedicated test schema. The point is to catch query bugs, constraint violations, and transaction issues.</p>
+    </div>
+
+    <div class="principle bad integration">
+      <div class="principle-header">
+        <div class="principle-icon">✗</div>
+        <h3>Don't mock what you own</h3>
+      </div>
+      <p>If you wrote the code, you should test it directly. Mocks hide bugs in the seams between your own modules. Save mocks for third-party services and infrastructure you don't control.</p>
+    </div>
+
+  </section>
+
+  <!-- E2E -->
+  <section id="e2e">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--e2e)">End-to-End</span>
+      <h2>Critical User Journeys, Not Everything</h2>
+    </div>
+
+    <div class="principle good e2e">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Test the happy path and the one edge case that matters</h3>
+      </div>
+      <p>E2E tests are expensive. Choose the scenarios that represent real user workflows — signup, purchase, login. If a scenario is important enough to have an E2E test, it's important enough to have full coverage below it.</p>
+    </div>
+
+    <div class="principle bad e2e">
+      <div class="principle-header">
+        <div class="principle-icon">✗</div>
+        <h3>Don't E2E test happy paths that unit and integration tests already cover</h3>
+      </div>
+      <p>If unit tests already verify that a form validates email correctly, an E2E test duplicating that is waste. E2E tests exist to catch integration failures — not to re-verify business logic.</p>
+    </div>
+
+    <div class="principle good e2e">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>E2E tests must be deterministic</h3>
+      </div>
+      <p>Use realistic test data. Avoid shared state. Never test with production data. An E2E test that fails due to data issues is noise — noise destroys trust in the test suite.</p>
+    </div>
+
+  </section>
+
+  <!-- Mocking -->
+  <section id="mocking">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--mocking)">Mocking Philosophy</span>
+      <h2>Controlled Uncertainty</h2>
+    </div>
+
+    <div class="principle good mocking">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Mock external services, not your own code</h3>
+      </div>
+      <p>Stripe API, Twilio, a downstream microservice — these should be mocked. Your own modules that you own and control should be tested directly or with test-specific implementations.</p>
+    </div>
+
+    <div class="principle bad mocking">
+      <div class="principle-header">
+        <div class="principle-icon">✗</div>
+        <h3>Don't over-specify mocks</h3>
+      </div>
+      <p>Mocking every method call and every argument creates fragile tests that break on harmless refactors. Mock only what you need to control — verify behaviour at the boundary, not implementation details.</p>
+    </div>
+
+    <div class="principle good mocking">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Verify interactions on mocks — but also verify outputs</h3>
+      </div>
+      <p>Asserting that a method was called is useful but not sufficient. Always also assert on the return value or final state. A mock that was called but with wrong arguments passes the interaction check but fails the real purpose.</p>
+    </div>
+
+  </section>
+
+  <!-- Coverage -->
+  <section id="coverage">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--accent)">Coverage</span>
+      <h2>Metrics That Help, Not Hinder</h2>
+    </div>
+
+    <div class="principle good">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Use coverage to find gaps, not to judge teams</h3>
+      </div>
+      <p>Coverage is a heuristic — it tells you which lines were never visited. It doesn't say whether the tests that visited those lines were meaningful. Use it to find untested branches, not to set a required percentage.</p>
+    </div>
+
+    <div class="principle bad">
+      <div class="principle-header">
+        <div class="principle-icon">✗</div>
+        <h3>Don't chase 100% coverage — it buys false confidence</h3>
+      </div>
+      <p>100% coverage means every line was executed at least once. It says nothing about whether assertions were correct, whether edge cases were handled, or whether the tests are checking the right things. A poorly written test can achieve 100% coverage while missing a critical bug.</p>
+    </div>
+
+    <div class="principle good">
+      <div class="principle-header">
+        <div class="principle-icon">✓</div>
+        <h3>Aim for meaningful coverage of critical paths</h3>
+      </div>
+      <p>Identify the 20% of the codebase that causes 80% of the bugs and incidents. Ensure those paths — payment logic, auth, data mutations — have thorough test coverage. Everything else can be lighter.</p>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Principles — Tauriq Barron</p>
+  <div class="footer-links">
+    <a href="https://github.com/Tauriqbarron/principles">GitHub</a>
+    <a href="index.html">All Principles</a>
+  </div>
+</footer>
+
+</body>
+</html>
