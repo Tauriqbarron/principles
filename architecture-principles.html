@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --border: #1e1e2e;
+    --text: #e2e2f0; --muted: #6b6b8a;
+    --bad: #ff4d6d; --bad-bg: #1a0810; --bad-border: #3d1020;
+    --good: #00e5a0; --good-bg: #021a10; --good-border: #0a3d28;
+    --accent: #7c6dfa; --code-bg: #0d0d18;
+    --arch: #f59e0b; --mono: #38bdf8; --event: #34d399;
+    --cqrs: #c77dff; --clean: #00b4d8; --dist: #fb7185;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; line-height: 1.6; min-height: 100vh; }
+  header { padding: 80px 40px 60px; max-width: 1100px; margin: 0 auto; position: relative; }
+  .header-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; display: block; }
+  h1 { font-size: clamp(40px,6vw,80px); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+  .header-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.7; }
+  .header-line { position: absolute; bottom: 0; left: 40px; width: 80px; height: 3px; background: var(--good); }
+  nav { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  nav ul { display: flex; gap: 0; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 40px; overflow-x: auto; }
+  nav a { display: block; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s,border-color 0.2s; white-space: nowrap; }
+  nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--good); }
+  main { max-width: 1100px; margin: 0 auto; padding: 60px 40px 100px; }
+  section { margin-bottom: 72px; }
+  .section-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+  .intro { font-size: 1.05rem; color: var(--muted); max-width: 700px; margin-bottom: 48px; line-height: 1.8; }
+  .principle { margin-bottom: 40px; }
+  .principle-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .principle-number { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .principle-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .principle-name { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .principle-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.75; margin-bottom: 18px; padding-left: 46px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-left: 46px; }
+  .panel { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+  .panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid; border-color: inherit; }
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border); }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .panel.bad  .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+  .panel.bad  .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+  .panel-filename { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+  .panel pre { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 0; }
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad); }
+  .good-line { color: var(--good); }
+  .callout { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-top: 12px; margin-left: 46px; font-size: 0.875rem; line-height: 1.6; }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad); }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+  .bad-callout  .callout-icon { color: var(--bad); }
+  .good-callout .callout-icon { color: var(--good); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding-left: 46px; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border); }
+  .badge-bad  { background: var(--bad-bg);  color: var(--bad);  border: 1px solid var(--bad-border); }
+  footer { border-top: 1px solid var(--border); padding: 32px 40px; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--good); }
+  @media (max-width: 640px) { header,main,footer,nav ul { padding-left: 20px; padding-right: 20px; } .principle-desc,.badges,.panels { padding-left: 0; } .panels { grid-template-columns: 1fr; } .callout { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">Architecture</span>
+  <h1>Architecture Principles</h1>
+  <p class="header-sub">Conventions for structuring software systems — monolith vs microservices, event-driven architecture, CQRS, and clean architecture layers.</p>
+  <div class="header-line"></div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#monolith">Monolith</a></li>
+    <li><a href="#microservices">Microservices</a></li>
+    <li><a href="#event">Event-Driven</a></li>
+    <li><a href="#cqrs">CQRS</a></li>
+    <li><a href="#clean">Clean Architecture</a></li>
+    <li><a href="#dist">Distributed</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="intro">
+    Architecture is the set of decisions that are hard to change. Choosing between a monolith and microservices, how to handle distribution, where to draw service boundaries — these decisions have compounding effects. Make them deliberately, understand the trade-offs, and prefer the simplest architecture that meets your current needs.
+  </div>
+
+  <!-- Monolith -->
+  <section id="monolith">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--mono)">Monolith</span>
+      <h2>Start Simple — The Monolith Is Not a Mistake</h2>
+    </div>
+
+    <div class="principle" id="mono-default">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--mono)">Monolith — Decision</div>
+          <div class="principle-name">Default to a monolith. Decompose only when you have a specific, evidenced problem</div>
+        </div>
+      </div>
+      <p class="principle-desc">A well-structured monolith is easier to build, test, deploy, and debug than a distributed system. The operational burden of microservices — network latency, partial failures, distributed tracing, service discovery — only pays off when you genuinely need what microservices offer: independent scaling, multiple technology stacks, or team boundaries along service lines.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Premature split — Avoid</span><span class="panel-filename">architecture.svg</span></div>
+          <pre><span class="comment"># ❌ Team of 3, early product — microservices overhead</span>
+<span class="bad-line">[API Gateway] → [Auth Svc] → [Order Svc] → [Payment Svc]</span>
+<span class="bad-line">             → [User Svc] → [Notify Svc] → [Inventory Svc]</span>
+<span class="comment">-- 7 services to deploy, monitor, trace, and debug.
+-- Cross-service refactors require 7 coordinated PRs.
+-- Team of 3 spends more time on infrastructure than product.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Well-structured monolith — Preferred</span><span class="panel-filename">architecture.svg</span></div>
+          <pre><span class="comment"># ✓ Single deploy, clear module boundaries</span>
+<span class="good-line">[App] → modules/auth, orders, payments, users, notifications</span>
+<span class="comment">-- One CI pipeline, one deployment, one log stream.
+-- Module boundaries mirror service boundaries — when you DO need to
+-- split, the seams are already there.
+-- Debugging: one process, one breakpoint, full call stack.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="mono-boundaries">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--mono)">Monolith — Discipline</div>
+          <div class="principle-name">Enforce module boundaries within the monolith as strictly as service boundaries</div>
+        </div>
+      </div>
+      <p class="principle-desc">A monolith without enforced boundaries becomes a big ball of mud — every module depends on every other. Use package namespaces, dependency inversion, and architecture tests (e.g., ArchUnit) to keep modules isolated. When you eventually need to split, clean seams will already exist.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Circular deps — Avoid</span><span class="panel-filename">module-deps.png</span></div>
+          <pre><span class="comment"># ❌ Modules depend freely — entangled call graph</span>
+<span class="bad-line">auth → orders → payments → notifications → auth (cycle!)</span>
+<span class="bad-line">users → auth → orders → users (cycle!)</span>
+<span class="comment">-- Every change requires understanding the entire codebase.
+-- Testing any module requires the full application context.
+-- Extracting a service means untangling years of cross-dependencies.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Layered deps — Preferred</span><span class="panel-filename">module-deps.png</span></div>
+          <pre><span class="comment"># ✓ Strict dependency direction — no cycles</span>
+<span class="good-line">controllers → services → repositories → database</span>
+<span class="good-line">domain ← services ← controllers</span>
+<span class="comment">-- Each module has exactly one upstream consumer.
+-- Cross-cutting concerns injected via interfaces.
+-- New module: follows the same pattern, automatically fits.</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Microservices -->
+  <section id="microservices">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--arch)">Microservices</span>
+      <h2>Split When You're Ready for the Operational Cost</h2>
+    </div>
+
+    <div class="principle" id="micro-boundaries">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--arch)">Microservices — Rule</div>
+          <div class="principle-name">Services are split along business capabilities, not technical layers</div>
+        </div>
+      </div>
+      <p class="principle-desc">A service called "user-service" that only manages user data is not a business capability — it's a data layer with a name. A service called "identity-service" that handles authentication, authorisation, sessions, and identity verification is a business capability. Split along the lines of what the business does, not what the code does.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Layer split — Avoid</span><span class="panel-filename">services-bad.svg</span></div>
+          <pre><span class="comment"># ❌ Splitting by layer — the "Nanoservices" anti-pattern</span>
+<span class="bad-line">[UserController] → [UserService] → [UserRepo]    → [User DB]
+[AuthController] → [AuthService] → [AuthRepo]    → [Auth DB]
+[OrderController] → [OrderService] → [OrderRepo] → [Order DB]</span>
+<span class="comment">-- Every business operation spans 3 services and 3 databases.
+-- Distributed transaction everywhere.
+-- No service can function without the other two.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Capability split — Preferred</span><span class="panel-filename">services-good.svg</span></div>
+          <pre><span class="comment"># ✓ Split along business capability — each owns its domain</span>
+<span class="good-line">[Identity Service] — auth, sessions, MFA, OAuth
+[Order Service]     — orders, checkout, pricing, promotions
+[User Service]     — profiles, preferences, avatar, settings</span>
+<span class="comment">-- Each service encapsulates one domain.
+-- A service can fail without taking down the entire product.
+-- Teams own their domain end-to-end.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="micro-autonomy">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--arch)">Microservices — Goal</div>
+          <div class="principle-name">Services should be independently deployable and testable</div>
+        </div>
+      </div>
+      <p class="principle-desc">If you can't deploy service A without deploying service B, they are not two services — they are one service with two names. True service independence means independent CI/CD pipelines, independent data stores, and no coordinated rollouts.</p>
+      <div class="badges">
+        <span class="badge badge-good">Independent CI/CD per service</span>
+        <span class="badge badge-good">Own database per service</span>
+        <span class="badge badge-good">No distributed transactions across services</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Event-Driven -->
+  <section id="event">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--event)">Event-Driven</span>
+      <h2>Events Are Contracts — Design Them Carefully</h2>
+    </div>
+
+    <div class="principle" id="event-contract">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--event)">Event-Driven — Rule</div>
+          <div class="principle-name">Never publish internal state changes — publish business events</div>
+        </div>
+      </div>
+      <p class="principle-desc">Publishing <code>user.email = 'new@example.com'</code> is a technical state change. Publishing <code>UserEmailChanged { userId, oldEmail, newEmail, changedAt }</code> is a business event. Consumers don't care that a column was updated — they care that something meaningful happened in the domain.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">State change — Avoid</span><span class="panel-filename">events-bad.json</span></div>
+          <pre><span class="comment"># ❌ Exposing internal state — tight coupling, no business meaning</span>
+<span class="bad-line">{</span>
+<span class="bad-line">  "type": "UserUpdated",</span>
+<span class="bad-line">  "payload": {</span>
+<span class="bad-line">    "id": 42,</span>
+<span class="bad-line">    "email": "new@example.com"</span>
+<span class="bad-line">  }</span>
+<span class="bad-line">}</span>
+<span class="comment">-- Consumer must know the old value to understand what changed.
+-- Renaming the column breaks all consumers.
+-- No indication of WHY this happened (edit? import? merge?).</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Business event — Preferred</span><span class="panel-filename">events-good.json</span></div>
+          <pre><span class="comment"># ✓ Business event — self-describing, semantically meaningful</span>
+<span class="good-line">{</span>
+<span class="good-line">  "type": "UserEmailChanged",</span>
+<span class="good-line">  "payload": {</span>
+<span class="good-line">    "userId": "usr_42",</span>
+<span class="good-line">    "oldEmail": "alice@example.com",</span>
+<span class="good-line">    "newEmail": "new@example.com",</span>
+<span class="good-line">    "changedBy": "usr_11",</span>
+<span class="good-line">    "reason": "user-initiated"</span>
+<span class="good-line">  }</span>
+<span class="good-line">}</span>
+<span class="comment">-- Consumer knows exactly what happened without querying the source.
+-- Schema evolution: add fields, don't rename.
+-- Consumers can react to the intent, not the implementation.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="event-schema">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--event)">Event-Driven — Anti-pattern</div>
+          <div class="principle-name">Don't use events as a synchronous RPC replacement</div>
+        </div>
+      </div>
+      <p class="principle-desc">If a consumer waits for an event to complete a request-response cycle, you have synchronous coupling via a message bus. Events should be fire-and-forget — the producer never knows or cares who consumes it, or when. If you need a response, use a request-response pattern (HTTP, gRPC), not an event.</p>
+    </div>
+
+  </section>
+
+  <!-- CQRS -->
+  <section id="cqrs">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--cqrs)">CQRS</span>
+      <h2>Separate Read Models from Write Models</h2>
+    </div>
+
+    <div class="principle" id="cqrs-concept">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--cqrs)">CQRS — Concept</div>
+          <div class="principle-name">Reads and writes have fundamentally different optimisations — separate them</div>
+        </div>
+      </div>
+      <p class="principle-desc">A data model optimised for writes (normalised, transactional) is rarely optimal for reads (denormalised, aggregated, projected). CQRS allows you to have a write model that enforces invariants and business rules, and a read model that is shaped exactly for the queries your UI needs — with no compromises.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">One model — Avoid</span><span class="panel-filename">queries.sql</span></div>
+          <pre><span class="comment"># ❌ Same model for reads and writes — forced compromise</span>
+<span class="bad-line">SELECT u.name, u.email, COUNT(o.id), SUM(o.total)</span>
+<span class="bad-line">FROM users u</span>
+<span class="bad-line">JOIN orders o ON o.user_id = u.id</span>
+<span class="bad-line">WHERE u.id = $1</span>
+<span class="bad-line">GROUP BY u.id</span>
+<span class="comment">-- O(n) join on every user dashboard load.
+-- Adding a "last order date" field requires a schema migration and
+-- a new query — both risky on a live system.
+-- Read model is always a compromise.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">CQRS read model — Preferred</span><span class="panel-filename">read-model.sql</span></div>
+          <pre><span class="comment"># ✓ Read model: pre-joined, pre-aggregated, shaped for the UI</span>
+<span class="good-line">SELECT * FROM user_dashboard WHERE user_id = $1</span>
+<span class="comment">-- user_dashboard is a materialised view / read model table:
+-- name, email, order_count, lifetime_value, last_order_date,
+-- loyalty_tier — all pre-computed.
+-- UI query: single row fetch, O(1).
+-- Adding a new read field: update the projection, no schema change.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="cqrs-eventual">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--cqrs)">CQRS — Trade-off</div>
+          <div class="principle-name">Read models are eventually consistent — design for it</div>
+        </div>
+      </div>
+      <p class="principle-desc">When a write is committed, the read model is updated asynchronously — there is a window where the read is stale. If your use case requires the write to be immediately readable (e.g., "I just submitted a form, let me see my data"), CQRS is the wrong pattern. Use it when stale reads are acceptable — dashboards, analytics, search results.</p>
+      <div class="badges">
+        <span class="badge badge-bad">CQRS is wrong if: immediate read-after-write consistency needed</span>
+        <span class="badge badge-good">CQRS is right if: dashboard, search, analytics, reporting</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Clean Architecture -->
+  <section id="clean">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--clean)">Clean Architecture</span>
+      <h2>Dependencies Flow Inward — The Core Owns the Rules</h2>
+    </div>
+
+    <div class="principle" id="clean-dependency">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--clean)">Clean Architecture — Rule</div>
+          <div class="principle-name">Dependencies point toward the domain — never the reverse</div>
+        </div>
+      </div>
+      <p class="principle-desc">The domain layer (entities, value objects, domain events) is the core of your application. It should have zero dependencies on infrastructure — no database, no HTTP client, no framework. Infrastructure details depend on the domain; the domain never depends on infrastructure. This is achieved through interfaces (ports) that the domain defines and infrastructure implements (adapters).</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Infrastructure in domain — Avoid</span><span class="panel-filename">order-service.js</span></div>
+          <pre><span class="comment"># ❌ Domain depends on infrastructure — untestable, fragile</span>
+<span class="bad-line">class OrderService {</span>
+<span class="bad-line">  async placeOrder(itemId: number, userId: number) {</span>
+<span class="bad-line">    const db = new PostgresDB(config);  <span class="comment">// domain owns DB concern</span></span>
+<span class="bad-line">    const email = new SendGridClient(key);  <span class="comment">// domain owns email concern</span></span>
+<span class="bad-line">    const inventory = new RestClient(baseUrl);  <span class="comment">// domain owns HTTP concern</span></span>
+<span class="bad-line">    // ... business logic mixed with I/O</span>
+<span class="bad-line">  }</span>
+<span class="comment">-- OrderService cannot be unit tested without a real Postgres DB.
+-- Changing the email provider requires changing the domain layer.
+-- Business rules are hidden among infrastructure concerns.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Interface inversion — Preferred</span><span class="panel-filename">order-service.ts</span></div>
+          <pre><span class="comment"># ✓ Domain defines the interface; infrastructure implements it</span>
+<span class="good-line">// domain/ports.ts — interface owned by domain</span>
+<span class="good-line">interface OrderRepository { save(o: Order): Promise&lt;Order&gt; }</span>
+<span class="good-line">interface EmailService { send(t: Email): Promise&lt;void&gt; }</span>
+<span class="good-line">interface InventoryService { check(itemId: number): Promise&lt;boolean&gt; }</span>
+<span class="good-line">// domain/order-service.ts — depends only on interfaces</span>
+<span class="good-line">class OrderService {</span>
+<span class="good-line">  constructor(</span>
+<span class="good-line">    private repo: OrderRepository,</span>
+<span class="good-line">    private email: EmailService,</span>
+<span class="good-line">    private inventory: InventoryService</span>
+<span class="good-line">  ) {}</span>
+<span class="comment">-- All dependencies injected — fully unit testable.
+-- Changing email provider: implement new EmailService, don't touch domain.
+-- Business rules are isolated and independently testable.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="clean-use-case">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--clean)">Clean Architecture — Scope</div>
+          <div class="principle-name">Each use case is a single, complete transaction in the domain layer</div>
+        </div>
+      </div>
+      <p class="principle-desc">A use case (or application service) coordinates the domain objects to accomplish one business action. It should be thin — it doesn't contain business rules, it orchestrates them. A use case should be small enough to read in one sitting and describe in one sentence.</p>
+    </div>
+
+  </section>
+
+  <!-- Distributed -->
+  <section id="dist">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--dist)">Distributed Systems</span>
+      <h2>The Fallacies of Distributed Computing Are Not Suggestions</h2>
+    </div>
+
+    <div class="principle" id="dist-fallacies">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--dist)">Distributed — Reality</div>
+          <div class="principle-name">Network latency is non-zero. Bandwidth is finite. Networks fail.</div>
+        </div>
+      </div>
+      <p class="principle-desc">The 8 fallacies of distributed computing: the network is reliable, latency is zero, bandwidth is infinite, the network is secure, topology doesn't change, there is one administrator, transport cost is zero, the network is homogeneous. Every distributed system failure is in some sense a fallacy being violated.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Assume reliability — Avoid</span><span class="panel-filename">payment.js</span></div>
+          <pre><span class="comment"># ❌ Network call with no failure handling — brittle</span>
+<span class="bad-line">const response = await fetch('http://payment-svc/charge', {</span>
+<span class="bad-line">  method: 'POST',</span>
+<span class="bad-line">  body: JSON.stringify({ amount })</span>
+<span class="bad-line">});</span>
+<span class="comment">-- If payment-svc is down, this throws an unhandled exception.
+-- No timeout. No circuit breaker. No retry.
+-- A single downstream failure takes down the entire request.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Graceful degradation — Preferred</span><span class="panel-filename">payment.js</span></div>
+          <pre><span class="comment"># ✓ Timeout, retry, circuit breaker — graceful degradation</span>
+<span class="good-line">const response = await fetch('http://payment-svc/charge', {</span>
+<span class="good-line">  method: 'POST',</span>
+<span class="good-line">  body: JSON.stringify({ amount }),</span>
+<span class="good-line">  signal: AbortSignal.timeout(3000)  <span class="good-line">// 3s timeout</span>
+<span class="good-line">}).catch(err =&gt; {</span>
+<span class="good-line">  if (err.name === 'TimeoutError') {</span>
+<span class="good-line">    throw new PaymentTimeoutError();</span>
+<span class="good-line">  }</span>
+<span class="good-line">  throw err;</span>
+<span class="good-line">});</span>
+<span class="comment">-- Timeout prevents indefinite blocking.
+-- Circuit breaker prevents hammering a failing service.
+-- Error is domain-aware — PaymentTimeoutError, not a raw fetch error.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="dist-cap">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--dist)">Distributed — Theorem</div>
+          <div class="principle-name">Understand the CAP theorem — consistency vs availability is a real trade-off</div>
+        </div>
+      </div>
+      <p class="principle-desc">In the presence of a network partition, you must choose between consistency and availability. You cannot have both. Most distributed databases allow you to tune this per operation — understanding which operations require strong consistency (e.g., financial transactions) and which can tolerate eventual consistency (e.g., social media likes) is a fundamental architectural decision.</p>
+      <div class="badges">
+        <span class="badge badge-good">Strong consistency: financial transactions, inventory</span>
+        <span class="badge badge-good">Eventual consistency: likes, views, search indexes, caches</span>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Principles — Tauriq Barron</p>
+  <div class="footer-links">
+    <a href="https://github.com/Tauriqbarron/principles">GitHub</a>
+    <a href="index.html">All Principles</a>
+  </div>
+</footer>
+
+</body>
+</html>

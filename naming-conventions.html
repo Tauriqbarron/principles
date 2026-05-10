@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naming Conventions</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --border: #1e1e2e;
+    --text: #e2e2f0; --muted: #6b6b8a;
+    --bad: #ff4d6d; --bad-bg: #1a0810; --bad-border: #3d1020;
+    --good: #00e5a0; --good-bg: #021a10; --good-border: #0a3d28;
+    --accent: #7c6dfa; --code-bg: #0d0d18;
+    --naming: #f59e0b; --consistency: #38bdf8; --domain: #c77dff;
+    --verbs: #34d399; --clarity: #fb7185; --booleans: #ffe066;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; line-height: 1.6; min-height: 100vh; }
+  header { padding: 80px 40px 60px; max-width: 1100px; margin: 0 auto; position: relative; }
+  .header-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; display: block; }
+  h1 { font-size: clamp(40px,6vw,80px); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+  .header-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.7; }
+  .header-line { position: absolute; bottom: 0; left: 40px; width: 80px; height: 3px; background: var(--good); }
+  nav { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  nav ul { display: flex; gap: 0; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 40px; overflow-x: auto; }
+  nav a { display: block; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s,border-color 0.2s; white-space: nowrap; }
+  nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--good); }
+  main { max-width: 1100px; margin: 0 auto; padding: 60px 40px 100px; }
+  section { margin-bottom: 72px; }
+  .section-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+  .intro { font-size: 1.05rem; color: var(--muted); max-width: 700px; margin-bottom: 48px; line-height: 1.8; }
+  .principle { margin-bottom: 40px; }
+  .principle-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .principle-number { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .principle-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .principle-name { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .principle-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.75; margin-bottom: 18px; padding-left: 46px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-left: 46px; }
+  .panel { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+  .panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid; border-color: inherit; }
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border); }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .panel.bad  .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+  .panel.bad  .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+  .panel-filename { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+  .panel pre { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 0; }
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad); }
+  .good-line { color: var(--good); }
+  .callout { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-top: 12px; margin-left: 46px; font-size: 0.875rem; line-height: 1.6; }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad); }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+  .bad-callout  .callout-icon { color: var(--bad); }
+  .good-callout .callout-icon { color: var(--good); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding-left: 46px; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border); }
+  .badge-bad  { background: var(--bad-bg);  color: var(--bad);  border: 1px solid var(--bad-border); }
+  footer { border-top: 1px solid var(--border); padding: 32px 40px; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--good); }
+  @media (max-width: 640px) { header,main,footer,nav ul { padding-left: 20px; padding-right: 20px; } .principle-desc,.badges,.panels { padding-left: 0; } .panels { grid-template-columns: 1fr; } .callout { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">Naming</span>
+  <h1>Naming Conventions</h1>
+  <p class="header-sub">Conventions for writing clear, consistent, and meaningful names — naming is hard, but it's worth getting right.</p>
+  <div class="header-line"></div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#consistency">Consistency</a></li>
+    <li><a href="#domains">Domains + Verbs</a></li>
+    <li><a href="#clarity">Clarity</a></li>
+    <li><a href="#booleans">Booleans</a></li>
+    <li><a href="#abbreviations">Abbreviations</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="intro">
+    Naming is the most underestimated form of abstraction. A well-named variable, function, or class encodes intent — reducing the need for comments, making refactoring safer, and making code review faster. The time spent choosing a good name is paid back every time it is read.
+  </div>
+
+  <!-- Consistency -->
+  <section id="consistency">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--consistency)">Consistency</span>
+      <h2>Consistency Over Personal Style — Document and Follow Your Naming Conventions</h2>
+    </div>
+
+    <div class="principle" id="consistency-rules">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--consistency)">Consistency — Rule</div>
+          <div class="principle-name">Don't mix naming conventions in the same codebase — pick one and enforce it</div>
+        </div>
+      </div>
+      <p class="principle-desc">Mixing <code>getUser</code>, <code>fetch_user</code>, <code>getUserData</code>, and <code>retrieveUser</code> for the same concept is a naming debt. It signals four different decisions made by four different people (or one person on four different days). One consistent pattern is better than four individually better alternatives.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Inconsistent — Avoid</span><span class="panel-filename">user-repo.js</span></div>
+          <pre><span class="comment"># ❌ Four patterns for the same concept in one file</span>
+<span class="bad-line">async function getUser(id) {}       <span class="comment">// camelCase</span></span>
+<span class="bad-line">async function fetch_user(id) {}     <span class="comment">// snake_case</span></span>
+<span class="bad-line">async function getUserData(id) {}   <span class="comment">// camelCase + "Data" suffix</span></span>
+<span class="bad-line">async function retrieveUser(id) {}   <span class="comment">// different verb</span></span>
+<span class="comment">-- Which one is the canonical method?
+-- Code review debates about which pattern to use.
+-- New developers don't know which to use — adds friction.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Consistent — Preferred</span><span class="panel-filename">user-repo.ts</span></div>
+          <pre><span class="comment"># ✓ One convention, applied consistently</span>
+<span class="good-line">async function getUser(id: string): Promise&lt;User&gt; {}</span>
+<span class="good-line">async function getUserByEmail(email: string): Promise&lt;User | null&gt; {}</span>
+<span class="good-line">async function createUser(data: CreateUserDto): Promise&lt;User&gt; {}</span>
+<span class="good-line">async function updateUser(id: string, data: UpdateUserDto): Promise&lt;User&gt; {}</span>
+<span class="good-line">async function deleteUser(id: string): Promise&lt;void&gt; {}</span>
+<span class="comment">-- One verb (get), consistent parameter order, consistent return types.
+-- A new developer reads one function and understands all of them.
+-- A lint rule can enforce this automatically.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="consistency-language">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--consistency)">Consistency — Scope</div>
+          <div class="principle-name">Match the language's standard library conventions and the team's established patterns</div>
+        </div>
+      </div>
+      <p class="principle-desc">JavaScript/TypeScript: <code>camelCase</code> for variables/functions, <code>PascalCase</code> for classes/types. Python: <code>snake_case</code> for functions/variables, <code>PascalCase</code> for classes. Go: <code>PascalCase</code> for exported names, <code>snake_case</code> for unexported. Follow the language idiom before imposing your own preferences.</p>
+    </div>
+
+  </section>
+
+  <!-- Domains + Verbs -->
+  <section id="domains">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--domain)">Domains + Verbs</span>
+      <h2>Name for the Domain — Not the Implementation</h2>
+    </div>
+
+    <div class="principle" id="domain-business">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--domain)">Domain — Rule</div>
+          <div class="principle-name">Name things after business concepts, not technical implementation</div>
+        </div>
+      </div>
+      <p class="principle-desc">A variable called <code>tempArray</code> describes what it is (a temporary array). A variable called <code>pendingOrders</code> describes what it means in the domain. A function called <code>processQueue</code> describes what it does technically. A function called <code>fulfilBackloggedOrders</code> describes what it does for the business. Domain names are meaningful to everyone; technical names are meaningful only to developers.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Technical name — Avoid</span><span class="panel-filename">orders.ts</span></div>
+          <pre><span class="comment"># ❌ Names describe implementation, not domain meaning</span>
+<span class="bad-line">const tempArray = orders.filter(o =&gt; o.status === 'pending');</span>
+<span class="bad-line">const data = await db.select('orders', { type: 'backlog' });</span>
+<span class="bad-line">function processQueue(items: any[]) { ... }</span>
+<span class="comment">-- tempArray: what makes it temporary? Will it be renamed later?
+-- data: what kind of data? Orders? Users? Anything?
+-- processQueue: what is being processed? What is the queue?</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Domain name — Preferred</span><span class="panel-filename">orders.ts</span></div>
+          <pre><span class="comment"># ✓ Names reflect business domain, not implementation</span>
+<span class="good-line">const pendingOrders = orders.filter(o =&gt; o.status === 'pending');</span>
+<span class="good-line">const backloggedOrders = await orderRepo.findBacklogged();</span>
+<span class="good-line">function fulfilBackloggedOrders(orders: Order[]): Promise&lt;void&gt; {</span>
+<span class="good-line">  for (const order of orders) {</span>
+<span class="good-line">    await order.fulfil();</span>
+<span class="good-line">  }</span>
+<span class="comment">-- pendingOrders: clear business meaning to anyone reading this code.
+-- fulfilBackloggedOrders: business operation, not a technical process.
+-- Domain experts and developers share vocabulary.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="domain-verbs">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--domain)">Domain — Verbs</div>
+          <div class="principle-name">Use verbs for functions/methods, nouns for variables/classes</div>
+        </div>
+      </div>
+      <p class="principle-desc">Functions are actions — they do something. <code>validateEmail()</code>, <code>createOrder()</code>, <code>calculateDiscount()</code>. Classes and variables are things — they represent something. <code>Order</code>, <code>discountRate</code>, <code>emailValidator</code>. Consistent verb/noun usage makes code read naturally.</p>
+      <div class="badges">
+        <span class="badge badge-good">Functions: validateEmail, createOrder, calculateDiscount, sendNotification</span>
+        <span class="badge badge-good">Classes: Order, UserService, EmailValidator, PaymentGateway</span>
+        <span class="badge badge-good">Variables: pendingOrders, currentUser, discountRate</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Clarity -->
+  <section id="clarity">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--clarity)">Clarity</span>
+      <h2>Clarity Is More Important Than Brevity</h2>
+    </div>
+
+    <div class="principle" id="clarity-length">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--clarity)">Clarity — Rule</div>
+          <div class="principle-name">Prefer clarity over brevity — long names that explain are better than short names that don't</div>
+        </div>
+      </div>
+      <p class="principle-desc">Code is read more often than it is written, and almost never in the context in which it was written. A name that takes a moment to understand is a name that slows down every reader, every time. The cost of a slightly longer name is paid once at write time; the cost of an unclear name is paid by every reader, forever.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Too brief — Avoid</span><span class="panel-filename">billing.ts</span></div>
+          <pre><span class="comment"># ❌ Abbreviations that obscure meaning</span>
+<span class="bad-line">const p = orders.filter(o =&gt; o.status === 'p');  <span class="comment">// p for pending?</span></span>
+<span class="bad-line">const r = await api.get('/usr/' + id);  <span class="comment">// r for response? resource?</span></span>
+<span class="bad-line">function calc(tx: Tx): number { ... }  <span class="comment">// calc what? calc where from?</span></span>
+<span class="comment">-- p: does this mean pending? paid? processing?
+-- r: what is the response? An order? A user?
+-- calc: this might be fine today, but what when you add a calc for tax?</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Clear name — Preferred</span><span class="panel-filename">billing.ts</span></div>
+          <pre><span class="comment"># ✓ Names that carry their meaning with them</span>
+<span class="good-line">const pendingOrders = orders.filter(o =&gt; o.status === 'pending');</span>
+<span class="good-line">const user = await api.get('/users/' + id);</span>
+<span class="good-line">function calculateOrderTotal(order: Order): number { ... }</span>
+<span class="comment">-- pendingOrders: immediately clear to any reader.
+-- user: not ambiguous — it's the resource we fetched.
+-- calculateOrderTotal: specific, no ambiguity about what or where.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="clarity-units">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--clarity)">Clarity — Units</div>
+          <div class="principle-name">Encode units in variable names when the unit is not obvious from the type</div>
+        </div>
+      </div>
+      <p class="principle-desc">A variable called <code>timeout</code> with value <code>3000</code> is ambiguous — is it 3000ms? 3000 seconds? A variable called <code>timeoutMs</code> is unambiguous. If the type system encodes the unit (e.g., <code>Duration.ofMillis(3000)</code>), the name can be simpler.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">No unit — Avoid</span><span class="panel-filename">config.ts</span></div>
+          <pre><span class="comment"># ❌ Implicit units — requires reading the usage to understand</span>
+<span class="bad-line">const TIMEOUT = 3000;      <span class="comment">// ms? seconds?</span></span>
+<span class="bad-line">const MAX_SIZE = 10;      <span class="comment">// 10 bytes? 10MB? 10 requests?</span></span>
+<span class="bad-line">const THROTTLE = 100;     <span class="comment">// 100 what?</span></span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Units in name — Preferred</span><span class="panel-filename">config.ts</span></div>
+          <pre><span class="comment"># ✓ Units explicit in the variable name</span>
+<span class="good-line">const TIMEOUT_MS = 3000;</span>
+<span class="good-line">const MAX_SIZE_BYTES = 10_485_760;  <span class="comment">// 10MB</span></span>
+<span class="good-line">const THROTTLE_RPS = 100;  <span class="comment">// requests per second</span></span></pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Booleans -->
+  <section id="booleans">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--booleans)">Booleans</span>
+      <h2>Booleans Should Ask a Question</h2>
+    </div>
+
+    <div class="principle" id="bool-prefix">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--booleans)">Booleans — Rule</div>
+          <div class="principle-name">Prefix booleans with is, has, can, should — never with a noun alone</div>
+        </div>
+      </div>
+      <p class="principle-desc">A boolean called <code>active</code> requires a question: "is it active?" A boolean called <code>isActive</code> answers the question directly. <code>admin</code> is ambiguous — a boolean? A string? <code>isAdmin</code> is unambiguously a boolean that answers a question.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Noun boolean — Avoid</span><span class="panel-filename">user.ts</span></div>
+          <pre><span class="comment"># ❌ Boolean without a question prefix — ambiguous</span>
+<span class="bad-line">const active = true;          <span class="comment">// is active? was active? should be active?</span></span>
+<span class="bad-line">const admin = true;           <span class="comment">// is this an admin user?</span></span>
+<span class="bad-line">const done = false;           <span class="comment">// is done? was done? has done?</span></span>
+<span class="bad-line">if (user.active) { ... }     <span class="comment">// reads awkwardly</span></span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Question prefix — Preferred</span><span class="panel-filename">user.ts</span></div>
+          <pre><span class="comment"># ✓ Boolean names that ask a clear question</span>
+<span class="good-line">const isActive = true;      <span class="comment">// is this user active?</span></span>
+<span class="good-line">const isAdmin = true;       <span class="comment">// is this user an admin?</span></span>
+<span class="good-line">const isDone = false;       <span class="comment">// is this task done?</span></span>
+<span class="good-line">const hasPermission = true; <span class="comment">// does the user have permission?</span></span>
+<span class="good-line">const canEdit = true;       <span class="comment">// can the user edit this resource?</span></span>
+<span class="good-line">if (user.isAdmin) { ... }   <span class="comment">// reads naturally: "if user is admin"</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Abbreviations -->
+  <section id="abbreviations">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--naming)">Abbreviations</span>
+      <h2>Only Abbreviate if the Abbreviation Is More Readable Than the Full Word</h2>
+    </div>
+
+    <div class="principle" id="abbr-common">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--naming)">Abbreviations — Standard</div>
+          <div class="principle-name">Widely understood abbreviations (HTML, API, URL, ID, DB) are fine — all others must be defined</div>
+        </div>
+      </div>
+      <p class="principle-desc">HTML, API, URL, ID, DB, HTTP, SQL — these are more readable than their expansions (HyperText Markup Language). But <code>tx</code> for "transaction" or <code>svc</code> for "service" are not universal. If your team has to look up or ask about an abbreviation, it is not helping.</p>
+      <div class="badges">
+        <span class="badge badge-good">HTML, API, URL, ID, DB, HTTP, SQL, JSON, XML, CLI</span>
+        <span class="badge badge-bad">tx, amt, qty, svc, proc, msg, dt, bgn — not universal</span>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Principles — Tauriq Barron</p>
+  <div class="footer-links">
+    <a href="https://github.com/Tauriqbarron/principles">GitHub</a>
+    <a href="index.html">All Principles</a>
+  </div>
+</footer>
+
+</body>
+</html>

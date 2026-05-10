@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refactoring Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --border: #1e1e2e;
+    --text: #e2e2f0; --muted: #6b6b8a;
+    --bad: #ff4d6d; --bad-bg: #1a0810; --bad-border: #3d1020;
+    --good: #00e5a0; --good-bg: #021a10; --good-border: #0a3d28;
+    --accent: #7c6dfa; --code-bg: #0d0d18;
+    --when: #f59e0b; --strangler: #34d399; --boyscout: #38bdf8;
+    --techdebt: #fb7185; --testability: #c77dff; --readability: #ffe066;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; line-height: 1.6; min-height: 100vh; }
+  header { padding: 80px 40px 60px; max-width: 1100px; margin: 0 auto; position: relative; }
+  .header-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; display: block; }
+  h1 { font-size: clamp(40px,6vw,80px); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+  .header-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.7; }
+  .header-line { position: absolute; bottom: 0; left: 40px; width: 80px; height: 3px; background: var(--good); }
+  nav { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  nav ul { display: flex; gap: 0; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 40px; overflow-x: auto; }
+  nav a { display: block; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s,border-color 0.2s; white-space: nowrap; }
+  nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--good); }
+  main { max-width: 1100px; margin: 0 auto; padding: 60px 40px 100px; }
+  section { margin-bottom: 72px; }
+  .section-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+  .intro { font-size: 1.05rem; color: var(--muted); max-width: 700px; margin-bottom: 48px; line-height: 1.8; }
+  .principle { margin-bottom: 40px; }
+  .principle-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .principle-number { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .principle-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .principle-name { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .principle-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.75; margin-bottom: 18px; padding-left: 46px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-left: 46px; }
+  .panel { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+  .panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid; border-color: inherit; }
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border); }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .panel.bad  .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+  .panel.bad  .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+  .panel-filename { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+  .panel pre { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 0; }
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad); }
+  .good-line { color: var(--good); }
+  .callout { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-top: 12px; margin-left: 46px; font-size: 0.875rem; line-height: 1.6; }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad); }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+  .bad-callout  .callout-icon { color: var(--bad); }
+  .good-callout .callout-icon { color: var(--good); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding-left: 46px; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border); }
+  .badge-bad  { background: var(--bad-bg);  color: var(--bad);  border: 1px solid var(--bad-border); }
+  footer { border-top: 1px solid var(--border); padding: 32px 40px; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--good); }
+  @media (max-width: 640px) { header,main,footer,nav ul { padding-left: 20px; padding-right: 20px; } .principle-desc,.badges,.panels { padding-left: 0; } .panels { grid-template-columns: 1fr; } .callout { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">Refactoring</span>
+  <h1>Refactoring Principles</h1>
+  <p class="header-sub">Conventions for when to refactor, the strangler fig pattern, the boy scout rule, and managing technical debt.</p>
+  <div class="header-line"></div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#when">When to Refactor</a></li>
+    <li><a href="#strangler">Strangler Fig</a></li>
+    <li><a href="#boyscout">Boy Scout Rule</a></li>
+    <li><a href="#techdebt">Technical Debt</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="intro">
+    Refactoring is not rewriting. It is the art of improving code without changing its behaviour. Done well, it keeps a codebase liveable as it grows. Done poorly, it introduces bugs under the guise of improvement. The principles here distinguish productive refactoring from risky surgery.
+  </div>
+
+  <!-- When to Refactor -->
+  <section id="when">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--when)">When to Refactor</span>
+      <h2>Refactor When You Need to Understand the Code — Not When You Just Want to</h2>
+    </div>
+
+    <div class="principle" id="when-opportunistic">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--when)">When — Anti-pattern</div>
+          <div class="principle-name">Don't refactor code that works and doesn't need to change — "refactoring" to make it "better" is a risk without a benefit</div>
+        </div>
+      </div>
+      <p class="principle-desc">If the code is correct, tested, understood by the team, and doesn't need to change for the current task — leave it alone. Every refactor is a risk of introducing a bug. The benefit of a refactor must exceed the risk. "This code could be cleaner" is not a reason to refactor — a new feature, a bug fix, or reduced testability are reasons.</p>
+      <div class="badges">
+        <span class="badge badge-bad">Refactor "just because": introduces risk with no immediate benefit</span>
+        <span class="badge badge-good">Refactor when: adding a feature, fixing a bug, code is untestable, understanding requires it</span>
+      </div>
+    </div>
+
+    <div class="principle" id="when-rule-of-three">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--when)">When — Rule</div>
+          <div class="principle-name">Use the Rule of Three — abstract when you see the same pattern three times</div>
+        </div>
+      </div>
+      <p class="principle-desc">The first time you write something, you write it directly. The second time, you tolerate duplication. The third time, you abstract. Refactoring too early (on the first or second occurrence) creates abstractions for patterns you don't yet understand. Refactoring too late (after ten copies) means a larger migration.</p>
+    </div>
+
+    <div class="principle" id="when-testability">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--when)">When — Signal</div>
+          <div class="principle-name">Refactor when the code is hard to test — testability is a proxy for design quality</div>
+        </div>
+      </div>
+      <p class="principle-desc">If a piece of code is genuinely hard to write a unit test for, it's usually because of a design problem — tight coupling, implicit dependencies, static state, or side effects buried inside functions. Improving testability almost always improves design. If you find yourself mocking extensively or unable to set up test state, that's a refactoring signal.</p>
+    </div>
+
+  </section>
+
+  <!-- Strangler Fig -->
+  <section id="strangler">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--strangler)">Strangler Fig</span>
+      <h2>Incremental Replacement — Don't Rewrite in Place</h2>
+    </div>
+
+    <div class="principle" id="strangler-pattern">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--strangler)">Strangler Fig — Pattern</div>
+          <div class="principle-name">Grow the new system around the old one — don't replace it in place</div>
+        </div>
+      </div>
+      <p class="principle-desc">The strangler fig pattern: new functionality is built alongside the old system, and traffic is gradually shifted from old to new. When the new system is fully in production and the old system handles zero traffic, it is decommissioned. The key insight: at any point, you have a working, deployable system — either the old one, the new one, or a mix.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Big bang rewrite — Avoid</span><span class="panel-filename">migration-plan.md</span></div>
+          <pre><span class="comment"># ❌ In-place rewrite — months of parallel work, one risky switchover</span>
+<span class="bad-line">Phase 1 (3 months): Build new system. Old system keeps running.</span>
+<span class="bad-line">Phase 2 (1 week):  Switchover — migrate all data, update DNS.</span>
+<span class="bad-line">Phase 3: Decommission old system.</span>
+<span class="comment">-- 3 months of divergence: old system has new features, new system doesn't.
+-- Switchover is a single point of failure: everything or nothing.
+-- If something goes wrong at switchover, rolling back is a big bang too.
+-- Teams lose confidence in the new system without real-world testing.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Strangler fig — Preferred</span><span class="panel-filename">migration-plan.md</span></div>
+          <pre><span class="comment"># ✓ Incremental: new system grows around old, one feature at a time</span>
+<span class="good-line">v1.0: Feature flag off. Old system fully in production.</span>
+<span class="good-line">v1.1: New system handles /users. Old handles everything else.</span>
+<span class="good-line">v1.2: New system handles /orders. Old handles /billing.</span>
+<span class="good-line">v1.3: New system handles /billing. Old decommissioned.</span>
+<span class="comment">-- Every deploy is a working system — old, new, or both.
+-- Each feature shift is independently reversible.
+-- Real traffic tests the new system incrementally.
+-- No big bang switchover risk.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="strangler-facade">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--strangler)">Strangler Fig — Mechanism</div>
+          <div class="principle-name">Use a facade (or feature flag router) at the system boundary to route between old and new</div>
+        </div>
+      </div>
+      <p class="principle-desc">The router/facade decides which system handles each request. As features are migrated, the router is updated. The old system and new system coexist behind the facade, and callers don't know which one is handling their request. This keeps migration invisible to consumers.</p>
+    </div>
+
+  </section>
+
+  <!-- Boy Scout Rule -->
+  <section id="boyscout">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--boyscout)">Boy Scout Rule</span>
+      <h2>Leave the Code Cleaner Than You Found It</h2>
+    </div>
+
+    <div class="principle" id="boyscout-small">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--boyscout)">Boy Scout — Rule</div>
+          <div class="principle-name">Every commit should leave the code slightly better — even if just a little</div>
+        </div>
+      </div>
+      <p class="principle-desc">The boy scout rule: "Leave the campground cleaner than you found it." Applied to code: with every change, fix at least one thing that is worse than it should be. Rename a poorly named variable. Extract a long function. Add a missing test. Fix a lint warning. Small, consistent improvements compound over time into a codebase that is genuinely maintainable.</p>
+      <div class="badges">
+        <span class="badge badge-good">Rename a confusing variable in the code you're touching</span>
+        <span class="badge badge-good">Extract a function that is doing two things</span>
+        <span class="badge badge-good">Add a test for the edge case you're about to fix</span>
+        <span class="badge badge-good">Fix a lint warning — no reason to leave it</span>
+      </div>
+    </div>
+
+    <div class="principle" id="boyscout-caller">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--boyscout)">Boy Scout — Boundary</div>
+          <div class="principle-name">The boy scout rule applies to the code you're touching — not to untouched code in the same file</div>
+        </div>
+      </div>
+      <p class="principle-desc">Don't use the boy scout rule as a licence to refactor unrelated code in the same PR. A PR that fixes a bug and also refactors three other modules is a PR that is hard to review and hard to revert. Keep refactoring scoped: fix what's necessary for your change, refactor what's genuinely urgent, leave the rest for another day.</p>
+      <div class="callout bad-callout">
+        <span class="callout-icon">⚠</span>
+        <span>Scope your refactoring to the code directly related to your change. A PR that fixes one bug and touches 15 files for "cleanups" is a red flag in code review.</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Technical Debt -->
+  <section id="techdebt">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--techdebt)">Technical Debt</span>
+      <h2>Technical Debt Is a Strategic Decision — Make It Consciously</h2>
+    </div>
+
+    <div class="principle" id="techdebt-track">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--techdebt)">Tech Debt — Tracking</div>
+          <div class="principle-name">Technical debt you can't see accumulates invisibly — track it explicitly</div>
+        </div>
+      </div>
+      <p class="principle-desc">Every shortcut that makes today's work faster but tomorrow's work slower is technical debt. Unlike financial debt, it rarely gets paid back unless explicitly scheduled. Track it in your issue tracker with a "tech-debt" label, an estimate of the cost of fixing it, and a reason for why it was incurred. Untracked technical debt is invisible debt — and it compounds just as dangerously.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Invisible debt — Avoid</span><span class="panel-filename">issues.md</span></div>
+          <pre><span class="comment"># ❌ Debt hidden in code comments — nobody tracks it</span>
+<span class="bad-line">// TODO: this query doesn't use an index, fix later</span>
+<span class="bad-line">// FIXME: fragile, relies on implicit global state</span>
+<span class="comment">-- TODOs in code are never reviewed, prioritised, or scheduled.
+-- Over time, the TODO/FIXME count grows and everyone ignores them.
+-- No way to measure the debt load on a feature area.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Tracked debt — Preferred</span><span class="panel-filename">project-board</span></div>
+          <pre><span class="comment"># ✓ Technical debt tracked as first-class work items</span>
+<span class="good-line">TECH-DEBT-42 | Slow query in /orders — missing index | High | 2 pts</span>
+<span class="good-line">TECH-DEBT-43 | Session relies on in-memory store — won't scale | Med | 5 pts</span>
+<span class="good-line">TECH-DEBT-44 | Hardcoded config — no env var support | Low | 1 pt</span>
+<span class="comment">-- Debt is reviewed, prioritised, and scheduled like any other work.
+-- Quarterly "debt sprint" can make measurable progress.
+-- New debt is introduced with an explicit ticket — not silently.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="techdebt-interest">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--techdebt)">Tech Debt — Strategy</div>
+          <div class="principle-name">Take on debt deliberately — when the interest cost exceeds the borrowing cost, pay it back</div>
+        </div>
+      </div>
+      <p class="principle-desc">Technical debt is not always bad. Sometimes taking a shortcut to ship a feature fast is the right decision — if the cost of the shortcut (in future development time) is less than the opportunity cost of delaying. The key is to understand the interest rate: how much slower does this make every future change in this area? When the interest cost exceeds the value of the shortcut, it's time to pay the debt.</p>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Principles — Tauriq Barron</p>
+  <div class="footer-links">
+    <a href="https://github.com/Tauriqbarron/principles">GitHub</a>
+    <a href="index.html">All Principles</a>
+  </div>
+</footer>
+
+</body>
+</html>

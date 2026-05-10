@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error Handling Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --border: #1e1e2e;
+    --text: #e2e2f0; --muted: #6b6b8a;
+    --bad: #ff4d6d; --bad-bg: #1a0810; --bad-border: #3d1020;
+    --good: #00e5a0; --good-bg: #021a10; --good-border: #0a3d28;
+    --accent: #7c6dfa; --code-bg: #0d0d18;
+    --fail: #ff4d6d; --prop: #f59e0b; --resilience: #34d399;
+    --custom: #c77dff; --logging: #38bdf8; --sentinel: #ffe066;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; line-height: 1.6; min-height: 100vh; }
+  header { padding: 80px 40px 60px; max-width: 1100px; margin: 0 auto; position: relative; }
+  .header-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; display: block; }
+  h1 { font-size: clamp(40px,6vw,80px); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+  .header-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.7; }
+  .header-line { position: absolute; bottom: 0; left: 40px; width: 80px; height: 3px; background: var(--good); }
+  nav { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  nav ul { display: flex; gap: 0; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 40px; overflow-x: auto; }
+  nav a { display: block; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s,border-color 0.2s; white-space: nowrap; }
+  nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--good); }
+  main { max-width: 1100px; margin: 0 auto; padding: 60px 40px 100px; }
+  section { margin-bottom: 72px; }
+  .section-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+  .intro { font-size: 1.05rem; color: var(--muted); max-width: 700px; margin-bottom: 48px; line-height: 1.8; }
+  .principle { margin-bottom: 40px; }
+  .principle-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .principle-number { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .principle-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .principle-name { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .principle-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.75; margin-bottom: 18px; padding-left: 46px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-left: 46px; }
+  .panel { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+  .panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid; border-color: inherit; }
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border); }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .panel.bad  .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+  .panel.bad  .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+  .panel-filename { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+  .panel pre { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 0; }
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad); }
+  .good-line { color: var(--good); }
+  .callout { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-top: 12px; margin-left: 46px; font-size: 0.875rem; line-height: 1.6; }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad); }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+  .bad-callout  .callout-icon { color: var(--bad); }
+  .good-callout .callout-icon { color: var(--good); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding-left: 46px; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border); }
+  .badge-bad  { background: var(--bad-bg);  color: var(--bad);  border: 1px solid var(--bad-border); }
+  footer { border-top: 1px solid var(--border); padding: 32px 40px; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--good); }
+  @media (max-width: 640px) { header,main,footer,nav ul { padding-left: 20px; padding-right: 20px; } .principle-desc,.badges,.panels { padding-left: 0; } .panels { grid-template-columns: 1fr; } .callout { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">Error Handling</span>
+  <h1>Error Handling Principles</h1>
+  <p class="header-sub">Conventions for failing fast, propagating errors, custom error types, and resilience patterns.</p>
+  <div class="header-line"></div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#failfast">Fail Fast</a></li>
+    <li><a href="#propagation">Propagation</a></li>
+    <li><a href="#custom">Custom Types</a></li>
+    <li><a href="#resilience">Resilience</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="intro">
+    Errors are not exceptional — they are expected. A robust system handles them gracefully at every layer. The question is not whether errors will occur, but whether your code is designed to handle them in a way that is debuggable, recoverable, and informative to the caller.
+  </div>
+
+  <!-- Fail Fast -->
+  <section id="failfast">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--fail)">Fail Fast</span>
+      <h2>Detect Errors at the Boundary — Not Deep in the Logic</h2>
+    </div>
+
+    <div class="principle" id="failfast-validate">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--fail)">Fail Fast — Rule</div>
+          <div class="principle-name">Validate inputs at the public interface — fail immediately with a clear message</div>
+        </div>
+      </div>
+      <p class="principle-desc">A function that accepts invalid input and fails silently three call stacks deep is a debugging nightmare. Validate at the entry point of every public function. If the input is invalid, fail immediately, explicitly, and with enough context to understand what went wrong.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Deferred validation — Avoid</span><span class="panel-filename">order-service.js</span></div>
+          <pre><span class="comment"># ❌ Validation deferred to deep inside the call stack</span>
+<span class="bad-line">async function placeOrder(itemId: number, userId: number) {</span>
+<span class="comment">  // No validation here — passes straight through</span>
+<span class="bad-line">  return this.orderRepo.create({ itemId, userId });</span>
+<span class="bad-line">  // Validation happens inside the repo, on the database constraint</span>
+<span class="comment">  // Error surfaces as: "PostgreSQL error: null value in column..."</span>
+<span class="bad-line">}</span>
+<span class="comment">-- Error surfaces as a raw database constraint violation.
+-- No context about which parameter was invalid.
+-- Requires database log investigation to debug.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Fail fast — Preferred</span><span class="panel-filename">order-service.ts</span></div>
+          <pre><span class="comment"># ✓ Validate at the entry point — fail fast with clear error</span>
+<span class="good-line">async function placeOrder(itemId: number, userId: number): Promise&lt;Order&gt; {</span>
+<span class="good-line">  if (!Number.isInteger(itemId) || itemId &lt;= 0) {</span>
+<span class="good-line">    throw new ValidationError(`itemId must be a positive integer, got: ${itemId}`);</span>
+<span class="good-line">  }</span>
+<span class="good-line">  if (!Number.isInteger(userId) || userId &lt;= 0) {</span>
+<span class="good-line">    throw new ValidationError(`userId must be a positive integer, got: ${userId}`);</span>
+<span class="good-line">  }</span>
+<span class="good-line">  return this.orderRepo.create({ itemId, userId });</span>
+<span class="comment">-- Error is caught at the boundary, not three layers deep.
+-- Message clearly identifies which parameter failed and why.
+-- Stack trace points directly at the calling code.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="failfast-assert">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--fail)">Fail Fast — Invariant</div>
+          <div class="principle-name">Assert invariants that should never be violated — don't check things that can't be false</div>
+        </div>
+      </div>
+      <p class="principle-desc">Use assertions for conditions that should be true if your code is correct — internal state that should never be reached in an invalid way. Don't use assertions for input validation (that's fail fast for external input). Assertions are for catching programming errors in development, not for handling runtime failures.</p>
+    </div>
+
+  </section>
+
+  <!-- Propagation -->
+  <section id="propagation">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--prop)">Error Propagation</span>
+      <h2>Errors Should Gain Context as They Bubble Up</h2>
+    </div>
+
+    <div class="principle" id="prop-context">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--prop)">Propagation — Rule</div>
+          <div class="principle-name">Never swallow errors — add context when re-throwing</div>
+        </div>
+      </div>
+      <p class="principle-desc">Catching an error and re-throwing with no information destroys the stack trace. Catching and adding context before re-throwing preserves the chain while giving future debuggers the context they need to understand the error's journey through your system.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Swallowed error — Avoid</span><span class="panel-filename">order-service.js</span></div>
+          <pre><span class="comment"># ❌ Error context destroyed — debugging nightmare</span>
+<span class="bad-line">async function placeOrder(itemId: number) {</span>
+<span class="bad-line">  try {</span>
+<span class="bad-line">    const item = await this.itemService.get(itemId);</span>
+<span class="bad-line">    return item.price;</span>
+<span class="bad-line">  } catch (err) {</span>
+<span class="bad-line">    throw new Error('Order failed');  <span class="comment">← original error destroyed</span></span>
+<span class="bad-line">  }</span>
+<span class="bad-line">}</span>
+<span class="comment">-- Original error (item not found? network timeout? auth failure?)
+-- is completely lost. The caller sees only "Order failed".
+-- Stack trace no longer points to the real source of the problem.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Chained error — Preferred</span><span class="panel-filename">order-service.ts</span></div>
+          <pre><span class="comment"># ✓ Error carries its full history through the call stack</span>
+<span class="good-line">async function placeOrder(itemId: number): Promise&lt;Order&gt; {</span>
+<span class="good-line">  try {</span>
+<span class="good-line">    const item = await this.itemService.get(itemId);</span>
+<span class="good-line">    return item.price;</span>
+<span class="good-line">  } catch (err) {</span>
+<span class="good-line">    throw new OrderError(</span>
+<span class="good-line">      `Failed to place order for item ${itemId}`</span>
+<span class="good-line">      { cause: err }  <span class="comment">← chain preserved</span></span>
+<span class="good-line">    );</span>
+<span class="good-line">  }</span>
+<span class="comment">-- Original error is chained via the `cause` property.
+-- Full stack trace preserved.
+-- Message tells you the context in addition to the root cause.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="prop-result">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--prop)">Propagation — Pattern</div>
+          <div class="principle-name">Use Result types (or discriminated unions) instead of throwing for expected failures</div>
+        </div>
+      </div>
+      <p class="principle-desc">Not all errors are exceptional. A user not found, a resource not authorized, a validation failure — these are expected outcomes, not exceptions. Returning a <code>Result&lt;T, E&gt;</code> type (Rust-style: <code>{ ok: true, value: T } | { ok: false, error: E }</code>) makes expected failures explicit in the type signature, forcing callers to handle them.</p>
+      <div class="badges">
+        <span class="badge badge-good">Result&lt;T,E&gt;: expected failures — not found, not authorized, validation</span>
+        <span class="badge badge-bad">throw: truly exceptional — invariant violated, bug, system failure</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Custom Types -->
+  <section id="custom">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--custom)">Custom Error Types</span>
+      <h2>Errors Are Types — Give Them Structure</h2>
+    </div>
+
+    <div class="principle" id="custom-hierarchy">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--custom)">Custom Types — Rule</div>
+          <div class="principle-name">Don't throw generic Error objects — use typed errors with structured data</div>
+        </div>
+      </div>
+      <p class="principle-desc">A string error message is not an error type. A structured error with a code, a message, a HTTP status mapping, and structured metadata is an error type. Callers can match on error type to take different recovery actions — something that is impossible with a raw string message.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Generic Error — Avoid</span><span class="panel-filename">errors.js</span></div>
+          <pre><span class="comment"># ❌ String-based error discrimination — fragile, untyped</span>
+<span class="bad-line">if (!user) throw new Error('User not found');</span>
+<span class="bad-line">if (!auth) throw new Error('Unauthorized');</span>
+<span class="bad-line">if (!item) throw new Error('Item not found');</span>
+<span class="comment">-- Caller: try { ... } catch (e) { if (e.message === 'User not found') ... }
+-- String comparison is brittle: 'user not found', 'User not found' — which one?
+-- No structured data: what was the userId that wasn't found?
+-- No HTTP status mapping: API layer must guess which status to return.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Typed errors — Preferred</span><span class="panel-filename">errors.ts</span></div>
+          <pre><span class="comment"># ✓ Typed errors with structured data and HTTP mapping</span>
+<span class="good-line">class AppError extends Error {</span>
+<span class="good-line">  constructor(</span>
+<span class="good-line">    message: string,</span>
+<span class="good-line">    public readonly code: string,</span>
+<span class="good-line">    public readonly httpStatus: number,</span>
+<span class="good-line">    public readonly details?: Record&lt;string, unknown&gt;</span>
+<span class="good-line">  ) { super(message); this.name = 'AppError'; }</span>
+<span class="good-line">}</span>
+<span class="good-line">class NotFoundError extends AppError {</span>
+<span class="good-line">  constructor(entity: string, id: string) {</span>
+<span class="good-line">    super(`${entity} ${id} not found`, 'NOT_FOUND', 404, { entity, id });</span>
+<span class="good-line">  }</span>
+<span class="good-line">class UnauthorizedError extends AppError {</span>
+<span class="good-line">  constructor() { super('Unauthorized', 'UNAUTHORIZED', 401); }</span>
+<span class="comment">-- Caller: catch (e) { if (e instanceof NotFoundError) { res.status(404)... } }
+-- Type-safe discrimination. IDE autocomplete. Compiler catches missing cases.
+-- Structured details: { entity: 'user', id: '42' } for logging.</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Resilience -->
+  <section id="resilience">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--resilience)">Resilience</span>
+      <h2>Degrade Gracefully — Don't Let One Failure Cascade</h2>
+    </div>
+
+    <div class="principle" id="resilience-circuit">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--resilience)">Resilience — Pattern</div>
+          <div class="principle-name">Use circuit breakers to prevent cascading failures</div>
+        </div>
+      </div>
+      <p class="principle-desc">When a downstream service is failing, repeatedly calling it wastes resources and can cause your service to fail too. A circuit breaker tracks failure rates and, after a threshold is reached, "opens" — failing fast without making network calls. This gives the downstream service time to recover while your service continues to handle other requests.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Unbounded retries — Avoid</span><span class="panel-filename">payment-client.js</span></div>
+          <pre><span class="comment"># ❌ Retrying a failing service — resources wasted, cascading failure</span>
+<span class="bad-line">async function charge(amount: number) {</span>
+<span class="bad-line">  while (true) {  <span class="comment">← unbounded retry!</span></span>
+<span class="bad-line">    try {</span>
+<span class="bad-line">      return await paymentProvider.charge(amount);</span>
+<span class="bad-line">    } catch (err) {</span>
+<span class="bad-line">      await sleep(1000);  <span class="comment">← retry every second forever</span></span>
+<span class="bad-line">    }</span>
+<span class="bad-line">  }</span>
+<span class="comment">-- Payment provider is down? This ties up a thread forever.
+-- Each retry adds load to the failing service.
+-- Users see hanging requests, not clear errors.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Circuit breaker — Preferred</span><span class="panel-filename">payment-client.ts</span></div>
+          <pre><span class="comment"># ✓ Circuit breaker: fail fast, recover gracefully</span>
+<span class="good-line">const circuit = new CircuitBreaker({</span>
+<span class="good-line">  failureThreshold: 5,   <span class="comment">// open after 5 consecutive failures</span></span>
+<span class="good-line">  resetTimeout: 30_000, <span class="comment">// try again after 30 seconds</span></span>
+<span class="good-line">});</span>
+<span class="good-line">async function charge(amount: number) {</span>
+<span class="good-line">  return circuit.execute(() => paymentProvider.charge(amount));</span>
+<span class="comment">-- After 5 failures: opens circuit, fails immediately for 30s.
+-- Downstream service gets breathing room to recover.
+-- Your service degrades gracefully instead of hanging.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="resilience-timeout">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--resilience)">Resilience — Rule</div>
+          <div class="principle-name">Every network call must have a timeout — no infinite waits</div>
+        </div>
+      </div>
+      <p class="principle-desc">A downstream service that never responds is indistinguishable from a network partition. Without a timeout, your service waits indefinitely, accumulating goroutines/threads until it runs out of resources. Every network call — HTTP, database, cache, external API — must have an explicit timeout.</p>
+    </div>
+
+    <div class="principle" id="resilience-bulkhead">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--resilience)">Resilience — Pattern</div>
+          <div class="principle-name">Use bulkheads to isolate failures — don't let one subsystem take down all others</div>
+        </div>
+      </div>
+      <p class="principle-desc">A bulkhead (named after watertight compartments in a ship) isolates failures so that one subsystem failing doesn't drain resources from others. For example, a separate thread pool for the payment service vs the notification service — if payments exhaust their pool, notifications continue to work.</p>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Principles — Tauriq Barron</p>
+  <div class="footer-links">
+    <a href="https://github.com/Tauriqbarron/principles">GitHub</a>
+    <a href="index.html">All Principles</a>
+  </div>
+</footer>
+
+</body>
+</html>

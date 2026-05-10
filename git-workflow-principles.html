@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Workflow Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --border: #1e1e2e;
+    --text: #e2e2f0; --muted: #6b6b8a;
+    --bad: #ff4d6d; --bad-bg: #1a0810; --bad-border: #3d1020;
+    --good: #00e5a0; --good-bg: #021a10; --good-border: #0a3d28;
+    --accent: #7c6dfa; --code-bg: #0d0d18;
+    --commit: #f59e0b; --branch: #38bdf8; --pr: #c77dff;
+    --merge: #fb7185; --rebase: #34d399; --msg: #ffe066;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; line-height: 1.6; min-height: 100vh; }
+  header { padding: 80px 40px 60px; max-width: 1100px; margin: 0 auto; position: relative; }
+  .header-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; display: block; }
+  h1 { font-size: clamp(40px,6vw,80px); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+  .header-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.7; }
+  .header-line { position: absolute; bottom: 0; left: 40px; width: 80px; height: 3px; background: var(--good); }
+  nav { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  nav ul { display: flex; gap: 0; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 40px; overflow-x: auto; }
+  nav a { display: block; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s,border-color 0.2s; white-space: nowrap; }
+  nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--good); }
+  main { max-width: 1100px; margin: 0 auto; padding: 60px 40px 100px; }
+  section { margin-bottom: 72px; }
+  .section-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+  .intro { font-size: 1.05rem; color: var(--muted); max-width: 700px; margin-bottom: 48px; line-height: 1.8; }
+  .principle { margin-bottom: 40px; }
+  .principle-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .principle-number { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .principle-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .principle-name { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .principle-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.75; margin-bottom: 18px; padding-left: 46px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-left: 46px; }
+  .panel { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+  .panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid; border-color: inherit; }
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border); }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .panel.bad  .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+  .panel.bad  .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+  .panel-filename { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+  .panel pre { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 0; }
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad); }
+  .good-line { color: var(--good); }
+  .callout { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-top: 12px; margin-left: 46px; font-size: 0.875rem; line-height: 1.6; }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad); }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+  .bad-callout  .callout-icon { color: var(--bad); }
+  .good-callout .callout-icon { color: var(--good); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding-left: 46px; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border); }
+  .badge-bad  { background: var(--bad-bg);  color: var(--bad);  border: 1px solid var(--bad-border); }
+  footer { border-top: 1px solid var(--border); padding: 32px 40px; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--good); }
+  @media (max-width: 640px) { header,main,footer,nav ul { padding-left: 20px; padding-right: 20px; } .principle-desc,.badges,.panels { padding-left: 0; } .panels { grid-template-columns: 1fr; } .callout { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">Git Workflow</span>
+  <h1>Git Workflow Principles</h1>
+  <p class="header-sub">Conventions for commit messages, branching strategy, pull request etiquette, and merge vs rebase decisions.</p>
+  <div class="header-line"></div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#commits">Commits</a></li>
+    <li><a href="#branches">Branches</a></li>
+    <li><a href="#prs">Pull Requests</a></li>
+    <li><a href="#merge">Merge vs Rebase</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="intro">
+    Git is a communication tool as much as a version control system. A well-crafted commit history tells the story of your codebase. A messy one obscures it. These conventions apply to teams of one or one hundred — commit messages are read more often than you think, usually at the worst possible moment.
+  </div>
+
+  <!-- Commits -->
+  <section id="commits">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--commit)">Commit Messages</span>
+      <h2>Every Commit Tells a Story — Make It Readable</h2>
+    </div>
+
+    <div class="principle" id="commits-structure">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--commit)">Commits — Format</div>
+          <div class="principle-name">Use conventional commits: type(scope): description</div>
+        </div>
+      </div>
+      <p class="principle-desc">A consistent format makes commit history scannable. <code>fix(auth): handle expired refresh tokens</code> is instantly readable. <code>fixed stuff</code> is not. The type communicates intent (what kind of change), the scope clarifies context (what area), and the description explains the what and why in plain language.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Vague commit — Avoid</span><span class="panel-filename">terminal</span></div>
+          <pre><span class="comment"># ❌ Meaningless commit messages</span>
+<span class="bad-line">git commit -m "fixed it"</span>
+<span class="bad-line">git commit -m "updates"</span>
+<span class="bad-line">git commit -m "WIP"</span>
+<span class="bad-line">git commit -m "asdfgh"</span>
+<span class="comment">-- Impossible to understand from git log what changed.
+-- git blame tells you WHO changed it but not WHY.
+-- Bisect is useless when commits have no semantic meaning.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Conventional commit — Preferred</span><span class="panel-filename">terminal</span></div>
+          <pre><span class="comment"># ✓ Type + scope + clear description</span>
+<span class="good-line">git commit -m "fix(auth): handle expired refresh tokens gracefully"</span>
+<span class="good-line">git commit -m "feat(billing): add metered billing webhook endpoint"</span>
+<span class="good-line">git commit -m "refactor(orders): extract order validation into domain service"</span>
+<span class="good-line">git commit -m "test(api): add integration tests for pagination edge cases"</span>
+<span class="good-line">git commit -m "docs(readme): update local dev setup instructions"</span>
+<span class="comment">-- git log is now a readable changelog.
+-- Conventional changelog tools generate release notes automatically.
+-- Scope makes it scannable: all auth changes together.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="commits-atomic">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--commit)">Commits — Size</div>
+          <div class="principle-name">Commit one logical change at a time — no mixed changes</div>
+        </div>
+      </div>
+      <p class="principle-desc">A commit should contain exactly the changes needed to accomplish one thing — and nothing more. If you fix a bug and refactor a helper in the same commit, they must be reviewed together and reverted together. Separate them. This is what makes git blame useful, bisect precise, and rebase clean.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Mixed commit — Avoid</span><span class="panel-filename">git log --oneline</span></div>
+          <pre><span class="comment"># ❌ One commit: refactor, new feature, and bugfix together</span>
+<span class="bad-line">a3f9d2b "various changes"</span>
+<span class="comment">-- What is this commit? You have to read the diff to find out.
+-- Reverting the bugfix means losing the refactor.
+-- If the feature breaks CI, you can't partially revert.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Atomic commits — Preferred</span><span class="panel-filename">git log --oneline</span></div>
+          <pre><span class="comment"># ✓ Each commit is one clean unit of work</span>
+<span class="good-line">a3f9d2b "refactor(orders): extract validation into order-service"</span>
+<span class="good-line">b7e1c4a "fix(orders): handle null shipping address in checkout"</span>
+<span class="good-line">c9d2e8f "feat(orders): add order confirmation email on checkout"</span>
+<span class="comment">-- Each commit has a single, clear purpose.
+-- git revert can undo exactly the change that caused the problem.
+-- git blame gives precise history per logical change.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="commits-body">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--commit)">Commits — Context</div>
+          <div class="principle-name">Explain the why, not the what — the diff shows the what</div>
+        </div>
+      </div>
+      <p class="principle-desc">The commit message body should explain the reason for the change — the context, the trade-off considered, the ticket or discussion that motivated it. The diff shows what changed. The message explains why. Future developers (including future you) will thank present you.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">No context — Avoid</span><span class="panel-filename">git log</span></div>
+          <pre><span class="comment"># ❌ Subject line only — no reasoning</span>
+<span class="bad-line">fix(api): return 404 instead of 500 for missing resource</span>
+<span class="comment">-- WHY return 404 instead of 500? Was a client request? Bug report?
+-- What specific case was being mishandled?
+-- Without context, a reviewer can't assess the trade-off.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">With body — Preferred</span><span class="panel-filename">git log</span></div>
+          <pre><span class="comment"># ✓ Subject + body explaining the decision</span>
+<span class="good-line">fix(api): return 404 instead of 500 for missing resource</span>
+<span class="good-line"></span>
+<span class="good-line">Previously, missing resources returned 500 Internal Server Error, which</span>
+<span class="good-line">clients handled as generic server failures. Per the API contract (issue #412),</span>
+<span class="good-line">a missing resource is a client error (4xx), not a server error.</span>
+<span class="good-line"></span>
+<span class="good-line">Co-authored-by: Alex &lt;alex@example.com&gt;</span>
+<span class="comment">-- Clear reasoning: issue #412 is referenced.
+-- The trade-off is explained: 4xx vs 5xx semantics.
+-- Reviewer can verify the decision is correct.</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Branches -->
+  <section id="branches">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--branch)">Branching</span>
+      <h2>Branches Are Cheap — Names Should Be Descriptive</h2>
+    </div>
+
+    <div class="principle" id="branch-naming">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--branch)">Branching — Naming</div>
+          <div class="principle-name">Branch names must communicate intent — not just the ticket number</div>
+        </div>
+      </div>
+      <p class="principle-desc">A branch called <code>feature/42</code> tells you nothing. A branch called <code>feature/order-confirmation-email</code> tells you exactly what it does. Include context: the type (feature, fix, refactor, docs), the scope (auth, orders, billing), and the specific change.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Unclear name — Avoid</span><span class="panel-filename">git branch</span></div>
+          <pre><span class="comment"># ❌ Branch names that require investigation</span>
+<span class="bad-line">git branch "fix-1"</span>
+<span class="bad-line">git branch "temp"</span>
+<span class="bad-line">git branch "alex-working"</span>
+<span class="bad-line">git branch "stuff"</span>
+<span class="comment">-- What does fix-1 fix? Which feature is alex-working on?
+-- Stale "temp" branches are never cleaned up.
+-- Code review requests are cryptic: "can I get a review on fix-1?"</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Descriptive name — Preferred</span><span class="panel-filename">git branch</span></div>
+          <pre><span class="comment"># ✓ Branch name = scope + change description</span>
+<span class="good-line">git checkout -b fix/auth/expired-token-graceful-handling</span>
+<span class="good-line">git checkout -b feature/orders/confirmation-email</span>
+<span class="good-line">git checkout -b refactor/billing/metabolism-to-stripe</span>
+<span class="good-line">git checkout -b docs/api/add-pagination-reference</span>
+<span class="comment">-- git branch -a shows a readable project board.
+-- GitHub filters by branch name automatically.
+-- PR title pre-fills from branch name.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="branch-lifetime">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--branch)">Branching — Lifetime</div>
+          <div class="principle-name">Short-lived branches — merge or delete within days, not weeks</div>
+        </div>
+      </div>
+      <p class="principle-desc">A branch that lives for more than a week is a merge conflict factory. The longer it lives, the harder it is to merge. If a branch needs more than a few days of work, it's likely too large — break it into smaller increments, merged to main via feature flags if necessary.</p>
+    </div>
+
+  </section>
+
+  <!-- PRs -->
+  <section id="prs">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--pr)">Pull Requests</span>
+      <h2>PRs Are Conversations — Write Them to Start One</h2>
+    </div>
+
+    <div class="principle" id="pr-size">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--pr)">PRs — Size</div>
+          <div class="principle-name">Keep PRs small — under 400 lines of code changed</div>
+        </div>
+      </div>
+      <p class="principle-desc">A 2,000-line PR takes three hours to review properly. A 200-line PR takes twenty minutes and gets reviewed thoroughly. Review quality is inversely proportional to PR size. If a feature requires more than 400 lines, split it into multiple PRs — or use a feature branch that merges into a feature flag branch before main.</p>
+      <div class="badges">
+        <span class="badge badge-good">&lt;200 lines: ideal — fast, thorough review</span>
+        <span class="badge badge-good">&lt;400 lines: acceptable</span>
+        <span class="badge badge-bad">&gt;400 lines: needs split or justification</span>
+        <span class="badge badge-bad">&gt;1000 lines: almost always too large</span>
+      </div>
+    </div>
+
+    <div class="principle" id="pr-description">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--pr)">PRs — Description</div>
+          <div class="principle-name">Write a PR description — don't make reviewers reverse-engineer the diff</div>
+        </div>
+      </div>
+      <p class="principle-desc">A PR description should explain: what changed, why it changed, how to test it, and what to look for in review. Screenshots for UI changes. Migration steps for database changes. Links to the relevant ticket, design doc, or discussion. The diff is the implementation detail — the description is the rationale.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">No description — Avoid</span><span class="panel-filename">github.com</span></div>
+          <pre><span class="comment"># ❌ Empty PR description — forces the reviewer to read the diff</span>
+<span class="bad-line">Title: "update user model"</span>
+<span class="bad-line">Description: (empty)</span>
+<span class="comment">-- Reviewer must reverse-engineer intent from code.
+-- No context for WHY this change was made.
+-- No guidance on what to test or focus on.
+-- No link to ticket or design discussion.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Full description — Preferred</span><span class="panel-filename">github.com</span></div>
+          <pre><span class="comment"># ✓ PR description with context, testing, and focus areas</span>
+<span class="good-line">## What</span>
+<span class="good-line">Extract order validation from the controller into a domain service,</span>
+<span class="good-line">per the clean architecture principle (issue #88).</span>
+<span class="good-line"></span>
+<span class="good-line">## Why</span>
+<span class="good-line">Validation logic was in the HTTP layer — untestable without HTTP.</span>
+<span class="good-line">The domain service is now unit-testable with pure inputs.</span>
+<span class="good-line"></span>
+<span class="good-line">## How to test</span>
+<span class="good-line">1. Run existing integration tests — all should pass</span>
+<span class="good-line">2. POST /orders with invalid items → 422 (was 500 before)</span>
+<span class="good-line">3. POST /orders with valid items → 201</span>
+<span class="good-line"></span>
+<span class="good-line">## Review focus</span>
+<span class="good-line">- Is the validation logic correctly placed in the domain layer?</span>
+<span class="good-line">- Any edge cases in the validation that I've missed?</span>
+<span class="good-line">Closes #88</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="pr-reviewer">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--pr)">PRs — Etiquette</div>
+          <div class="principle-name">Review comments are about the code — not the author</div>
+        </div>
+      </div>
+      <p class="principle-desc">"This is wrong" is not a review comment. "This returns 500 when the resource doesn't exist — should return 404 per our API contract (issue #42)" is. Distinguish between blocking issues (must fix before merge), suggestions (author decides), and nitpicks (optional). Respond to every review comment, even if just to acknowledge it.</p>
+      <div class="badges">
+        <span class="badge badge-good">Blocking: must fix before merge</span>
+        <span class="badge badge-good">Suggestion: author's call — acknowledge and explain</span>
+        <span class="badge badge-good">Nitpick: optional polish — label it "nit"</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Merge vs Rebase -->
+  <section id="merge">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--merge)">Merge vs Rebase</span>
+      <h2>Two Ways to Integrate — Choose Deliberately</h2>
+    </div>
+
+    <div class="principle" id="merge-strategy">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--merge)">Merge vs Rebase — Decision</div>
+          <div class="principle-name">Don't merge main into your feature branch as a substitute for rebasing</div>
+        </div>
+      </div>
+      <p class="principle-desc">Merging main into your feature branch (merge commits) keeps the history but creates a messy, non-linear history graph when done repeatedly. Rebasing your feature branch onto main (replay your commits on top of main) keeps a clean, linear history. Both are valid — but pick one strategy and be consistent.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Repeated merge — Avoid</span><span class="panel-filename">git log --graph</span></div>
+          <pre><span class="comment"># ❌ Daily merges of main into feature branch — messy history</span>
+<span class="bad-line">*   Merge branch 'main' into feature/order-email</span>
+<span class="bad-line">|\</span>
+<span class="bad-line">| * Merge branch 'main' into feature/order-email  <span class="comment">← yesterday's merge</span></span>
+<span class="bad-line">| |\</span>
+<span class="bad-line">| | * Merge branch 'main' into feature/order-email  <span class="comment">← day before</span></span>
+<span class="comment">-- Git history is a maze of merge commits, not a readable story.
+-- git blame shows commits from other branches bleeding into yours.
+-- Impossible to bisect cleanly.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Rebase onto main — Preferred</span><span class="panel-filename">git log --graph</span></div>
+          <pre><span class="comment"># ✓ Rebase onto main before merging — linear history</span>
+<span class="good-line">git fetch origin</span>
+<span class="good-line">git rebase origin/main</span>
+<span class="comment">-- Resolved by rebasing onto latest main.
+-- Linear history: one clean line of development.
+-- git log --first-parent shows the story without merge noise.
+-- Final merge to main is a single fast-forward or merge commit.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="merge-public">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--merge)">Rebase — Rule</div>
+          <div class="principle-name">Never rebase commits that have been pushed to a shared branch</div>
+        </div>
+      </div>
+      <p class="principle-desc">Rebasing rewrites commit history. If other people have checked out your branch, rebasing makes their local history diverge from origin. This creates serious problems for anyone who pulled the old commits. Rebase is safe only for local commits that haven't been shared, or feature branches that are only reviewed — not for shared branches like main, develop, or release.</p>
+      <div class="callout bad-callout">
+        <span class="callout-icon">⚠</span>
+        <span>If you've already pushed a branch and teammates may have pulled it: use <code>git revert</code> to undo changes instead of rebasing to rewrite them. Or use <code>git merge --no-ff</code> to preserve history without rewriting.</span>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Principles — Tauriq Barron</p>
+  <div class="footer-links">
+    <a href="https://github.com/Tauriqbarron/principles">GitHub</a>
+    <a href="index.html">All Principles</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Review Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --border: #1e1e2e;
+    --text: #e2e2f0; --muted: #6b6b8a;
+    --bad: #ff4d6d; --bad-bg: #1a0810; --bad-border: #3d1020;
+    --good: #00e5a0; --good-bg: #021a10; --good-border: #0a3d28;
+    --accent: #7c6dfa; --code-bg: #0d0d18;
+    --scope: #f59e0b; --feedback: #34d399; --author: #38bdf8;
+    --nit: #c77dff; --blocking: #fb7185; --tone: #ffe066;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; line-height: 1.6; min-height: 100vh; }
+  header { padding: 80px 40px 60px; max-width: 1100px; margin: 0 auto; position: relative; }
+  .header-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; display: block; }
+  h1 { font-size: clamp(40px,6vw,80px); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+  .header-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.7; }
+  .header-line { position: absolute; bottom: 0; left: 40px; width: 80px; height: 3px; background: var(--good); }
+  nav { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  nav ul { display: flex; gap: 0; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 40px; overflow-x: auto; }
+  nav a { display: block; padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.2s,border-color 0.2s; white-space: nowrap; }
+  nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--good); }
+  main { max-width: 1100px; margin: 0 auto; padding: 60px 40px 100px; }
+  section { margin-bottom: 72px; }
+  .section-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+  .intro { font-size: 1.05rem; color: var(--muted); max-width: 700px; margin-bottom: 48px; line-height: 1.8; }
+  .principle { margin-bottom: 40px; }
+  .principle-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .principle-number { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .principle-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .principle-name { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .principle-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.75; margin-bottom: 18px; padding-left: 46px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-left: 46px; }
+  .panel { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+  .panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid; border-color: inherit; }
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border); }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .panel.bad  .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+  .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+  .panel.bad  .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+  .panel-filename { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+  .panel pre { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 0; }
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad); }
+  .good-line { color: var(--good); }
+  .callout { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-top: 12px; margin-left: 46px; font-size: 0.875rem; line-height: 1.6; }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad); }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+  .bad-callout  .callout-icon { color: var(--bad); }
+  .good-callout .callout-icon { color: var(--good); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding-left: 46px; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-good { background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border); }
+  .badge-bad  { background: var(--bad-bg);  color: var(--bad);  border: 1px solid var(--bad-border); }
+  footer { border-top: 1px solid var(--border); padding: 32px 40px; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--good); }
+  @media (max-width: 640px) { header,main,footer,nav ul { padding-left: 20px; padding-right: 20px; } .principle-desc,.badges,.panels { padding-left: 0; } .panels { grid-template-columns: 1fr; } .callout { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">Code Review</span>
+  <h1>Code Review Principles</h1>
+  <p class="header-sub">Conventions for what to look for, how to give feedback, and what authors should do before requesting review.</p>
+  <div class="header-line"></div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#scope">What to Review</a></li>
+    <li><a href="#feedback">Giving Feedback</a></li>
+    <li><a href="#author">Author Responsibilities</a></li>
+    <li><a href="#tone">Tone and Respect</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="intro">
+    Code review is a collaboration, not a gatekeeping exercise. A good review improves the code, teaches both parties something, and strengthens the team's shared understanding. A bad review creates resentment, slows the team down, and doesn't catch the bugs that matter.
+  </div>
+
+  <!-- What to Review -->
+  <section id="scope">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--scope)">What to Review</span>
+      <h2>Review the Intent, Not Just the Implementation</h2>
+    </div>
+
+    <div class="principle" id="scope-correctness">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--scope)">Review — Focus</div>
+          <div class="principle-name">The primary job of a reviewer is to catch bugs — not to enforce style preferences</div>
+        </div>
+      </div>
+      <p class="principle-desc">If the CI pipeline passes and there are no linting errors, style is not a reviewer's job. Review for correctness: does this code do what the PR description says it does? Are edge cases handled? Could this break in production? Is the error handling right? Style is automated — correctness is not.</p>
+      <div class="badges">
+        <span class="badge badge-good">Correctness: logic, edge cases, error handling, security</span>
+        <span class="badge badge-good">Design: does this fit the architecture? Is it the right abstraction?</span>
+        <span class="badge badge-good">Readability: can future maintainers understand this?</span>
+        <span class="badge badge-bad">Style (already linted): let the CI handle it</span>
+      </div>
+    </div>
+
+    <div class="principle" id="scope-read">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--scope)">Review — Discipline</div>
+          <div class="principle-name">Read every changed line — don't skim, don't trust the diff summary</div>
+        </div>
+      </div>
+      <p class="principle-desc">Skimming a PR diff is not reviewing code. The diff summary hides context. The real bugs are often in the small, "obvious" changes that don't seem worth looking at twice. Read every line of every file changed. If you don't have time to read it properly, don't review it — defer to someone who does.</p>
+    </div>
+
+    <div class="principle" id="scope-problem">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--scope)">Review — Perspective</div>
+          <div class="principle-name">Review from the caller's perspective — not the author's</div>
+        </div>
+      </div>
+      <p class="principle-desc">The author knows what the code is trying to do. The reviewer doesn't — they have to infer it from the code. If the code requires the reviewer to understand the author's mental model to follow it, the code is not clear enough. A good reviewer asks: "would a new team member understand this in six months?"</p>
+    </div>
+
+  </section>
+
+  <!-- Giving Feedback -->
+  <section id="feedback">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--feedback)">Giving Feedback</span>
+      <h2>Feedback Is a Gift — Give It That Way</h2>
+    </div>
+
+    <div class="principle" id="feedback-specific">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--feedback)">Feedback — Specificity</div>
+          <div class="principle-name">Be specific — "this is wrong" is not feedback, "this returns 404 when the user doesn't exist but should return 401 when the token is invalid" is feedback</div>
+        </div>
+      </div>
+      <p class="principle-desc">General feedback forces the author to reverse-engineer your thinking. Specific feedback shows your reasoning and gives the author something concrete to act on. It also forces you to be precise — vague feedback often means you haven't fully understood the problem yourself.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Vague feedback — Avoid</span><span class="panel-filename">github.com</span></div>
+          <pre><span class="comment"># ❌ Vague comment — forces author to guess the reasoning</span>
+<span class="bad-line">"This doesn't look right."</span>
+<span class="bad-line">"Why is this here?"</span>
+<span class="bad-line">"This could be simplified."</span>
+<span class="comment">-- "Doesn't look right" doesn't explain WHAT is wrong or WHY.
+-- Author must spend time interpreting vague feedback.
+-- No guidance on how to fix it.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Specific feedback — Preferred</span><span class="panel-filename">github.com</span></div>
+          <pre><span class="comment"># ✓ Specific: describes what, why, and suggests a path forward</span>
+<span class="good-line">"This returns 404 when the user doesn't exist, but per the API</span>
+<span class="good-line">contract (see issue #42), a missing user should return 404, while</span>
+<span class="good-line">an invalid auth token should return 401. Currently, both return 404.</span>
+<span class="good-line">The fix would be to check token validity before querying the user."</span>
+<span class="comment">-- Clear WHAT is wrong: 404 vs 401 semantics confused.
+-- Clear WHY it's wrong: API contract in issue #42.
+-- Clear HOW to fix: check token validity first.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="feedback-blocking">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--feedback)">Feedback — Priority</div>
+          <div class="principle-name">Distinguish between blocking issues, suggestions, and nitpicks — label them</div>
+        </div>
+      </div>
+      <p class="principle-desc">Not all feedback is equal. A blocking issue (must fix before merge) is different from a suggestion (author's call) which is different from a nitpick (optional polish). Label each comment clearly so the author knows what must happen vs what is optional. If everything is "blocking", nothing is.</p>
+      <div class="badges">
+        <span class="badge" style="background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad-border);">[blocking] — must fix before merge</span>
+        <span class="badge" style="background: var(--good-bg); color: var(--good); border: 1px solid var(--good-border);">[suggestion] — author's decision, explain your reasoning</span>
+        <span class="badge" style="background: var(--nit); color: var(--bg); border: 1px solid var(--nit);">[nit] — optional polish, tiny improvement</span>
+      </div>
+    </div>
+
+    <div class="principle" id="feedback-respond">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--feedback)">Feedback — Author</div>
+          <div class="principle-name">Respond to every review comment — even if just to acknowledge it</div>
+        </div>
+      </div>
+      <p class="principle-desc">Every open review thread represents an unresolved question. Resolve every thread: either fix the issue, explain why you disagree (respectfully and with reasoning), or mark it as acknowledged. Don't leave threads open silently. If you disagree with feedback, say so — with reasoning, not with silence or a passive "I disagree".</p>
+    </div>
+
+  </section>
+
+  <!-- Author Responsibilities -->
+  <section id="author">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--author)">Author Responsibilities</span>
+      <h2>Authors Set Reviewers Up for Success</h2>
+    </div>
+
+    <div class="principle" id="author-small">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--author)">Author — Responsibility</div>
+          <div class="principle-name">Keep PRs small — a PR that needs a 2-hour review will be reviewed poorly or not at all</div>
+        </div>
+      </div>
+      <p class="principle-desc">Review quality degrades as PR size increases. A 2,000-line PR reviewed in a hurry catches fewer bugs than a 150-line PR reviewed carefully. If your PR is large, the reviewer will miss something. Break it into logical pieces, merged incrementally — each piece independently reviewable.</p>
+    </div>
+
+    <div class="principle" id="author-tests">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--author)">Author — Testing</div>
+          <div class="principle-name">Write the tests before requesting review — and demonstrate they pass</div>
+        </div>
+      </div>
+      <p class="principle-desc">A PR without tests is a PR that hasn't demonstrated its correctness. Write the tests that show the code works, then request review. If the CI is red when you request review, you are asking the reviewer to debug your CI — which is not their job. Green CI is a precondition for review, not a courtesy.</p>
+      <div class="badges">
+        <span class="badge badge-bad">Requesting review with CI red: reviewer will ask you to fix CI first</span>
+        <span class="badge badge-good">Green CI + tests demonstrating the fix: ready for substantive review</span>
+      </div>
+    </div>
+
+    <div class="principle" id="author-context">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--author)">Author — Context</div>
+          <div class="principle-name">Self-review before requesting review — read your own diff like a reviewer would</div>
+        </div>
+      </div>
+      <p class="principle-desc">Before requesting review, read your own diff. Read it as if you've never seen it before. Does it make sense? Are there debugging artifacts (console.log, commented-out code, TODO comments left in)? Are the variable names clear? This catches 80% of the issues a reviewer would find — and the remaining 20% are the interesting ones that actually benefit from a second pair of eyes.</p>
+    </div>
+
+  </section>
+
+  <!-- Tone -->
+  <section id="tone">
+    <div class="section-header">
+      <span class="section-tag" style="color: var(--tone)">Tone and Respect</span>
+      <h2>Review the Code, Not the Coder</h2>
+    </div>
+
+    <div class="principle" id="tone-critique">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--tone)">Tone — Rule</div>
+          <div class="principle-name">Critique the code, not the author — "this is wrong" vs "you are wrong"</div>
+        </div>
+      </div>
+      <p class="principle-desc">"This is wrong" is a statement about the code. "You are wrong" is a statement about the person. The first can be fixed with a code change. The second makes the author defensive. Reviewers: assume positive intent. Authors: assume the reviewer is trying to help, not to criticise.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Person-focused — Avoid</span><span class="panel-filename">github.com</span></div>
+          <pre><span class="comment"># ❌ Feedback that attacks the person, not the code</span>
+<span class="bad-line">"Why did you even do it this way? This is obviously wrong."</span>
+<span class="bad-line">"You forgot to handle the null case again."</span>
+<span class="bad-line">"This is a naive implementation."</span>
+<span class="comment">-- Triggers defensiveness. Author focuses on defending themselves.
+-- Doesn't help the author understand the actual issue.
+-- Creates negative team dynamics.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Code-focused — Preferred</span><span class="panel-filename">github.com</span></div>
+          <pre><span class="comment"># ✓ Feedback focused on the code, not the person</span>
+<span class="good-line">"This will throw if the user is null — we should handle that case.</span>
+<span class="good-line">Consider: if (!user) return early with a 401."</span>
+<span class="good-line">"This works, but a more concise alternative might be...</span>
+<span class="good-line">[suggestion] — no need to change if you prefer the current approach."</span>
+<span class="comment">-- Describes the code issue, not the author's decision.
+-- Offers a concrete suggestion without demanding it.
+-- Explicitly notes when something is optional — reduces friction.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle" id="tone-positive">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--tone)">Tone — Balance</div>
+          <div class="principle-name">Acknowledge what's good — reviews that only flag problems breed resentment</div>
+        </div>
+      </div>
+      <p class="principle-desc">A review that only says "fix this" and "fix that" is demoralising, even when all the comments are technically correct. Point out what's good: "this is a clean solution", "I like how you handled the edge case here", "this test coverage is thorough". Positive acknowledgment costs nothing and makes the constructive feedback land better.</p>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Principles — Tauriq Barron</p>
+  <div class="footer-links">
+    <a href="https://github.com/Tauriqbarron/principles">GitHub</a>
+    <a href="index.html">All Principles</a>
+  </div>
+</footer>
+
+</body>
+</html>
