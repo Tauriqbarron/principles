@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database Design Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --text: #e2e2f0;
+    --muted: #6b6b8a;
+    --bad: #ff4d6d;
+    --bad-bg: #1a0810;
+    --bad-border: #3d1020;
+    --good: #00e5a0;
+    --good-bg: #021a10;
+    --good-border: #0a3d28;
+    --accent: #7c6dfa;
+    --code-bg: #0d0d18;
+    --norm-color: #00b4d8;
+    --acid-color: #ff9a3c;
+    --index-color: #ffe066;
+    --anti-color: #ff4d6d;
+    --ddia-color: #00e5a0;
+    --philo-color: #c77dff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 80px 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  h1 {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 24px;
+  }
+
+  h1 .highlight { color: var(--accent); }
+  h1 .norm { color: var(--norm-color); }
+  h1 .perf { color: var(--index-color); }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 640px;
+    font-weight: 400;
+  }
+
+  /* NAV */
+  .nav-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .nav-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-pill:hover {
+    color: var(--text);
+    border-color: var(--accent);
+    background: rgba(124, 109, 250, 0.08);
+  }
+
+  /* SECTIONS */
+  .section-group {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 16px;
+    padding-top: 60px;
+  }
+
+  .section-icon {
+    font-size: 36px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    flex-shrink: 0;
+  }
+
+  .section-title-group {
+    flex: 1;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .section-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .section-desc {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+    max-width: 720px;
+    line-height: 1.7;
+  }
+
+  .source-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  /* PRINCIPLE CARDS */
+  .principle {
+    margin-bottom: 56px;
+    scroll-margin-top: 24px;
+  }
+
+  .principle-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .principle-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0.25;
+  }
+
+  .principle-title-group {
+    flex: 1;
+    padding-top: 6px;
+  }
+
+  .principle-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .principle-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .principle-desc {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 20px;
+    max-width: 720px;
+    line-height: 1.7;
+    padding-left: 66px;
+  }
+
+  /* CODE PANELS */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .panel {
+    background: var(--code-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .panel.bad { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel.bad .panel-header { border-color: var(--bad-border); }
+  .panel.good .panel-header { border-color: var(--good-border); }
+
+  .panel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .panel.bad .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .panel.bad .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+
+  .panel-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .panel pre {
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.65;
+    overflow-x: auto;
+    color: var(--text);
+  }
+
+  /* Syntax */
+  .kw { color: #c678dd; }
+  .fn { color: #61afef; }
+  .cls { color: #e5c07b; }
+  .str { color: #98c379; }
+  .comment { color: #5c6370; font-style: italic; }
+  .bad-line { color: var(--bad); }
+  .good-line { color: var(--good); }
+  .num { color: #d19a66; }
+
+  /* CALLOUTS */
+  .callout {
+    display: flex;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+
+  .bad-callout {
+    background: var(--bad-bg);
+    border: 1px solid var(--bad-border);
+  }
+
+  .good-callout {
+    background: var(--good-bg);
+    border: 1px solid var(--good-border);
+  }
+
+  .callout-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .bad-callout .callout-icon { color: var(--bad); }
+  .good-callout .callout-icon { color: var(--good); }
+
+  /* CONCEPT CARDS */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .concept-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .concept-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .concept-card p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* NF CARDS */
+  .nf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .nf-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nf-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .nf-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .nf-card .nf-rule {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .nf-card .nf-plain {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* DIVIDERS */
+  .section-divider {
+    max-width: 1100px;
+    margin: 60px auto 0;
+    padding: 0 40px;
+  }
+
+  .section-divider hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* BOOK SHELF */
+  .book-shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .book-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .book-card .book-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .book-card .book-author {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .book-card .book-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .book-card .book-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 10px;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+
+  @media (max-width: 768px) {
+    header, .nav-pills, .section-group { padding-left: 20px; padding-right: 20px; }
+    h1 { font-size: 36px; }
+    .panels { grid-template-columns: 1fr; }
+    .principle-desc { padding-left: 0; }
+    .principle-header { flex-direction: column; gap: 8px; }
+    .principle-number { font-size: 36px; }
+    .concept-grid, .nf-grid { grid-template-columns: 1fr; }
+    .book-shelf { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">// Data Layer Foundations</span>
+  <h1>
+    <span class="highlight">Database</span> <span class="norm">Design</span><br>
+    <span class="perf">Principles</span> & Philosophy
+  </h1>
+  <p class="subtitle">Normalisation, ACID, indexing, antipatterns, and the philosophies behind reliable, scalable, and maintainable data systems — drawn from the field's most important books.</p>
+</header>
+
+<nav class="nav-pills">
+  <a class="nav-pill" href="#normalisation">Normalisation</a>
+  <a class="nav-pill" href="#acid">ACID</a>
+  <a class="nav-pill" href="#indexing">Indexing & Performance</a>
+  <a class="nav-pill" href="#antipatterns">SQL Antipatterns</a>
+  <a class="nav-pill" href="#ddia">DDIA Principles</a>
+  <a class="nav-pill" href="#philosophy">Design Philosophy</a>
+  <a class="nav-pill" href="#books">Essential Reading</a>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  SECTION 1 — NORMALISATION                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-group" id="normalisation">
+
+  <div class="section-header">
+    <div class="section-icon" style="background: rgba(0,180,216,0.1); color: var(--norm-color);">🗃</div>
+    <div class="section-title-group">
+      <div class="section-label" style="color: var(--norm-color);">Normal Forms</div>
+      <div class="section-name">Normalisation</div>
+    </div>
+  </div>
+  <p class="section-desc">
+    Normalisation is the systematic process of organising data to eliminate redundancy and prevent update anomalies. Each normal form builds on the previous one, enforcing stricter rules about how data depends on keys.
+  </p>
+  <div class="source-tag">Sources: C.J. Date — An Introduction to Database Systems · Hernandez — Database Design for Mere Mortals</div>
+
+  <!-- NF overview cards -->
+  <div class="nf-grid">
+    <div class="nf-card" style="border-left: 3px solid #00b4d8;">
+      <h4 style="color: var(--norm-color);">1NF</h4>
+      <div class="nf-rule">Every column holds atomic (indivisible) values. No repeating groups or arrays inside a single cell.</div>
+      <div class="nf-plain">One value, one cell. No comma-separated lists.</div>
+    </div>
+    <div class="nf-card" style="border-left: 3px solid #0096c7;">
+      <h4 style="color: #0096c7;">2NF</h4>
+      <div class="nf-rule">Every non-key column must depend on the <em>entire</em> primary key, not just part of it.</div>
+      <div class="nf-plain">Eliminate partial dependencies on composite keys.</div>
+    </div>
+    <div class="nf-card" style="border-left: 3px solid #0077b6;">
+      <h4 style="color: #0077b6;">3NF</h4>
+      <div class="nf-rule">Non-key columns must depend on the key directly — not through another non-key column.</div>
+      <div class="nf-plain">No transitive dependencies. Every column tells you about the key, the whole key, and nothing but the key.</div>
+    </div>
+    <div class="nf-card" style="border-left: 3px solid #005f99;">
+      <h4 style="color: #005f99;">BCNF</h4>
+      <div class="nf-rule">Every determinant must be a candidate key. Stricter than 3NF — handles edge cases where a non-candidate-key column determines part of a key.</div>
+      <div class="nf-plain">If X → Y, then X must be a superkey.</div>
+    </div>
+  </div>
+
+  <!-- 1NF violation example -->
+  <div class="principle" id="nf-example">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--norm-color);">1</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--norm-color);">First Normal Form</div>
+        <div class="principle-name">Atomic values — no comma-separated lists.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Storing multiple values in a single column makes querying, filtering, and joining almost impossible without string manipulation hacks.</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — 1NF Violation</span>
+          <span class="panel-filename">schema.sql</span>
+        </div>
+        <pre><span class="comment">-- ❌ Skills stored as a comma-separated string.
+-- How do you find all employees who know C#?
+-- LIKE '%C#%' is fragile and un-indexable.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Employees</span> (
+    <span class="fn">Id</span>         <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">Name</span>       <span class="kw">NVARCHAR</span>(<span class="num">100</span>),
+    <span class="bad-line">Skills     NVARCHAR(MAX)</span>
+    <span class="comment">-- 'C#, SQL, Docker, React'</span>
+);
+
+<span class="comment">-- Painful query:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="cls">Employees</span>
+<span class="kw">WHERE</span> <span class="bad-line">Skills LIKE '%C#%'</span>;
+<span class="comment">-- Also matches 'C#Sharp', 'AC#E' etc.</span></pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — 1NF Compliant</span>
+          <span class="panel-filename">schema.sql</span>
+        </div>
+        <pre><span class="comment">-- ✓ Junction table: each skill is its
+-- own row. Clean, indexable, joinable.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Employees</span> (
+    <span class="fn">Id</span>    <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">Name</span>  <span class="kw">NVARCHAR</span>(<span class="num">100</span>)
+);
+
+<span class="kw">CREATE TABLE</span> <span class="cls">EmployeeSkills</span> (
+    <span class="fn">EmployeeId</span>  <span class="kw">INT REFERENCES</span> <span class="cls">Employees</span>(<span class="fn">Id</span>),
+    <span class="fn">Skill</span>       <span class="kw">NVARCHAR</span>(<span class="num">50</span>),
+    <span class="kw">PRIMARY KEY</span> (<span class="fn">EmployeeId</span>, <span class="fn">Skill</span>)
+);
+
+<span class="comment">-- Clean query:</span>
+<span class="kw">SELECT</span> e.* <span class="kw">FROM</span> <span class="cls">Employees</span> e
+<span class="kw">JOIN</span> <span class="cls">EmployeeSkills</span> es
+  <span class="kw">ON</span> e.<span class="fn">Id</span> = es.<span class="fn">EmployeeId</span>
+<span class="kw">WHERE</span> es.<span class="fn">Skill</span> = <span class="str">'C#'</span>;</pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The Jaywalking antipattern:</strong> Comma-separated lists in a single column break querying, indexing, referential integrity, and make aggregation impossible. Bill Karwin calls this the most common database antipattern.</span>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The fix:</strong> Create an intersection (junction) table. Each value gets its own row. You gain indexing, foreign keys, and clean <code>JOIN</code> queries. This is the foundational rule of 1NF.</span>
+    </div>
+  </div>
+
+  <!-- 3NF violation example -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--norm-color);">3</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--norm-color);">Third Normal Form</div>
+        <div class="principle-name">Eliminate transitive dependencies.</div>
+      </div>
+    </div>
+    <p class="principle-desc">When a non-key column determines another non-key column, you get update anomalies: change a city's region and you have to update every row that mentions that city.</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — 3NF Violation</span>
+          <span class="panel-filename">orders.sql</span>
+        </div>
+        <pre><span class="comment">-- ❌ Region depends on City, not on OrderId.
+-- Change Auckland's region? Update every
+-- order row from Auckland.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Orders</span> (
+    <span class="fn">OrderId</span>      <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">CustomerId</span>   <span class="kw">INT</span>,
+    <span class="fn">City</span>         <span class="kw">NVARCHAR</span>(<span class="num">50</span>),
+    <span class="bad-line">Region       NVARCHAR(50)</span>
+    <span class="comment">-- City → Region (transitive!)</span>
+);
+
+<span class="comment">-- Auckland, Auckland Region
+-- Wellington, Wellington Region
+-- Christchurch, Canterbury
+-- Auckland, Auckland Region  (duplicated)</span></pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — 3NF Compliant</span>
+          <span class="panel-filename">orders.sql</span>
+        </div>
+        <pre><span class="comment">-- ✓ Cities table owns the City → Region
+-- relationship. Orders just references City.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Cities</span> (
+    <span class="fn">CityName</span>  <span class="kw">NVARCHAR</span>(<span class="num">50</span>) <span class="kw">PRIMARY KEY</span>,
+    <span class="fn">Region</span>    <span class="kw">NVARCHAR</span>(<span class="num">50</span>) <span class="kw">NOT NULL</span>
+);
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Orders</span> (
+    <span class="fn">OrderId</span>     <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">CustomerId</span>  <span class="kw">INT</span>,
+    <span class="fn">City</span>        <span class="kw">NVARCHAR</span>(<span class="num">50</span>)
+      <span class="kw">REFERENCES</span> <span class="cls">Cities</span>(<span class="fn">CityName</span>)
+);
+
+<span class="comment">-- Region lives in ONE place.
+-- Update it once, it's correct everywhere.</span></pre>
+      </div>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The mantra:</strong> "Every non-key column must provide a fact about the key, the whole key, and nothing but the key — so help me Codd." This phrase encapsulates 1NF through 3NF in a single sentence.</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-divider"><hr></div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  SECTION 2 — ACID                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-group" id="acid">
+
+  <div class="section-header">
+    <div class="section-icon" style="background: rgba(255,154,60,0.1); color: var(--acid-color);">🔒</div>
+    <div class="section-title-group">
+      <div class="section-label" style="color: var(--acid-color);">Transaction Guarantees</div>
+      <div class="section-name">ACID Properties</div>
+    </div>
+  </div>
+  <p class="section-desc">
+    ACID describes the four guarantees that database transactions must provide to ensure data remains correct even in the face of errors, crashes, and concurrent access. Understanding ACID deeply is essential for building applications that don't corrupt data.
+  </p>
+  <div class="source-tag">Sources: Kleppmann — Designing Data-Intensive Applications · Silberschatz et al. — Database System Concepts</div>
+
+  <div class="concept-grid">
+    <div class="concept-card" style="border-top: 3px solid #ff9a3c;">
+      <h4 style="color: #ff9a3c;">A — Atomicity</h4>
+      <p>A transaction is all-or-nothing. If any part fails, the entire transaction is rolled back. You never get a half-completed transfer where money leaves one account but never arrives in another.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #f77f00;">
+      <h4 style="color: #f77f00;">C — Consistency</h4>
+      <p>A transaction moves the database from one valid state to another. All constraints, cascades, and triggers must be satisfied before a transaction can commit. This is the application's responsibility — the database just enforces the rules you've defined.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #e36414;">
+      <h4 style="color: #e36414;">I — Isolation</h4>
+      <p>Concurrent transactions behave as if they were executed sequentially. Different isolation levels (Read Committed, Repeatable Read, Serializable) trade strictness for performance. Phantom reads, dirty reads, and lost updates are the bugs that occur when isolation is too weak.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #c44500;">
+      <h4 style="color: #c44500;">D — Durability</h4>
+      <p>Once a transaction commits, the data survives any subsequent crash — power failure, hardware fault, anything. Implemented through write-ahead logs (WAL) and flushing to disk before acknowledging the commit.</p>
+    </div>
+  </div>
+
+  <!-- Transaction example -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--acid-color);">A</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--acid-color);">Atomicity in Practice</div>
+        <div class="principle-name">Wrap related operations in a transaction.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Without explicit transactions, each statement auto-commits independently. If the second statement fails, the first has already committed — leaving your data in an inconsistent state.</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — No Transaction</span>
+          <span class="panel-filename">transfer.sql</span>
+        </div>
+        <pre><span class="comment">-- ❌ Each statement auto-commits.
+-- If the second UPDATE fails, money
+-- has vanished into thin air.</span>
+
+<span class="kw">UPDATE</span> <span class="cls">Accounts</span>
+<span class="kw">SET</span> <span class="fn">Balance</span> = <span class="fn">Balance</span> - <span class="num">500</span>
+<span class="kw">WHERE</span> <span class="fn">AccountId</span> = <span class="num">1</span>;
+
+<span class="comment">-- 💥 Server crashes here!</span>
+
+<span class="kw">UPDATE</span> <span class="cls">Accounts</span>
+<span class="kw">SET</span> <span class="fn">Balance</span> = <span class="fn">Balance</span> + <span class="num">500</span>
+<span class="kw">WHERE</span> <span class="fn">AccountId</span> = <span class="num">2</span>;
+
+<span class="comment">-- Account 1 lost $500.
+-- Account 2 never received it.</span></pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Explicit Transaction</span>
+          <span class="panel-filename">transfer.sql</span>
+        </div>
+        <pre><span class="comment">-- ✓ Both statements succeed together
+-- or fail together. No half-states.</span>
+
+<span class="kw">BEGIN TRANSACTION</span>;
+
+<span class="kw">UPDATE</span> <span class="cls">Accounts</span>
+<span class="kw">SET</span> <span class="fn">Balance</span> = <span class="fn">Balance</span> - <span class="num">500</span>
+<span class="kw">WHERE</span> <span class="fn">AccountId</span> = <span class="num">1</span>;
+
+<span class="kw">UPDATE</span> <span class="cls">Accounts</span>
+<span class="kw">SET</span> <span class="fn">Balance</span> = <span class="fn">Balance</span> + <span class="num">500</span>
+<span class="kw">WHERE</span> <span class="fn">AccountId</span> = <span class="num">2</span>;
+
+<span class="kw">COMMIT</span>;
+
+<span class="comment">-- If anything fails, both are
+-- rolled back automatically.</span></pre>
+      </div>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>In application code:</strong> In .NET, use <code>TransactionScope</code> or <code>IDbTransaction</code>. In Entity Framework, <code>SaveChanges()</code> wraps all pending changes in a single transaction by default. Always keep transactions short to avoid blocking other queries.</span>
+    </div>
+  </div>
+
+  <!-- Isolation levels -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--acid-color);">I</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--acid-color);">Isolation Levels</div>
+        <div class="principle-name">Understand the concurrency bugs each level prevents.</div>
+      </div>
+    </div>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4 style="color: var(--bad);">Read Uncommitted</h4>
+        <p>Can see uncommitted changes from other transactions (dirty reads). Rarely used — almost never what you want.</p>
+      </div>
+      <div class="concept-card">
+        <h4 style="color: var(--acid-color);">Read Committed</h4>
+        <p>The default in PostgreSQL and SQL Server. You only see committed data, but the same query within a transaction can return different results if another transaction commits in between (non-repeatable reads).</p>
+      </div>
+      <div class="concept-card">
+        <h4 style="color: var(--index-color);">Repeatable Read</h4>
+        <p>Once you read a row, it stays the same for the duration of your transaction. Prevents non-repeatable reads but can still see phantom rows (new rows inserted by other transactions).</p>
+      </div>
+      <div class="concept-card">
+        <h4 style="color: var(--good);">Serializable</h4>
+        <p>The strongest level. Transactions behave as if they ran one after another. Prevents all concurrency anomalies but at a performance cost. PostgreSQL implements this efficiently via SSI (Serializable Snapshot Isolation).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"><hr></div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  SECTION 3 — INDEXING & PERFORMANCE        -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-group" id="indexing">
+
+  <div class="section-header">
+    <div class="section-icon" style="background: rgba(255,224,102,0.1); color: var(--index-color);">⚡</div>
+    <div class="section-title-group">
+      <div class="section-label" style="color: var(--index-color);">Performance Engineering</div>
+      <div class="section-name">Indexing & Query Performance</div>
+    </div>
+  </div>
+  <p class="section-desc">
+    An unindexed query on a million-row table scans every single row. The right index turns that full table scan into a near-instant lookup. But indexes aren't free — they consume disk space and slow down writes. Understanding when and how to index is one of the highest-leverage skills in database work.
+  </p>
+  <div class="source-tag">Sources: Karwin — SQL Antipatterns · Kleppmann — DDIA · Markus Winand — SQL Performance Explained</div>
+
+  <div class="concept-grid">
+    <div class="concept-card" style="border-top: 3px solid var(--index-color);">
+      <h4 style="color: var(--index-color);">B-Tree Index</h4>
+      <p>The default index type. Keeps data sorted in a balanced tree structure. Excellent for equality checks (<code>=</code>), range queries (<code>BETWEEN</code>), and ordering (<code>ORDER BY</code>). Used by almost every relational database by default.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #ffd000;">
+      <h4 style="color: #ffd000;">Hash Index</h4>
+      <p>Optimised for exact equality lookups only. O(1) average lookup time. Cannot be used for range queries or sorting. Good for lookup tables and join keys when you only ever query with <code>=</code>.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #ffb700;">
+      <h4 style="color: #ffb700;">Composite Index</h4>
+      <p>An index on multiple columns — order matters. An index on <code>(LastName, FirstName)</code> helps queries filtering on <code>LastName</code> alone, or on both, but <em>not</em> on <code>FirstName</code> alone. The leftmost prefix rule.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #ff9e00;">
+      <h4 style="color: #ff9e00;">Covering Index</h4>
+      <p>When an index includes all the columns a query needs, the database can answer the query entirely from the index without touching the table. Look for "Index Only Scan" in your query plan.</p>
+    </div>
+  </div>
+
+  <!-- Index Shotgun -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--index-color);">!</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--index-color);">Antipattern: Index Shotgun</div>
+        <div class="principle-name">Not too few, not too many — just the right indexes.</div>
+      </div>
+    </div>
+    <p class="principle-desc">The Index Shotgun antipattern comes in two flavours: creating no indexes at all (every query is a full table scan), or creating an index on every column (writes become glacially slow and storage balloons).</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Problem — No Indexes</span>
+          <span class="panel-filename">query-plan.sql</span>
+        </div>
+        <pre><span class="comment">-- ❌ 2.3 million rows, no index on Email.
+-- Full table scan every single time.</span>
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="cls">Users</span>
+<span class="kw">WHERE</span> <span class="fn">Email</span> = <span class="str">'tauriq@example.com'</span>;
+
+<span class="comment">-- Execution plan shows:
+-- Seq Scan on Users
+-- cost=0.00..58293.00
+-- rows=2,300,000 (ALL of them!)</span>
+
+<span class="comment">-- Response time: 1,200ms</span></pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Fix — Targeted Index</span>
+          <span class="panel-filename">query-plan.sql</span>
+        </div>
+        <pre><span class="comment">-- ✓ Index on the column you actually
+-- filter by. B-tree does the rest.</span>
+
+<span class="kw">CREATE INDEX</span> <span class="fn">ix_users_email</span>
+<span class="kw">ON</span> <span class="cls">Users</span> (<span class="fn">Email</span>);
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="cls">Users</span>
+<span class="kw">WHERE</span> <span class="fn">Email</span> = <span class="str">'tauriq@example.com'</span>;
+
+<span class="comment">-- Execution plan shows:
+-- Index Scan using ix_users_email
+-- cost=0.43..8.45
+-- rows=1</span>
+
+<span class="comment">-- Response time: 0.3ms</span></pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The opposite extreme:</strong> Don't create an index on every column either. Each index must be maintained on every INSERT, UPDATE, and DELETE. A table with 15 indexes will have significantly slower writes. Profile your actual queries and index accordingly.</span>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>How to decide:</strong> Use <code>EXPLAIN ANALYZE</code> (PostgreSQL) or look at the execution plan in SSMS (SQL Server). Index columns that appear in <code>WHERE</code>, <code>JOIN</code>, and <code>ORDER BY</code> clauses of your most frequent queries. Re-evaluate indexes periodically as query patterns change.</span>
+    </div>
+  </div>
+
+  <!-- N+1 Query Problem -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--index-color);">N</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--index-color);">The N+1 Query Problem</div>
+        <div class="principle-name">One query to load parents, then N queries for children.</div>
+      </div>
+    </div>
+    <p class="principle-desc">The N+1 problem is one of the most common performance killers in application code that uses an ORM. You load a list of records, then loop through each one and lazily load related data — firing a separate SQL query per row.</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — N+1 Queries (C#)</span>
+          <span class="panel-filename">OrderService.cs</span>
+        </div>
+        <pre><span class="comment">// ❌ 1 query to load 200 orders,
+// then 200 queries to load each customer.
+// Total: 201 database round-trips.</span>
+
+<span class="kw">var</span> orders = db.<span class="cls">Orders</span>.<span class="fn">ToList</span>();
+
+<span class="kw">foreach</span> (<span class="kw">var</span> order <span class="kw">in</span> orders)
+{
+    <span class="comment">// Lazy load fires a query per order</span>
+    <span class="bad-line">var name = order.Customer.Name;</span>
+    Console.<span class="fn">WriteLine</span>(
+        $<span class="str">"{order.Id}: {name}"</span>);
+}</pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Eager Load (C#)</span>
+          <span class="panel-filename">OrderService.cs</span>
+        </div>
+        <pre><span class="comment">// ✓ One query with a JOIN.
+// Total: 1 database round-trip.</span>
+
+<span class="kw">var</span> orders = db.<span class="cls">Orders</span>
+    <span class="good-line">.Include(o => o.Customer)</span>
+    .<span class="fn">ToList</span>();
+
+<span class="kw">foreach</span> (<span class="kw">var</span> order <span class="kw">in</span> orders)
+{
+    <span class="comment">// Already loaded — no extra query</span>
+    <span class="kw">var</span> name = order.Customer.Name;
+    Console.<span class="fn">WriteLine</span>(
+        $<span class="str">"{order.Id}: {name}"</span>);
+}</pre>
+      </div>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>In Entity Framework:</strong> Use <code>.Include()</code> for eager loading. In Dapper, write an explicit <code>JOIN</code>. Always check your ORM's generated SQL — enable logging in development to catch N+1 patterns early.</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"><hr></div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  SECTION 4 — SQL ANTIPATTERNS              -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-group" id="antipatterns">
+
+  <div class="section-header">
+    <div class="section-icon" style="background: rgba(255,77,109,0.1); color: var(--anti-color);">🚫</div>
+    <div class="section-title-group">
+      <div class="section-label" style="color: var(--anti-color);">Common Mistakes</div>
+      <div class="section-name">SQL Antipatterns</div>
+    </div>
+  </div>
+  <p class="section-desc">
+    Antipatterns are solutions that look reasonable on the surface but cause serious problems at scale. Bill Karwin's "SQL Antipatterns" catalogues the most common traps developers fall into — and the principled fixes. Knowing what <em>not</em> to do is as important as knowing best practices.
+  </p>
+  <div class="source-tag">Source: Bill Karwin — SQL Antipatterns: Avoiding the Pitfalls of Database Programming</div>
+
+  <!-- Keyless Entry -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--anti-color);">K</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--anti-color);">Keyless Entry</div>
+        <div class="principle-name">Skipping foreign keys "for flexibility" destroys data integrity.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Some developers avoid foreign keys because they think constraints slow things down or get in the way of agile development. The result: orphan rows, broken references, and bugs that only surface in production.</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — No Foreign Keys</span>
+          <span class="panel-filename">schema.sql</span>
+        </div>
+        <pre><span class="comment">-- ❌ No FK constraint. Nothing stops you
+-- from inserting an order for a customer
+-- that doesn't exist.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Orders</span> (
+    <span class="fn">Id</span>          <span class="kw">INT PRIMARY KEY</span>,
+    <span class="bad-line">CustomerId  INT,</span>
+    <span class="fn">Total</span>       <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>)
+);
+
+<span class="comment">-- This succeeds silently:</span>
+<span class="kw">INSERT INTO</span> <span class="cls">Orders</span> (<span class="fn">Id</span>, <span class="fn">CustomerId</span>, <span class="fn">Total</span>)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="bad-line">99999</span>, <span class="num">250.00</span>);
+<span class="comment">-- Customer 99999 doesn't exist.
+-- Now your reports are wrong.</span></pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Enforced Foreign Key</span>
+          <span class="panel-filename">schema.sql</span>
+        </div>
+        <pre><span class="comment">-- ✓ The database enforces the relationship.
+-- You can't insert garbage references.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Orders</span> (
+    <span class="fn">Id</span>          <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">CustomerId</span>  <span class="kw">INT NOT NULL</span>,
+    <span class="fn">Total</span>       <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+    <span class="good-line">CONSTRAINT FK_Orders_Customer</span>
+      <span class="kw">FOREIGN KEY</span> (<span class="fn">CustomerId</span>)
+      <span class="kw">REFERENCES</span> <span class="cls">Customers</span>(<span class="fn">Id</span>)
+);
+
+<span class="comment">-- This now fails with an error:
+-- "INSERT conflicts with FOREIGN KEY
+--  constraint FK_Orders_Customer"</span></pre>
+      </div>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The principle:</strong> Let the database enforce data integrity, not your application code. Application bugs come and go, but foreign keys are enforced at every entry point — raw SQL, ORM, migration scripts, manual data fixes. Constraints are your last line of defence.</span>
+    </div>
+  </div>
+
+  <!-- Fear of the Unknown (NULLs) -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--anti-color);">?</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--anti-color);">Fear of the Unknown</div>
+        <div class="principle-name">Misusing NULL — or avoiding it by inventing magic values.</div>
+      </div>
+    </div>
+    <p class="principle-desc">NULL means "unknown" — not zero, not empty string, not "N/A". Using magic sentinel values like -1 or "NONE" instead of NULL creates bugs that are even harder to find. But NULLs have their own traps in comparisons and aggregations.</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Problem — Magic Values</span>
+          <span class="panel-filename">users.sql</span>
+        </div>
+        <pre><span class="comment">-- ❌ Using -1 to mean "no phone number".
+-- Every query must know about this
+-- magic value, or the report is wrong.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Users</span> (
+    <span class="fn">Id</span>     <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">Name</span>   <span class="kw">NVARCHAR</span>(<span class="num">100</span>),
+    <span class="fn">Phone</span>  <span class="kw">NVARCHAR</span>(<span class="num">20</span>)
+      <span class="kw">DEFAULT</span> <span class="bad-line">'UNKNOWN'</span>
+);
+
+<span class="comment">-- How many users have a phone?</span>
+<span class="kw">SELECT COUNT</span>(*) <span class="kw">FROM</span> <span class="cls">Users</span>
+<span class="kw">WHERE</span> <span class="fn">Phone</span> <span class="bad-line">!= 'UNKNOWN'</span>
+  <span class="kw">AND</span> <span class="fn">Phone</span> <span class="bad-line">!= 'N/A'</span>
+  <span class="kw">AND</span> <span class="fn">Phone</span> <span class="bad-line">!= ''</span>;
+<span class="comment">-- What other magic values did someone
+-- invent? We'll never catch them all.</span></pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Fix — Use NULL Correctly</span>
+          <span class="panel-filename">users.sql</span>
+        </div>
+        <pre><span class="comment">-- ✓ NULL means "we don't know".
+-- SQL has built-in syntax for this.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Users</span> (
+    <span class="fn">Id</span>     <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">Name</span>   <span class="kw">NVARCHAR</span>(<span class="num">100</span>),
+    <span class="fn">Phone</span>  <span class="kw">NVARCHAR</span>(<span class="num">20</span>) <span class="comment">-- nullable</span>
+);
+
+<span class="comment">-- How many users have a phone?</span>
+<span class="kw">SELECT COUNT</span>(*) <span class="kw">FROM</span> <span class="cls">Users</span>
+<span class="kw">WHERE</span> <span class="fn">Phone</span> <span class="good-line">IS NOT NULL</span>;
+
+<span class="comment">-- Clean. Unambiguous.
+-- COUNT(), SUM(), AVG() all handle
+-- NULLs correctly by design.</span>
+
+<span class="comment">-- But remember: NULL != NULL.
+-- Use IS NULL, never = NULL.</span></pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The trap:</strong> <code>WHERE Phone = NULL</code> returns no rows — not because there aren't any, but because <code>NULL = NULL</code> evaluates to <code>NULL</code> (unknown), which is not <code>TRUE</code>. This is three-valued logic and it catches everyone at least once.</span>
+    </div>
+  </div>
+
+  <!-- EAV Antipattern -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--anti-color);">E</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--anti-color);">Entity-Attribute-Value (EAV)</div>
+        <div class="principle-name">The "infinitely flexible" schema that's infinitely painful.</div>
+      </div>
+    </div>
+    <p class="principle-desc">EAV stores data as key-value pairs instead of typed columns. It seems flexible — "we can add any attribute without a migration!" — but you lose type safety, constraints, and joins become monstrous pivot queries.</p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Problem — EAV Table</span>
+          <span class="panel-filename">products.sql</span>
+        </div>
+        <pre><span class="comment">-- ❌ Everything is a string.
+-- No type checking, no constraints,
+-- querying is a nightmare.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">ProductAttributes</span> (
+    <span class="fn">ProductId</span>  <span class="kw">INT</span>,
+    <span class="fn">AttrName</span>   <span class="kw">NVARCHAR</span>(<span class="num">50</span>),
+    <span class="bad-line">AttrValue  NVARCHAR(MAX)</span>
+);
+
+<span class="comment">-- "Give me all products where
+--  weight < 5kg AND colour = 'red'"</span>
+<span class="kw">SELECT</span> p.<span class="fn">ProductId</span>
+<span class="kw">FROM</span> <span class="cls">ProductAttributes</span> p
+<span class="kw">JOIN</span> <span class="cls">ProductAttributes</span> w
+  <span class="kw">ON</span> p.<span class="fn">ProductId</span> = w.<span class="fn">ProductId</span>
+<span class="kw">WHERE</span> p.<span class="fn">AttrName</span> = <span class="str">'colour'</span>
+  <span class="kw">AND</span> p.<span class="fn">AttrValue</span> = <span class="str">'red'</span>
+  <span class="kw">AND</span> w.<span class="fn">AttrName</span> = <span class="str">'weight'</span>
+  <span class="bad-line">AND CAST(w.AttrValue AS DECIMAL) < 5</span>;
+<span class="comment">-- Self-join per attribute. Grows O(n).</span></pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Fix — Typed Columns (or JSONB)</span>
+          <span class="panel-filename">products.sql</span>
+        </div>
+        <pre><span class="comment">-- ✓ Option A: Real columns with types.</span>
+
+<span class="kw">CREATE TABLE</span> <span class="cls">Products</span> (
+    <span class="fn">Id</span>      <span class="kw">INT PRIMARY KEY</span>,
+    <span class="fn">Name</span>    <span class="kw">NVARCHAR</span>(<span class="num">100</span>),
+    <span class="fn">Colour</span>  <span class="kw">NVARCHAR</span>(<span class="num">30</span>),
+    <span class="fn">Weight</span>  <span class="kw">DECIMAL</span>(<span class="num">6</span>,<span class="num">2</span>)
+);
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="cls">Products</span>
+<span class="kw">WHERE</span> <span class="fn">Colour</span> = <span class="str">'red'</span>
+  <span class="kw">AND</span> <span class="fn">Weight</span> < <span class="num">5</span>;
+<span class="comment">-- Simple, fast, type-safe.</span>
+
+<span class="comment">-- ✓ Option B: JSONB for truly dynamic
+-- attributes (PostgreSQL):</span>
+<span class="comment">-- attrs JSONB, with a GIN index.</span>
+<span class="comment">-- Flexible AND queryable.</span></pre>
+      </div>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>When EAV is legitimate:</strong> When you genuinely have thousands of possible attributes that vary per entity (e.g. medical record systems, product catalogues with wildly different categories). Even then, consider a hybrid: core columns for common attributes + JSON/JSONB for the rest.</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-divider"><hr></div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  SECTION 5 — DDIA PRINCIPLES               -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-group" id="ddia">
+
+  <div class="section-header">
+    <div class="section-icon" style="background: rgba(0,229,160,0.1); color: var(--ddia-color);">📐</div>
+    <div class="section-title-group">
+      <div class="section-label" style="color: var(--ddia-color);">System Design</div>
+      <div class="section-name">Data-Intensive Application Principles</div>
+    </div>
+  </div>
+  <p class="section-desc">
+    Martin Kleppmann's "Designing Data-Intensive Applications" is widely considered the most important book on modern data systems. These are the core principles it establishes — the lens through which every data design decision should be evaluated.
+  </p>
+  <div class="source-tag">Source: Martin Kleppmann — Designing Data-Intensive Applications (O'Reilly, 2017; 2nd ed. 2026)</div>
+
+  <div class="concept-grid">
+    <div class="concept-card" style="border-top: 3px solid var(--ddia-color);">
+      <h4 style="color: var(--ddia-color);">Reliability</h4>
+      <p>The system works correctly even when things go wrong — hardware faults, software bugs, human errors. Fault-tolerant systems <em>anticipate</em> faults and handle them gracefully, rather than hoping they won't happen. Design for failure, not for the happy path.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #00cc8e;">
+      <h4 style="color: #00cc8e;">Scalability</h4>
+      <p>As load increases, the system can cope without degrading. Scalability isn't a binary — you describe it in terms of specific load parameters (requests/sec, read/write ratio, data volume) and how performance changes as those parameters grow.</p>
+    </div>
+    <div class="concept-card" style="border-top: 3px solid #00b37a;">
+      <h4 style="color: #00b37a;">Maintainability</h4>
+      <p>The majority of software cost is ongoing maintenance, not initial development. Maintainable systems are <strong>operable</strong> (easy to run), <strong>simple</strong> (easy to understand), and <strong>evolvable</strong> (easy to change). This is the principle that matters most over a system's lifetime.</p>
+    </div>
+  </div>
+
+  <!-- Data Models -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--ddia-color);">D</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--ddia-color);">Data Model Trade-offs</div>
+        <div class="principle-name">Choose the model that fits your access patterns.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Relational, document, graph — each data model makes certain operations easy and others awkward. The model you choose shapes how you think about the problem and determines which queries are natural vs. painful.</p>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4 style="color: var(--norm-color);">Relational (SQL)</h4>
+        <p>Best when data has many relationships, you need strong consistency, and your queries involve complex joins. Normalised data means no redundancy, and schemas enforce structure at write time (schema-on-write).</p>
+      </div>
+      <div class="concept-card">
+        <h4 style="color: var(--acid-color);">Document (NoSQL)</h4>
+        <p>Best for data that comes in self-contained "documents" — user profiles, blog posts, product listings. Flexible schema (schema-on-read), great locality (one read to fetch everything). Poor for many-to-many relationships.</p>
+      </div>
+      <div class="concept-card">
+        <h4 style="color: var(--philo-color);">Graph</h4>
+        <p>Best when the connections between entities <em>are</em> the data — social networks, recommendation engines, fraud detection. Excels at traversing relationships that would require recursive joins in SQL.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAP Theorem / Replication -->
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--ddia-color);">R</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--ddia-color);">Replication & Partitioning</div>
+        <div class="principle-name">The fundamental trade-offs of distributed data.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Replication keeps copies of data on multiple machines for fault tolerance. Partitioning (sharding) splits data across machines for scalability. Both introduce complexity around consistency, conflict resolution, and operational overhead.</p>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4 style="color: var(--ddia-color);">Single-Leader Replication</h4>
+        <p>One node handles writes, replicas handle reads. Simple model with clear consistency. Used by PostgreSQL, MySQL, SQL Server. Risk: leader failure requires failover.</p>
+      </div>
+      <div class="concept-card">
+        <h4 style="color: var(--acid-color);">Multi-Leader Replication</h4>
+        <p>Multiple nodes accept writes — useful for multi-datacentre setups. But now you need conflict resolution: what happens when two leaders modify the same row simultaneously?</p>
+      </div>
+      <div class="concept-card">
+        <h4 style="color: var(--index-color);">Leaderless Replication</h4>
+        <p>Any node accepts reads and writes (e.g. Cassandra, DynamoDB). Uses quorum reads/writes. Eventual consistency means stale data is possible.</p>
+      </div>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The key insight from DDIA:</strong> There is no "best" replication strategy. Each is a set of trade-offs between consistency, availability, latency, and operational complexity. Understand your application's requirements — does it need strong consistency (banking)? Or is eventual consistency acceptable (social media feeds)?</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"><hr></div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  SECTION 6 — DESIGN PHILOSOPHY             -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-group" id="philosophy">
+
+  <div class="section-header">
+    <div class="section-icon" style="background: rgba(199,125,255,0.1); color: var(--philo-color);">💡</div>
+    <div class="section-title-group">
+      <div class="section-label" style="color: var(--philo-color);">Guiding Principles</div>
+      <div class="section-name">Database Design Philosophy</div>
+    </div>
+  </div>
+  <p class="section-desc">
+    Beyond specific techniques, these are the overarching philosophies that guide good database design. They emerge from decades of practice across relational databases, distributed systems, and real-world production failures.
+  </p>
+  <div class="source-tag">Synthesised from: C.J. Date · Bill Karwin · Martin Kleppmann · Ralph Kimball · Michael Hernandez</div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">1</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Data Outlives Code</div>
+        <div class="principle-name">Your application will be rewritten. Your data will not.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Applications get rewritten every 5–10 years. Data, once created, lives on decades. This means schema design deserves more care than any individual application feature. A bad schema creates pain that compounds over every future application that touches the data.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">2</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Constraints Are Features</div>
+        <div class="principle-name">Every constraint you omit is a bug you'll ship later.</div>
+      </div>
+    </div>
+    <p class="principle-desc">NOT NULL, foreign keys, CHECK constraints, unique indexes — these aren't bureaucratic overhead. They're executable documentation of your business rules. When you say "we'll enforce that in the application layer", you're saying "we trust that no developer will ever make a mistake, no migration will ever skip a check, and no one will ever touch this data with raw SQL." That trust is misplaced.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">3</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Normalise First, Denormalise Later</div>
+        <div class="principle-name">Start strict. Loosen only with evidence.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Begin every design in at least 3NF. Only denormalise when you have a proven, measured performance problem that can't be solved with better queries or indexes. Premature denormalisation creates the same maintenance burden as premature optimisation in code. When you do denormalise, document <em>why</em> and which anomalies you're accepting.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">4</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Schema Is a Contract</div>
+        <div class="principle-name">Treat migrations like API versioning.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Your database schema is a public contract that multiple applications, services, and tools depend on. Changing it requires the same discipline as changing a public API: backward compatibility, migration plans, and communication. Use numbered migration scripts (Flyway, EF Migrations, Alembic) — never modify schemas by hand in production.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">5</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Design for Queries, Not for Objects</div>
+        <div class="principle-name">The database serves queries, not your class hierarchy.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Object-relational impedance mismatch is real. Don't blindly mirror your C# classes as database tables — class hierarchies, encapsulation, and polymorphism don't map cleanly to relational structures. Design your schema for the queries you'll run, then map to objects in application code. The ORM should adapt to the database, not the other way around.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">6</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Naming Is Design</div>
+        <div class="principle-name">Consistent, descriptive names prevent entire categories of bugs.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Pick a convention and enforce it ruthlessly. Singular or plural table names — pick one. Snake_case or PascalCase — pick one. Is it <code>CustomerId</code> or <code>CustId</code> or <code>customer_id</code>? When every developer has to guess the column name, errors multiply. Good naming makes the schema self-documenting.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">7</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Measure, Don't Guess</div>
+        <div class="principle-name">Use EXPLAIN ANALYZE, not intuition.</div>
+      </div>
+    </div>
+    <p class="principle-desc">The database engine's query planner is smarter than your intuition. Before adding indexes, rewriting queries, or restructuring tables — profile. Look at actual execution plans, not estimated ones. The bottleneck is almost never where you think it is. Keep a performance baseline and track regressions.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">8</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Soft Delete with Caution</div>
+        <div class="principle-name">Deleted data is never really deleted — until it is.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Soft deletes (an <code>IsDeleted</code> flag) seem safe, but every query now needs <code>WHERE IsDeleted = 0</code>. Forget it once and your UI shows deleted data. Unique constraints break because the "deleted" row still occupies the unique slot. Consider alternatives: audit tables, event sourcing, or temporal tables (supported natively in SQL Server 2016+ and PostgreSQL).</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">9</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">The Log Is the Truth</div>
+        <div class="principle-name">Immutable event logs are more powerful than mutable state.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Kleppmann argues that an append-only log of events (every change that happened, in order) is a more fundamental data structure than the current state of a database. The current state is just a projection of the log. This philosophy — influenced by event sourcing and stream processing — means you can always rebuild state from the log, but you can never reconstruct the log from the state alone.</p>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-number" style="color: var(--philo-color);">10</span>
+      <div class="principle-title-group">
+        <div class="principle-label" style="color: var(--philo-color);">Understand Your Access Patterns</div>
+        <div class="principle-name">OLTP and OLAP are fundamentally different workloads.</div>
+      </div>
+    </div>
+    <p class="principle-desc">Transactional systems (OLTP) optimise for many small reads and writes — a customer places an order, a user updates their profile. Analytical systems (OLAP) optimise for few large reads across millions of rows — "what was total revenue by region last quarter?" Trying to serve both from one schema without understanding this distinction is a recipe for neither working well. Ralph Kimball's dimensional modelling (star schemas, fact tables, dimension tables) exists specifically for this reason.</p>
+  </div>
+</div>
+
+<div class="section-divider"><hr></div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  SECTION 7 — ESSENTIAL READING             -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-group" id="books">
+
+  <div class="section-header">
+    <div class="section-icon" style="background: rgba(124,109,250,0.1); color: var(--accent);">📚</div>
+    <div class="section-title-group">
+      <div class="section-label" style="color: var(--accent);">Further Study</div>
+      <div class="section-name">Essential Reading</div>
+    </div>
+  </div>
+  <p class="section-desc">
+    The books that shaped the principles on this page. Ordered roughly from most practical to most theoretical — start wherever matches your current need.
+  </p>
+
+  <div class="book-shelf">
+    <div class="book-card">
+      <div class="book-title">Designing Data-Intensive Applications</div>
+      <div class="book-author">Martin Kleppmann · O'Reilly, 2017 (2nd ed. 2026)</div>
+      <div class="book-desc">The definitive guide to modern data systems. Covers replication, partitioning, transactions, consistency models, batch/stream processing. Teaches you to think in trade-offs rather than best practices. Widely considered the most important book for backend engineers.</div>
+      <div class="book-tag" style="background: rgba(0,229,160,0.12); color: var(--ddia-color);">MUST READ</div>
+    </div>
+    <div class="book-card">
+      <div class="book-title">SQL Antipatterns</div>
+      <div class="book-author">Bill Karwin · Pragmatic Bookshelf, 2010 (Vol. 1 updated 2024)</div>
+      <div class="book-desc">A catalogue of the most common database design mistakes and how to fix them. Covers logical design (Jaywalking, EAV, Keyless Entry), physical design (Index Shotgun), query patterns (Spaghetti Query), and application integration. Extremely practical.</div>
+      <div class="book-tag" style="background: rgba(255,77,109,0.12); color: var(--anti-color);">HIGHLY PRACTICAL</div>
+    </div>
+    <div class="book-card">
+      <div class="book-title">Database Design for Mere Mortals</div>
+      <div class="book-author">Michael J. Hernandez · Addison-Wesley, 3rd ed.</div>
+      <div class="book-desc">The most accessible guide to relational database design. Walks through the full process: analysing requirements, defining tables, establishing relationships, enforcing business rules, and creating views. No prior database experience required.</div>
+      <div class="book-tag" style="background: rgba(0,180,216,0.12); color: var(--norm-color);">BEGINNER FRIENDLY</div>
+    </div>
+    <div class="book-card">
+      <div class="book-title">An Introduction to Database Systems</div>
+      <div class="book-author">C.J. Date · Addison-Wesley, 8th ed.</div>
+      <div class="book-desc">The academic standard — 900,000+ copies sold. Rigorous treatment of relational theory, normalisation, and the relational algebra that underpins SQL. Dense but authoritative. Date pioneered relational database technology alongside Codd at IBM.</div>
+      <div class="book-tag" style="background: rgba(199,125,255,0.12); color: var(--philo-color);">FOUNDATIONAL THEORY</div>
+    </div>
+    <div class="book-card">
+      <div class="book-title">The Data Warehouse Toolkit</div>
+      <div class="book-author">Ralph Kimball & Margy Ross · Wiley, 3rd ed.</div>
+      <div class="book-desc">The definitive guide to dimensional modelling — star schemas, fact tables, slowly changing dimensions. Essential if you work with reporting, business intelligence, or analytics. The OLTP vs OLAP distinction crystallised here.</div>
+      <div class="book-tag" style="background: rgba(255,224,102,0.12); color: var(--index-color);">ANALYTICS / BI</div>
+    </div>
+    <div class="book-card">
+      <div class="book-title">Database Internals</div>
+      <div class="book-author">Alex Petrov · O'Reilly, 2019</div>
+      <div class="book-desc">Goes deep on how databases work under the hood — storage engines (B-Trees, LSM Trees), transaction processing, distributed system protocols (Raft, Paxos). Excellent companion to DDIA for understanding <em>why</em> databases behave the way they do.</div>
+      <div class="book-tag" style="background: rgba(124,109,250,0.12); color: var(--accent);">DEEP INTERNALS</div>
+    </div>
+  </div>
+
+</div>
+
+
+<footer>
+  // database-design-principles &nbsp;·&nbsp; Normalisation · ACID · Indexing · Antipatterns · DDIA · Design Philosophy &nbsp;·&nbsp; SQL examples
+</footer>
+
+</body>
+</html>

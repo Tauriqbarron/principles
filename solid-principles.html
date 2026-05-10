@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLID Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --text: #e2e2f0;
+    --muted: #6b6b8a;
+    --bad: #ff4d6d;
+    --bad-bg: #1a0810;
+    --bad-border: #3d1020;
+    --good: #00e5a0;
+    --good-bg: #021a10;
+    --good-border: #0a3d28;
+    --accent: #7c6dfa;
+    --code-bg: #0d0d18;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 80px 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  h1 {
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+
+  h1 .s { color: var(--bad); }
+  h1 .o { color: #ff9a3c; }
+  h1 .l { color: #ffe066; }
+  h1 .i { color: var(--good); }
+  h1 .d { color: var(--accent); }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 560px;
+    font-weight: 400;
+  }
+
+  /* NAV PILLS */
+  .nav-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .nav-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .nav-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,109,250,0.08);
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+  }
+
+  /* PRINCIPLE SECTION */
+  .principle {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s forwards;
+  }
+
+  .principle:nth-child(1) { animation-delay: 0.1s; }
+  .principle:nth-child(2) { animation-delay: 0.2s; }
+  .principle:nth-child(3) { animation-delay: 0.3s; }
+  .principle:nth-child(4) { animation-delay: 0.4s; }
+  .principle:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .principle-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .principle-letter {
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    opacity: 0.15;
+  }
+
+  .principle-title-group { flex: 1; }
+
+  .principle-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .principle-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .principle-desc {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 40px;
+    padding-left: 92px;
+    line-height: 1.7;
+  }
+
+  /* CODE PANELS */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .panel {
+    background: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .panel.bad .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .panel.bad .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+
+  .panel-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  pre {
+    padding: 24px 20px;
+    overflow-x: auto;
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+
+  .comment { color: #444466; }
+  .kw { color: #9d7dfa; }
+  .cls { color: #7ce0f5; }
+  .fn { color: #7cfac0; }
+  .str { color: #f5c07c; }
+  .num { color: #f5a07c; }
+  .bad-line { color: var(--bad); opacity: 0.85; }
+  .good-line { color: var(--good); opacity: 0.85; }
+  .iface { color: #fa9dcc; }
+
+  /* CALLOUT */
+  .callout {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout.bad-callout {
+    background: var(--bad-bg);
+    border: 1px solid var(--bad-border);
+    color: #ff8fa3;
+  }
+
+  .callout.good-callout {
+    background: var(--good-bg);
+    border: 1px solid var(--good-border);
+    color: #6dffd0;
+  }
+
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* COLORS PER PRINCIPLE */
+  .s-color { color: var(--bad); }
+  .o-color { color: #ff9a3c; }
+  .l-color { color: #ffe066; }
+  .i-color { color: var(--good); }
+  .d-color { color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 768px) {
+    header, .nav-pills, main { padding-left: 20px; padding-right: 20px; }
+    h1 { font-size: 52px; }
+    .panels { grid-template-columns: 1fr; }
+    .principle-desc { padding-left: 0; }
+    .principle-header { flex-direction: column; gap: 8px; }
+    .principle-letter { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">// Object-Oriented Design</span>
+  <h1>
+    <span class="s">S</span><span class="o">O</span><span class="l">L</span><span class="i">I</span><span class="d">D</span>
+  </h1>
+  <p class="subtitle">Five principles for writing maintainable, flexible, and scalable object-oriented code — illustrated with real before/after examples.</p>
+</header>
+
+<nav class="nav-pills">
+  <a class="nav-pill" href="#srp">S — Single Responsibility</a>
+  <a class="nav-pill" href="#ocp">O — Open/Closed</a>
+  <a class="nav-pill" href="#lsp">L — Liskov Substitution</a>
+  <a class="nav-pill" href="#isp">I — Interface Segregation</a>
+  <a class="nav-pill" href="#dip">D — Dependency Inversion</a>
+</nav>
+
+<main>
+
+  <!-- ─── S ─── -->
+  <section class="principle" id="srp">
+    <div class="principle-header">
+      <span class="principle-letter s-color">S</span>
+      <div class="principle-title-group">
+        <div class="principle-label s-color">Single Responsibility Principle</div>
+        <div class="principle-name">One class, one reason to change.</div>
+      </div>
+    </div>
+    <p class="principle-desc">
+      A class should have only one job. When a class handles multiple concerns, a change in one area forces you to retest and redeploy everything — even unrelated functionality.
+    </p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — Violation</span>
+          <span class="panel-filename">UserService.cs</span>
+        </div>
+        <pre><span class="comment">// ❌ This class does WAY too much.
+// Changing email logic forces retesting
+// user data logic, and vice versa.</span>
+
+<span class="kw">public class</span> <span class="cls">UserService</span>
+{
+    <span class="kw">public void</span> <span class="fn">CreateUser</span>(<span class="cls">User</span> user)
+    {
+        <span class="comment">// Save to database</span>
+        _db.Insert(user);
+
+        <span class="comment">// Format and send welcome email</span>
+        <span class="bad-line">var body = $"Welcome, {user.Name}!";</span>
+        <span class="bad-line">var msg = new MailMessage(</span>
+        <span class="bad-line">    "noreply@app.com", user.Email,</span>
+        <span class="bad-line">    "Welcome!", body);</span>
+        <span class="bad-line">new SmtpClient().Send(msg);</span>
+
+        <span class="comment">// Generate and write audit log</span>
+        <span class="bad-line">var log = $"[{DateTime.Now}] User created: {user.Id}";</span>
+        <span class="bad-line">File.AppendAllText("audit.log", log);</span>
+    }
+}</pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Fixed</span>
+          <span class="panel-filename">UserService.cs + others</span>
+        </div>
+        <pre><span class="comment">// ✅ Each class has one job.
+// Swap email provider? Only EmailService changes.
+// Change log format? Only AuditLogger changes.</span>
+
+<span class="kw">public class</span> <span class="cls">UserService</span>
+{
+    <span class="kw">private readonly</span> <span class="cls">IEmailService</span> _email;
+    <span class="kw">private readonly</span> <span class="cls">IAuditLogger</span> _logger;
+
+    <span class="kw">public void</span> <span class="fn">CreateUser</span>(<span class="cls">User</span> user)
+    {
+        _db.Insert(user);
+        <span class="good-line">_email.SendWelcome(user);</span>
+        <span class="good-line">_logger.Log($"User created: {user.Id}");</span>
+    }
+}
+
+<span class="kw">public class</span> <span class="cls">EmailService</span> : <span class="iface">IEmailService</span>
+{
+    <span class="kw">public void</span> <span class="fn">SendWelcome</span>(<span class="cls">User</span> user) { <span class="comment">/* ... */</span> }
+}
+
+<span class="kw">public class</span> <span class="cls">AuditLogger</span> : <span class="iface">IAuditLogger</span>
+{
+    <span class="kw">public void</span> <span class="fn">Log</span>(<span class="kw">string</span> msg) { <span class="comment">/* ... */</span> }
+}</pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The problem:</strong> A bug in the email SMTP config could break user creation entirely. You can't unit test user persistence without also setting up email and file I/O.</span>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The fix:</strong> Each class is independently testable and deployable. Mock <code>IEmailService</code> in tests and never touch real SMTP.</span>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── O ─── -->
+  <section class="principle" id="ocp">
+    <div class="principle-header">
+      <span class="principle-letter o-color">O</span>
+      <div class="principle-title-group">
+        <div class="principle-label o-color">Open/Closed Principle</div>
+        <div class="principle-name">Open for extension. Closed for modification.</div>
+      </div>
+    </div>
+    <p class="principle-desc">
+      You should be able to add new behaviour without editing existing, tested code. Modifying working code risks introducing regressions; extending it via new classes is safe.
+    </p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — Violation</span>
+          <span class="panel-filename">DiscountCalculator.cs</span>
+        </div>
+        <pre><span class="comment">// ❌ Every new discount type requires
+// editing this method. Risk of breaking
+// existing discount logic every time.</span>
+
+<span class="kw">public class</span> <span class="cls">DiscountCalculator</span>
+{
+    <span class="kw">public decimal</span> <span class="fn">Calculate</span>(
+        <span class="cls">Order</span> order, <span class="kw">string</span> discountType)
+    {
+        <span class="bad-line">if (discountType == "seasonal")</span>
+            <span class="kw">return</span> order.Total * 0.10m;
+
+        <span class="bad-line">else if (discountType == "loyalty")</span>
+            <span class="kw">return</span> order.Total * 0.15m;
+
+        <span class="bad-line">else if (discountType == "employee")</span>
+            <span class="kw">return</span> order.Total * 0.25m;
+
+        <span class="comment">// Adding "flash sale"? Edit this file again...</span>
+        <span class="kw">return</span> 0;
+    }
+}</pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Fixed</span>
+          <span class="panel-filename">Discounts/</span>
+        </div>
+        <pre><span class="comment">// ✅ New discount = new class.
+// DiscountCalculator never changes again.</span>
+
+<span class="kw">public interface</span> <span class="iface">IDiscountStrategy</span>
+{
+    <span class="kw">decimal</span> <span class="fn">Calculate</span>(<span class="cls">Order</span> order);
+}
+
+<span class="good-line">public class SeasonalDiscount : IDiscountStrategy</span>
+<span class="good-line">{</span>
+<span class="good-line">    public decimal Calculate(Order o) => o.Total * 0.10m;</span>
+<span class="good-line">}</span>
+
+<span class="good-line">public class FlashSaleDiscount : IDiscountStrategy</span>
+<span class="good-line">{</span>
+<span class="good-line">    public decimal Calculate(Order o) => o.Total * 0.40m;</span>
+<span class="good-line">}</span>
+
+<span class="kw">public class</span> <span class="cls">DiscountCalculator</span>
+{
+    <span class="kw">private readonly</span> <span class="iface">IDiscountStrategy</span> _strategy;
+
+    <span class="kw">public decimal</span> <span class="fn">Calculate</span>(<span class="cls">Order</span> order)
+        => _strategy.Calculate(order);
+}</pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The problem:</strong> The <code>if/else</code> chain grows forever. Every new discount type touches the same battle-tested method, risking regression in unrelated branches.</span>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The fix:</strong> Strategy pattern. Add a "flash sale" discount by creating one new class — zero changes to anything that already works.</span>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── L ─── -->
+  <section class="principle" id="lsp">
+    <div class="principle-header">
+      <span class="principle-letter l-color">L</span>
+      <div class="principle-title-group">
+        <div class="principle-label l-color">Liskov Substitution Principle</div>
+        <div class="principle-name">Subtypes must honour the base type's contract.</div>
+      </div>
+    </div>
+    <p class="principle-desc">
+      If S extends T, you should be able to use S anywhere T is expected without the program misbehaving. Subclasses that break or narrow inherited behaviour violate this principle.
+    </p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — Violation</span>
+          <span class="panel-filename">Birds.cs</span>
+        </div>
+        <pre><span class="comment">// ❌ Penguin IS-A Bird, but it can't fly.
+// Code that calls .Fly() on any Bird will
+// crash or throw at runtime for Penguins.</span>
+
+<span class="kw">public class</span> <span class="cls">Bird</span>
+{
+    <span class="kw">public virtual void</span> <span class="fn">Fly</span>()
+        => Console.WriteLine(<span class="str">"Flap flap!"</span>);
+}
+
+<span class="bad-line">public class Penguin : Bird</span>
+<span class="bad-line">{</span>
+<span class="bad-line">    public override void Fly()</span>
+<span class="bad-line">        => throw new NotSupportedException(</span>
+<span class="bad-line">            "Penguins can't fly!");</span>
+<span class="bad-line">}</span>
+
+<span class="comment">// Caller assumes all birds can fly:</span>
+<span class="kw">void</span> <span class="fn">MakeAllBirdsFly</span>(<span class="cls">IEnumerable</span>&lt;<span class="cls">Bird</span>&gt; birds)
+{
+    <span class="bad-line">foreach (var b in birds) b.Fly(); // 💥 CRASH</span>
+}</pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Fixed</span>
+          <span class="panel-filename">Birds.cs</span>
+        </div>
+        <pre><span class="comment">// ✅ Separate the capability into interfaces.
+// Only birds that CAN fly implement IFlyable.</span>
+
+<span class="kw">public abstract class</span> <span class="cls">Bird</span>
+{
+    <span class="kw">public abstract void</span> <span class="fn">Move</span>();
+}
+
+<span class="good-line">public interface IFlyable</span>
+<span class="good-line">{</span>
+<span class="good-line">    void Fly();</span>
+<span class="good-line">}</span>
+
+<span class="good-line">public class Eagle : Bird, IFlyable</span>
+<span class="good-line">{</span>
+<span class="good-line">    public override void Move() => Fly();</span>
+<span class="good-line">    public void Fly() => Console.WriteLine("Soar!");</span>
+<span class="good-line">}</span>
+
+<span class="good-line">public class Penguin : Bird</span>
+<span class="good-line">{</span>
+<span class="good-line">    public override void Move()</span>
+<span class="good-line">        => Console.WriteLine("Waddle waddle!");</span>
+<span class="good-line">}</span>
+
+<span class="kw">void</span> <span class="fn">MakeFly</span>(<span class="cls">IEnumerable</span>&lt;<span class="iface">IFlyable</span>&gt; flyers)
+{
+    <span class="good-line">foreach (var f in flyers) f.Fly(); // ✅ Safe</span>
+}</pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The problem:</strong> <code>Penguin</code> overrides <code>Fly()</code> to throw, silently breaking the contract every caller relies on. Polymorphism becomes a runtime minefield.</span>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The fix:</strong> Model capabilities as interfaces. <code>IFlyable</code> only applies to birds that actually fly. No surprises, no defensive <code>try/catch</code> around every <code>Fly()</code> call.</span>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── I ─── -->
+  <section class="principle" id="isp">
+    <div class="principle-header">
+      <span class="principle-letter i-color">I</span>
+      <div class="principle-title-group">
+        <div class="principle-label i-color">Interface Segregation Principle</div>
+        <div class="principle-name">Don't force clients to depend on methods they don't use.</div>
+      </div>
+    </div>
+    <p class="principle-desc">
+      A fat interface forces every implementor to stub out irrelevant methods. Prefer many small, focused interfaces over one large one — callers only depend on what they actually need.
+    </p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — Violation</span>
+          <span class="panel-filename">IDevice.cs</span>
+        </div>
+        <pre><span class="comment">// ❌ A basic printer can't scan or fax.
+// It's forced to implement methods
+// that throw NotImplementedException.</span>
+
+<span class="bad-line">public interface IDevice</span>
+<span class="bad-line">{</span>
+<span class="bad-line">    void Print(Document d);</span>
+<span class="bad-line">    void Scan(Document d);</span>
+<span class="bad-line">    void Fax(Document d);</span>
+<span class="bad-line">}</span>
+
+<span class="kw">public class</span> <span class="cls">BasicPrinter</span> : <span class="iface">IDevice</span>
+{
+    <span class="kw">public void</span> <span class="fn">Print</span>(<span class="cls">Document</span> d) { <span class="comment">/* real code */</span> }
+
+    <span class="bad-line">public void Scan(Document d)</span>
+    <span class="bad-line">    => throw new NotImplementedException();</span>
+
+    <span class="bad-line">public void Fax(Document d)</span>
+    <span class="bad-line">    => throw new NotImplementedException();</span>
+}</pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Fixed</span>
+          <span class="panel-filename">IDevice.cs</span>
+        </div>
+        <pre><span class="comment">// ✅ Split into focused interfaces.
+// Each class implements only what it can do.</span>
+
+<span class="good-line">public interface IPrinter  { void Print(Document d); }</span>
+<span class="good-line">public interface IScanner  { void Scan(Document d);  }</span>
+<span class="good-line">public interface IFax      { void Fax(Document d);   }</span>
+
+<span class="comment">// Basic printer: just printing, no stubs needed</span>
+<span class="good-line">public class BasicPrinter : IPrinter</span>
+<span class="good-line">{</span>
+<span class="good-line">    public void Print(Document d) { /* real code */ }</span>
+<span class="good-line">}</span>
+
+<span class="comment">// All-in-one: implements everything it supports</span>
+<span class="good-line">public class AllInOnePrinter : IPrinter, IScanner, IFax</span>
+<span class="good-line">{</span>
+<span class="good-line">    public void Print(Document d) { /* ... */ }</span>
+<span class="good-line">    public void Scan(Document d)  { /* ... */ }</span>
+<span class="good-line">    public void Fax(Document d)   { /* ... */ }</span>
+<span class="good-line">}</span></pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The problem:</strong> Any code that calls <code>Scan()</code> on a <code>BasicPrinter</code> explodes at runtime. The fat interface leaks implementation limitations into the type system.</span>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The fix:</strong> Small, role-based interfaces. A function that needs scanning depends on <code>IScanner</code> — it can't even receive a <code>BasicPrinter</code> by accident.</span>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── D ─── -->
+  <section class="principle" id="dip">
+    <div class="principle-header">
+      <span class="principle-letter d-color">D</span>
+      <div class="principle-title-group">
+        <div class="principle-label d-color">Dependency Inversion Principle</div>
+        <div class="principle-name">Depend on abstractions, not concretions.</div>
+      </div>
+    </div>
+    <p class="principle-desc">
+      High-level business logic should not be coupled to low-level infrastructure. Both should depend on a shared interface. This is the foundation of dependency injection and testability.
+    </p>
+    <div class="panels">
+      <div class="panel bad">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">Before — Violation</span>
+          <span class="panel-filename">OrderService.cs</span>
+        </div>
+        <pre><span class="comment">// ❌ OrderService creates its own dependencies.
+// Switching to Postgres? Edit business logic.
+// Unit testing? Real SQL Server required.</span>
+
+<span class="kw">public class</span> <span class="cls">OrderService</span>
+{
+    <span class="bad-line">private readonly SqlServerDb _db;</span>
+    <span class="bad-line">private readonly SmtpEmailSender _email;</span>
+
+    <span class="kw">public</span> <span class="fn">OrderService</span>()
+    {
+        <span class="bad-line">_db    = new SqlServerDb("Server=prod;...");</span>
+        <span class="bad-line">_email = new SmtpEmailSender("mail.corp.com");</span>
+    }
+
+    <span class="kw">public void</span> <span class="fn">PlaceOrder</span>(<span class="cls">Order</span> order)
+    {
+        _db.Save(order);
+        _email.Send(order.CustomerEmail,
+            <span class="str">"Order confirmed!"</span>);
+    }
+}</pre>
+      </div>
+      <div class="panel good">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <span class="panel-label">After — Fixed</span>
+          <span class="panel-filename">OrderService.cs</span>
+        </div>
+        <pre><span class="comment">// ✅ Depend on interfaces injected from outside.
+// Swap SqlServer → Postgres = 0 changes here.
+// Tests pass in fakes — no real DB needed.</span>
+
+<span class="good-line">public interface IOrderRepository { void Save(Order o); }</span>
+<span class="good-line">public interface IEmailSender     { void Send(string to, string msg); }</span>
+
+<span class="kw">public class</span> <span class="cls">OrderService</span>
+{
+    <span class="good-line">private readonly IOrderRepository _repo;</span>
+    <span class="good-line">private readonly IEmailSender     _email;</span>
+
+    <span class="comment">// Dependencies injected — not newed up inside</span>
+    <span class="good-line">public OrderService(IOrderRepository repo,</span>
+    <span class="good-line">                    IEmailSender email)</span>
+    {
+        _repo  = repo;
+        _email = email;
+    }
+
+    <span class="kw">public void</span> <span class="fn">PlaceOrder</span>(<span class="cls">Order</span> order)
+    {
+        _repo.Save(order);
+        _email.Send(order.CustomerEmail,
+            <span class="str">"Order confirmed!"</span>);
+    }
+}</pre>
+      </div>
+    </div>
+    <div class="callout bad-callout">
+      <span class="callout-icon">⚠</span>
+      <span><strong>The problem:</strong> The constructor hard-codes a SQL Server connection string and a specific SMTP host. Business logic is glued to infrastructure — impossible to test in isolation.</span>
+    </div>
+    <div class="callout good-callout">
+      <span class="callout-icon">✓</span>
+      <span><strong>The fix:</strong> Inject interfaces. Your DI container (e.g. <code>Microsoft.Extensions.DependencyInjection</code>) wires up the real implementations in production; tests use <code>Mock&lt;IOrderRepository&gt;</code>. No infrastructure required.</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  SOLID — Robert C. Martin, ca. 2000 &nbsp;·&nbsp; Examples in C# / .NET
+</footer>
+
+</body>
+</html>

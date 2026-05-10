@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software Engineering Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --text: #e2e2f0;
+    --muted: #6b6b8a;
+    --bad: #ff4d6d;
+    --bad-bg: #1a0810;
+    --bad-border: #3d1020;
+    --good: #00e5a0;
+    --good-bg: #021a10;
+    --good-border: #0a3d28;
+    --accent: #7c6dfa;
+    --code-bg: #0d0d18;
+
+    /* Section accent colours */
+    --grasp: #f59e0b;
+    --grasp-bg: #1a1200;
+    --grasp-border: #3d2d00;
+    --dry: #38bdf8;
+    --dry-bg: #001a26;
+    --dry-border: #003d5c;
+    --twelve: #a78bfa;
+    --twelve-bg: #0d0a1a;
+    --twelve-border: #2a1f4d;
+    --first: #fb7185;
+    --first-bg: #1a0812;
+    --first-border: #3d1030;
+    --sec: #34d399;
+    --sec-bg: #011a10;
+    --sec-border: #083d28;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 80px 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  h1 {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 620px;
+    font-weight: 400;
+  }
+
+  /* CHAPTER NAV */
+  .chapter-nav {
+    padding: 0 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .chapter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .chapter-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    min-width: 140px;
+  }
+
+  .nav-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .nav-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .nav-pill:hover { border-color: var(--accent); color: var(--accent); background: rgba(124,109,250,0.08); }
+
+  /* CHAPTER HEADER */
+  .chapter {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  .chapter-heading {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 10px;
+    padding-top: 60px;
+  }
+
+  .chapter-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .chapter-title {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .chapter-desc {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 720px;
+    margin-bottom: 60px;
+    line-height: 1.7;
+    padding-left: 52px;
+  }
+
+  .chapter-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin-bottom: 60px;
+    margin-top: 0;
+  }
+
+  /* PRINCIPLE SECTION */
+  .principles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+
+  .principle {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.6s forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .principle-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .principle-letter {
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    opacity: 0.15;
+    flex-shrink: 0;
+  }
+
+  .principle-title-group { flex: 1; }
+
+  .principle-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .principle-name {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .principle-desc {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 700px;
+    margin-bottom: 32px;
+    padding-left: 92px;
+    line-height: 1.75;
+  }
+
+  /* CODE PANELS */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .panel {
+    background: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .panel.bad .panel-dot { background: var(--bad); }
+  .panel.good .panel-dot { background: var(--good); }
+
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .panel.bad .panel-label { color: var(--bad); }
+  .panel.good .panel-label { color: var(--good); }
+
+  .panel-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  pre {
+    padding: 24px 20px;
+    overflow-x: auto;
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+
+  /* single-panel full width variant */
+  .panels.single { grid-template-columns: 1fr; }
+
+  /* Code syntax colours */
+  .comment { color: #444466; }
+  .kw { color: #9d7dfa; }
+  .cls { color: #7ce0f5; }
+  .fn { color: #7cfac0; }
+  .str { color: #f5c07c; }
+  .num { color: #f5a07c; }
+  .bad-line { color: var(--bad); opacity: 0.85; }
+  .good-line { color: var(--good); opacity: 0.85; }
+  .iface { color: #fa9dcc; }
+  .note-line { color: #f59e0b; opacity: 0.9; }
+
+  /* CALLOUT */
+  .callout {
+    margin-top: 12px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    line-height: 1.6;
+  }
+
+  .callout.bad-callout { background: var(--bad-bg); border: 1px solid var(--bad-border); color: #ff8fa3; }
+  .callout.good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: #6dffd0; }
+  .callout.note-callout { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); color: #fcd34d; }
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* CONCEPT CARD (for non-code principles) */
+  .concept-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 12px;
+  }
+
+  .concept-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .concept-card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* TAG BADGES */
+  .tag-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    padding-left: 92px;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tag-blue { background: rgba(56,189,248,0.12); color: var(--dry); border: 1px solid rgba(56,189,248,0.25); }
+  .tag-amber { background: rgba(245,158,11,0.12); color: var(--grasp); border: 1px solid rgba(245,158,11,0.25); }
+  .tag-purple { background: rgba(167,139,250,0.12); color: var(--twelve); border: 1px solid rgba(167,139,250,0.25); }
+  .tag-pink { background: rgba(251,113,133,0.12); color: var(--first); border: 1px solid rgba(251,113,133,0.25); }
+  .tag-green { background: rgba(52,211,153,0.12); color: var(--sec); border: 1px solid rgba(52,211,153,0.25); }
+
+  /* DIVIDERS */
+  .divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 60px 0;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 768px) {
+    header, .chapter-nav, .chapter { padding-left: 20px; padding-right: 20px; }
+    h1 { font-size: 36px; }
+    .panels, .concept-grid { grid-template-columns: 1fr; }
+    .principle-desc, .tag-row { padding-left: 0; }
+    .principle-header { flex-direction: column; gap: 8px; }
+    .principle-letter { font-size: 48px; }
+    .chapter-label { min-width: unset; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-tag">// Software Engineering Principles</span>
+  <h1>Beyond SOLID — <br>The Principles Every Developer Should Know</h1>
+  <p class="subtitle">Five principle sets spanning design, architecture, coding hygiene, cloud deployment, testing, and security — each illustrated with real before/after examples in C#.</p>
+</header>
+
+<nav class="chapter-nav">
+  <div class="chapter-group">
+    <span class="chapter-label">Design</span>
+    <div class="nav-pills">
+      <a class="nav-pill" href="#grasp">GRASP</a>
+      <a class="nav-pill" href="#dry">DRY / YAGNI / KISS</a>
+    </div>
+  </div>
+  <div class="chapter-group">
+    <span class="chapter-label">Architecture</span>
+    <div class="nav-pills">
+      <a class="nav-pill" href="#twelve">12-Factor App</a>
+    </div>
+  </div>
+  <div class="chapter-group">
+    <span class="chapter-label">Testing</span>
+    <div class="nav-pills">
+      <a class="nav-pill" href="#first">FIRST Principles</a>
+    </div>
+  </div>
+  <div class="chapter-group">
+    <span class="chapter-label">Security</span>
+    <div class="nav-pills">
+      <a class="nav-pill" href="#security">CIA Triad &amp; OWASP</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════ GRASP ════════════════════════════════ -->
+<section class="chapter" id="grasp">
+  <div class="chapter-heading">
+    <span class="chapter-icon">🧩</span>
+    <h2 class="chapter-title" style="color: var(--grasp);">GRASP</h2>
+  </div>
+  <p class="chapter-desc">
+    General Responsibility Assignment Software Patterns. Where SOLID tells you <em>how</em> to structure individual classes, GRASP tells you <em>who</em> should be responsible for what. These nine patterns are the vocabulary for reasoning about responsibility assignment across an object model. You've been applying most of them intuitively — this just names them.
+  </p>
+  <hr class="chapter-divider">
+
+  <div class="principles-list">
+
+    <!-- 1. Information Expert -->
+    <div class="principle" style="animation-delay:0.1s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--grasp)">IE</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--grasp)">Information Expert</div>
+          <div class="principle-name">Assign responsibility to the class that has the information to fulfil it.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-amber">most fundamental GRASP pattern</span>
+        <span class="tag tag-amber">avoids feature envy</span>
+      </div>
+      <p class="principle-desc">
+        The class that knows the most about a piece of data should be the one doing the work with it. Putting logic in the wrong class leads to "feature envy" — a class constantly reaching into another to do its job.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Violation</span>
+            <span class="panel-filename">OrderController.cs</span>
+          </div>
+          <pre><span class="comment">// ❌ OrderController knows about Order internals
+// to calculate the total. OrderController is NOT
+// the information expert — Order is.</span>
+
+<span class="kw">public class</span> <span class="cls">OrderController</span>
+{
+    <span class="kw">public decimal</span> <span class="fn">GetTotal</span>(<span class="cls">Order</span> order)
+    {
+        <span class="bad-line">decimal total = 0;</span>
+        <span class="bad-line">foreach (var line in order.Lines)</span>
+        <span class="bad-line">    total += line.Qty * line.UnitPrice;</span>
+        <span class="bad-line">return total;</span>
+    }
+}</pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fixed</span>
+            <span class="panel-filename">Order.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ Order knows its own lines — it IS
+// the information expert. Total calculation
+// belongs right here.</span>
+
+<span class="kw">public class</span> <span class="cls">Order</span>
+{
+    <span class="good-line">public decimal Total =></span>
+    <span class="good-line">    Lines.Sum(l => l.Qty * l.UnitPrice);</span>
+}
+
+<span class="kw">public class</span> <span class="cls">OrderController</span>
+{
+    <span class="kw">public decimal</span> <span class="fn">GetTotal</span>(<span class="cls">Order</span> order)
+        <span class="good-line">=> order.Total; // just ask the expert</span>
+}</pre>
+        </div>
+      </div>
+      <div class="callout bad-callout"><span class="callout-icon">⚠</span><span><strong>The problem:</strong> Controller reaches into Order's data to do Order's math. If line pricing logic changes, you hunt through controllers, services, and views to find duplicated calculations.</span></div>
+      <div class="callout good-callout"><span class="callout-icon">✓</span><span><strong>The fix:</strong> The entity that owns the data computes the result. Callers just ask. This is Information Expert — and it's why your ERP domain objects should calculate their own totals, not your service layer.</span></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 2. Creator -->
+    <div class="principle" style="animation-delay:0.15s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--grasp)">CR</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--grasp)">Creator</div>
+          <div class="principle-name">Assign creation of an object to the class that contains or closely uses it.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-amber">factory pattern foundation</span>
+        <span class="tag tag-amber">reduces coupling</span>
+      </div>
+      <p class="principle-desc">
+        B should create A if B contains A, closely uses A, has the initialising data for A, or records A. This avoids scattered <code>new</code> calls across unrelated classes.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Violation</span>
+            <span class="panel-filename">OrderService.cs</span>
+          </div>
+          <pre><span class="comment">// ❌ OrderService creates OrderLine objects
+// even though Order is the natural owner.
+// If OrderLine's constructor changes, all
+// service methods break.</span>
+
+<span class="kw">public void</span> <span class="fn">AddItem</span>(<span class="cls">Order</span> order,
+    <span class="cls">Product</span> p, <span class="kw">int</span> qty)
+{
+    <span class="bad-line">var line = new OrderLine(p.Id, p.Price, qty);</span>
+    <span class="bad-line">order.Lines.Add(line);</span>
+}</pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fixed</span>
+            <span class="panel-filename">Order.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ Order contains OrderLines — it's the
+// Creator. The service just calls AddItem
+// and Order encapsulates the construction.</span>
+
+<span class="kw">public class</span> <span class="cls">Order</span>
+{
+    <span class="good-line">public void AddItem(Product p, int qty)</span>
+    <span class="good-line">{</span>
+    <span class="good-line">    Lines.Add(new OrderLine(p.Id,</span>
+    <span class="good-line">        p.Price, qty));</span>
+    <span class="good-line">}</span>
+}
+
+<span class="kw">public void</span> <span class="fn">AddItem</span>(<span class="cls">Order</span> order,
+    <span class="cls">Product</span> p, <span class="kw">int</span> qty)
+{
+    <span class="good-line">order.AddItem(p, qty); // clean</span>
+}</pre>
+        </div>
+      </div>
+      <div class="callout good-callout"><span class="callout-icon">✓</span><span><strong>Why it matters:</strong> When <code>OrderLine</code> gains a new required field, you update <code>Order.AddItem()</code> in one place — not every service and controller that was newing up lines.</span></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 3. Low Coupling / High Cohesion -->
+    <div class="principle" style="animation-delay:0.2s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--grasp)">LC</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--grasp)">Low Coupling &amp; High Cohesion</div>
+          <div class="principle-name">Classes should know little about each other, and do one thing well.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-amber">the two core tensions in design</span>
+        <span class="tag tag-amber">measured by change impact</span>
+      </div>
+      <p class="principle-desc">
+        These two patterns are always evaluated together. <strong>Low Coupling</strong> means a change in class A doesn't ripple into class B. <strong>High Cohesion</strong> means a class's methods all work toward the same purpose — it doesn't stray into unrelated concerns.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">High Coupling + Low Cohesion</span>
+            <span class="panel-filename">ReportService.cs</span>
+          </div>
+          <pre><span class="comment">// ❌ Tightly coupled to SqlServerDb (concrete).
+// Low cohesion: this class formats reports AND
+// sends emails AND writes to disk.</span>
+
+<span class="kw">public class</span> <span class="cls">ReportService</span>
+{
+    <span class="bad-line">private readonly SqlServerDb _db;</span>
+    <span class="bad-line">private readonly SmtpClient _smtp;</span>
+
+    <span class="kw">public void</span> <span class="fn">Run</span>(<span class="cls">Report</span> r)
+    {
+        <span class="bad-line">_db.Save(r);           // persistence</span>
+        <span class="bad-line">_smtp.Send(r.Email);   // comms</span>
+        <span class="bad-line">File.Write(r.Path, r); // storage</span>
+    }
+}</pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Low Coupling + High Cohesion</span>
+            <span class="panel-filename">ReportService.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ Depends on abstractions (interfaces).
+// One responsibility: orchestrate.
+// Each collaborator has its own cohesive job.</span>
+
+<span class="kw">public class</span> <span class="cls">ReportService</span>
+{
+    <span class="good-line">private readonly IReportRepo   _repo;</span>
+    <span class="good-line">private readonly INotifier     _notify;</span>
+    <span class="good-line">private readonly IFileExporter _export;</span>
+
+    <span class="kw">public void</span> <span class="fn">Run</span>(<span class="cls">Report</span> r)
+    {
+        <span class="good-line">_repo.Save(r);</span>
+        <span class="good-line">_notify.Send(r);</span>
+        <span class="good-line">_export.Write(r);</span>
+    }
+}</pre>
+        </div>
+      </div>
+      <div class="callout note-callout"><span class="callout-icon">💡</span><span><strong>The practical test:</strong> If a change to your email provider forces edits in a reporting class, coupling is too high. If your "user service" also handles logging, PDF generation, and cache invalidation, cohesion is too low.</span></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 4. Controller -->
+    <div class="principle" style="animation-delay:0.25s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--grasp)">CO</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--grasp)">Controller</div>
+          <div class="principle-name">A non-UI class should receive and coordinate system events.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-amber">MVC foundation</span>
+        <span class="tag tag-amber">thin controllers</span>
+      </div>
+      <p class="principle-desc">
+        A Controller receives input from the UI layer and delegates to the domain — it doesn't contain business logic itself. This is the "thin controller, fat model" principle. You know this pattern from MVC in your .NET and Laravel work.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fat Controller (violation)</span>
+            <span class="panel-filename">OrdersController.cs</span>
+          </div>
+          <pre><span class="comment">// ❌ Business logic living in the controller.
+// Untestable without HTTP context.
+// Every endpoint re-implements domain rules.</span>
+
+[HttpPost]
+<span class="kw">public</span> <span class="cls">IActionResult</span> <span class="fn">Place</span>(<span class="cls">OrderDto</span> dto)
+{
+    <span class="bad-line">if (dto.Lines.Count == 0)</span>
+    <span class="bad-line">    return BadRequest("No items");</span>
+
+    <span class="bad-line">var discount = dto.IsVip ? 0.15m : 0;</span>
+    <span class="bad-line">var total = dto.Lines.Sum(l =></span>
+    <span class="bad-line">    l.Qty * l.Price) * (1 - discount);</span>
+
+    <span class="bad-line">_db.Orders.Add(new Order { Total = total });</span>
+    <span class="bad-line">_db.SaveChanges();</span>
+    <span class="kw">return</span> Ok();
+}</pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Thin Controller (fixed)</span>
+            <span class="panel-filename">OrdersController.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ Controller receives input, validates
+// the shape, delegates to a service.
+// Business rules live in the domain.</span>
+
+[HttpPost]
+<span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IActionResult</span>&gt; <span class="fn">Place</span>(
+    <span class="cls">OrderDto</span> dto)
+{
+    <span class="good-line">if (!ModelState.IsValid)</span>
+    <span class="good-line">    return BadRequest(ModelState);</span>
+
+    <span class="good-line">var result = await _orderService</span>
+    <span class="good-line">    .PlaceAsync(dto);</span>
+
+    <span class="good-line">return result.IsSuccess</span>
+    <span class="good-line">    ? Ok(result.Value)</span>
+    <span class="good-line">    : BadRequest(result.Error);</span>
+}</pre>
+        </div>
+      </div>
+      <div class="callout good-callout"><span class="callout-icon">✓</span><span><strong>The payoff:</strong> Your <code>OrderService.PlaceAsync()</code> is testable in isolation — no HTTP stack, no database. The controller is so thin there's almost nothing to test in it directly.</span></div>
+    </div>
+
+  </div><!-- /principles-list -->
+</section>
+
+
+<!-- ════════════════════════════════ DRY / YAGNI / KISS ════════════════════════════════ -->
+<section class="chapter" id="dry">
+  <div class="chapter-heading">
+    <span class="chapter-icon">🧼</span>
+    <h2 class="chapter-title" style="color: var(--dry);">DRY · YAGNI · KISS</h2>
+  </div>
+  <p class="chapter-desc">
+    Three complementary mantras for fighting the most common forms of code bloat: duplication, speculative complexity, and unnecessary cleverness. Together they describe what "clean code" actually means in practice.
+  </p>
+  <hr class="chapter-divider">
+
+  <div class="principles-list">
+
+    <!-- DRY -->
+    <div class="principle" style="animation-delay:0.1s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--dry)">DRY</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--dry)">Don't Repeat Yourself</div>
+          <div class="principle-name">Every piece of knowledge should have one single authoritative representation.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-blue">Hunt &amp; Thomas, The Pragmatic Programmer</span>
+        <span class="tag tag-blue">not just copy-paste</span>
+      </div>
+      <p class="principle-desc">
+        DRY is often misunderstood as "never copy code." It's broader: if the same <em>decision</em> (business rule, constant, formula) appears in multiple places, a change to it requires you to find and update every copy — and you will eventually miss one. The fix is a single authoritative source.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Violation — Logic Duplication</span>
+            <span class="panel-filename">Various.cs</span>
+          </div>
+          <pre><span class="comment">// ❌ The GST rate is hardcoded in 3 places.
+// When it changes from 15% to 16%, you'll
+// find 2 of them. Bugs guaranteed.</span>
+
+<span class="comment">// In InvoiceService.cs:</span>
+<span class="bad-line">var gst = subtotal * 0.15m;</span>
+
+<span class="comment">// In QuoteService.cs:</span>
+<span class="bad-line">total = lineTotal + (lineTotal * 0.15m);</span>
+
+<span class="comment">// In ReceiptPrinter.cs:</span>
+<span class="bad-line">gstAmount = amount / 1.15m * 0.15m;</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fixed — Single Source of Truth</span>
+            <span class="panel-filename">TaxConstants.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ One place. One change when the rate
+// changes. No hunt. No misses.</span>
+
+<span class="good-line">public static class Tax</span>
+<span class="good-line">{</span>
+<span class="good-line">    public const decimal GstRate = 0.15m;</span>
+<span class="good-line">    public static decimal Gst(decimal amount)</span>
+<span class="good-line">        => amount * GstRate;</span>
+<span class="good-line">    public static decimal ExclGst(decimal total)</span>
+<span class="good-line">        => total / (1 + GstRate);</span>
+<span class="good-line">}</span>
+
+<span class="comment">// Everywhere else:</span>
+<span class="good-line">var gst = Tax.Gst(subtotal);</span></pre>
+        </div>
+      </div>
+      <div class="callout bad-callout"><span class="callout-icon">⚠</span><span><strong>Watch out for WET code:</strong> "Write Everything Twice" (or more). Magic numbers, duplicated validation rules, copy-pasted SQL fragments — all DRY violations. The fix isn't always extraction into a method; sometimes it's a constant, a config value, or a shared schema.</span></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- YAGNI -->
+    <div class="principle" style="animation-delay:0.15s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--dry)">YN</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--dry)">You Ain't Gonna Need It</div>
+          <div class="principle-name">Don't build features until you actually need them.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-blue">Extreme Programming (XP)</span>
+        <span class="tag tag-blue">fights speculative generalisation</span>
+      </div>
+      <p class="principle-desc">
+        Speculative generalisation — building abstractions for hypothetical future requirements — creates complexity with no current payoff. The requirements you imagine rarely arrive in the form you imagined. Build what you need now; refactor when the real need appears.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Violation — Over-Engineered</span>
+            <span class="panel-filename">NotificationSystem.cs</span>
+          </div>
+          <pre><span class="comment">// ❌ "We might need SMS, push, Slack, webhooks
+// later." So a plugin system, factory registry,
+// config-driven pipeline... for sending one email.</span>
+
+<span class="bad-line">public interface INotificationChannel { ... }</span>
+<span class="bad-line">public class NotificationChannelFactory { ... }</span>
+<span class="bad-line">public class NotificationPipelineBuilder { ... }</span>
+<span class="bad-line">public class ChannelRegistry { ... }</span>
+<span class="bad-line">public class NotificationRouter { ... }</span>
+
+<span class="comment">// Actual current requirement: send a welcome email.</span>
+<span class="comment">// None of this complexity is needed yet.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fixed — Just What's Needed</span>
+            <span class="panel-filename">EmailNotifier.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ Build exactly what the current story needs.
+// When SMS is actually requested, extract the
+// interface then. The YAGNI code is also
+// cheaper to delete if requirements change.</span>
+
+<span class="good-line">public class EmailNotifier</span>
+<span class="good-line">{</span>
+<span class="good-line">    public async Task SendWelcome(User user)</span>
+<span class="good-line">    {</span>
+<span class="good-line">        await _smtp.SendAsync(</span>
+<span class="good-line">            user.Email,</span>
+<span class="good-line">            "Welcome!",</span>
+<span class="good-line">            $"Hi {user.Name}...");</span>
+<span class="good-line">    }</span>
+<span class="good-line">}</span></pre>
+        </div>
+      </div>
+      <div class="callout note-callout"><span class="callout-icon">💡</span><span><strong>The tension with SOLID:</strong> OCP says "design for extension." YAGNI says "don't over-abstract." The reconciliation: apply OCP to the places you <em>know</em> will vary (from domain knowledge), not to everything that <em>could</em> vary.</span></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- KISS -->
+    <div class="principle" style="animation-delay:0.2s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--dry)">KISS</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--dry)">Keep It Simple, Stupid</div>
+          <div class="principle-name">Prefer the simplest solution that works. Complexity is a liability.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-blue">Lockheed Skunk Works, 1960</span>
+        <span class="tag tag-blue">Occam's razor for code</span>
+      </div>
+      <p class="principle-desc">
+        Complex solutions are harder to read, debug, and maintain — and they fail in harder-to-diagnose ways. Every clever abstraction, nested ternary, and macro-pattern is debt that future-you pays with interest. If a junior dev can't follow it, it's too complex.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Violation — Unnecessary Cleverness</span>
+            <span class="panel-filename">StatusHelper.cs</span>
+          </div>
+          <pre><span class="comment">// ❌ A single lookup table, generic type magic,
+// and reflection — to return a display string
+// for an enum. Impressive? Yes. Necessary? No.</span>
+
+<span class="bad-line">public static string GetLabel&lt;T&gt;(T value)</span>
+<span class="bad-line">    where T : Enum</span>
+<span class="bad-line">{</span>
+<span class="bad-line">    return typeof(T)</span>
+<span class="bad-line">        .GetMember(value.ToString())[0]</span>
+<span class="bad-line">        .GetCustomAttribute&lt;DisplayAttribute&gt;()</span>
+<span class="bad-line">        ?.Name ?? value.ToString();</span>
+<span class="bad-line">}</span>
+
+<span class="comment">// Called exactly once, for OrderStatus.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fixed — Obvious and Direct</span>
+            <span class="panel-filename">OrderStatus.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ Readable in 5 seconds. Easy to extend.
+// No reflection, no generics, no magic.
+// If you need it for 10 enums later,
+// extract it then.</span>
+
+<span class="good-line">public static string ToLabel(OrderStatus s)</span>
+<span class="good-line">    => s switch</span>
+<span class="good-line">    {</span>
+<span class="good-line">        OrderStatus.Pending   => "Pending",</span>
+<span class="good-line">        OrderStatus.Shipped   => "Shipped",</span>
+<span class="good-line">        OrderStatus.Delivered => "Delivered",</span>
+<span class="good-line">        _                     => s.ToString()</span>
+<span class="good-line">    };</span></pre>
+        </div>
+      </div>
+      <div class="callout good-callout"><span class="callout-icon">✓</span><span><strong>The rule of thumb:</strong> The measure of good code is how long it takes a new team member to understand it, not how few lines it is. A clear 15-line method beats a clever 5-line one every time.</span></div>
+    </div>
+
+  </div><!-- /principles-list -->
+</section>
+
+
+<!-- ════════════════════════════════ 12-FACTOR ════════════════════════════════ -->
+<section class="chapter" id="twelve">
+  <div class="chapter-heading">
+    <span class="chapter-icon">☁️</span>
+    <h2 class="chapter-title" style="color: var(--twelve);">The Twelve-Factor App</h2>
+  </div>
+  <p class="chapter-desc">
+    A methodology for building modern, cloud-native SaaS applications — published by Heroku engineers and now the de-facto checklist for any containerised deployment. Directly applicable to your Docker + Ubuntu Server parish platform and any cloud work you're targeting in the Auckland job market.
+  </p>
+  <hr class="chapter-divider">
+
+  <div class="principles-list">
+
+    <!-- Factors overview cards -->
+    <div class="principle" style="animation-delay:0.05s">
+      <div class="concept-grid">
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">① Codebase</h4>
+          <p>One codebase tracked in version control, many deploys. Never share code between apps by copying files — use a package/library. One repo = one app.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">② Dependencies</h4>
+          <p>Explicitly declare and isolate all dependencies. A .NET app should declare everything in <code>.csproj</code>; never rely on system-level packages being present on the host.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">③ Config</h4>
+          <p>Store config in environment variables — never in code. Connection strings, API keys, feature flags: env vars, not <code>appsettings.Production.json</code> committed to git.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">④ Backing Services</h4>
+          <p>Treat databases, queues, and email providers as attached resources. A local Postgres and an RDS Postgres are interchangeable — only the connection string changes.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑤ Build, Release, Run</h4>
+          <p>Strictly separate build (compile), release (combine build + config), and run (execute) stages. A release is immutable — never patch running code.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑥ Processes</h4>
+          <p>Execute the app as one or more stateless processes. Don't store user sessions in memory or on local disk — use Redis or a database. Any instance can die and be replaced.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑦ Port Binding</h4>
+          <p>Export services via port binding. The app is self-contained and listens on a port — it doesn't rely on being injected into a runtime (e.g. IIS). Kestrel in .NET is the twelve-factor way.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑧ Concurrency</h4>
+          <p>Scale out via the process model. Add more containers/instances, not bigger servers. Stateless processes make this trivial — no coordination needed between instances.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑨ Disposability</h4>
+          <p>Fast startup, graceful shutdown. A container should be killable at any moment without data loss. Use database transactions and message queue acknowledgements to handle mid-flight work.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑩ Dev/Prod Parity</h4>
+          <p>Keep development, staging, and production as similar as possible. Docker solves most of this — the same image runs locally and in production. Eliminates "works on my machine."</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑪ Logs</h4>
+          <p>Treat logs as event streams. Write to stdout/stderr; let the platform (Docker, cloud) aggregate them. Don't manage log files in the app — use structured logging like Serilog.</p>
+        </div>
+
+        <div class="concept-card" style="border-color: rgba(167,139,250,0.3)">
+          <h4 style="color:var(--twelve)">⑫ Admin Processes</h4>
+          <p>Run admin and management tasks as one-off processes — migrations, seed scripts, data fixes. They should run in the same environment as the app, not as cron jobs on the host.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Factor III deep dive — most commonly violated -->
+    <div class="principle" style="animation-delay:0.15s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--twelve)">III</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--twelve)">Deep Dive — Factor III: Config</div>
+          <div class="principle-name">The most commonly violated factor. Never commit secrets to source control.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-purple">critical for Docker deployments</span>
+        <span class="tag tag-purple">directly relevant to your parish platform</span>
+      </div>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Violation</span>
+            <span class="panel-filename">appsettings.Production.json</span>
+          </div>
+          <pre><span class="comment">// ❌ Secrets in a file committed to git.
+// Rotate a key? New commit. New deployment.
+// Leaked to git history forever.</span>
+
+<span class="bad-line">{</span>
+<span class="bad-line">  "Database": {</span>
+<span class="bad-line">    "ConnectionString": "Server=prod-db;</span>
+<span class="bad-line">      User=sa;Password=Prod$ecret99!"</span>
+<span class="bad-line">  },</span>
+<span class="bad-line">  "Smtp": {</span>
+<span class="bad-line">    "ApiKey": "SG.xxxxxxxxxxxxxxxxxxx"</span>
+<span class="bad-line">  }</span>
+<span class="bad-line">}</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fixed — Environment Variables</span>
+            <span class="panel-filename">docker-compose.yml + Program.cs</span>
+          </div>
+          <pre><span class="comment">// ✅ Config lives in environment, not code.
+// docker-compose.yml (never committed):</span>
+
+<span class="good-line">environment:</span>
+<span class="good-line">  - DATABASE_URL=Server=prod-db;User=sa;...</span>
+<span class="good-line">  - SMTP_API_KEY=SG.xxx</span>
+
+<span class="comment">// Program.cs reads from env:</span>
+<span class="good-line">builder.Configuration</span>
+<span class="good-line">    .AddEnvironmentVariables();</span>
+
+<span class="comment">// Or use .env file (in .gitignore) locally,
+// secrets manager (AWS/Azure) in production.</span></pre>
+        </div>
+      </div>
+      <div class="callout bad-callout"><span class="callout-icon">⚠</span><span><strong>Real-world consequence:</strong> Thousands of production databases are compromised every year because a developer committed a connection string. Git history is permanent — even if you delete the file, the secret remains in history.</span></div>
+    </div>
+
+  </div><!-- /principles-list -->
+</section>
+
+
+<!-- ════════════════════════════════ FIRST ════════════════════════════════ -->
+<section class="chapter" id="first">
+  <div class="chapter-heading">
+    <span class="chapter-icon">🧪</span>
+    <h2 class="chapter-title" style="color: var(--first);">FIRST Principles</h2>
+  </div>
+  <p class="chapter-desc">
+    Five properties that every good unit test should have. These aren't suggestions — tests that violate them erode confidence in your test suite and eventually get skipped or deleted. Pairs naturally with TDD and the Testing Pyramid.
+  </p>
+  <hr class="chapter-divider">
+
+  <div class="principles-list">
+
+    <div class="principle" style="animation-delay:0.05s">
+
+      <!-- F -->
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--first)">F</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--first)">Fast</div>
+          <div class="principle-name">Tests must run in milliseconds, not seconds.</div>
+        </div>
+      </div>
+      <p class="principle-desc">
+        Slow tests don't get run. If the test suite takes 5 minutes, developers stop running it locally and only find failures on CI — after the code is already pushed. Unit tests that hit real databases, HTTP endpoints, or disk are integration tests, not unit tests.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Slow — Hits Real DB</span><span class="panel-filename">OrderTests.cs</span></div>
+          <pre><span class="comment">// ❌ Spins up a real SQL Server connection.
+// ~800ms per test. 300 tests = 4 minutes.</span>
+
+[Fact]
+<span class="kw">public async Task</span> <span class="fn">PlaceOrder_SavesCorrectly</span>()
+{
+    <span class="bad-line">var db = new SqlServerDbContext(realConnStr);</span>
+    <span class="kw">var</span> svc = <span class="kw">new</span> <span class="cls">OrderService</span>(db);
+    <span class="bad-line">await svc.PlaceAsync(testOrder);</span>
+    <span class="bad-line">var saved = await db.Orders.FindAsync(1);</span>
+    Assert.NotNull(saved);
+}</pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Fast — Mocked Dependency</span><span class="panel-filename">OrderTests.cs</span></div>
+          <pre><span class="comment">// ✅ Mocked IOrderRepository. ~2ms per test.
+// No database. No network. Just logic.</span>
+
+[Fact]
+<span class="kw">public async Task</span> <span class="fn">PlaceOrder_CallsRepo</span>()
+{
+    <span class="good-line">var repo = new Mock&lt;IOrderRepository&gt;();</span>
+    <span class="good-line">var svc  = new OrderService(repo.Object, ...);</span>
+
+    <span class="good-line">await svc.PlaceAsync(testOrder);</span>
+
+    <span class="good-line">repo.Verify(r => r.Save(</span>
+    <span class="good-line">    It.IsAny&lt;Order&gt;()), Times.Once);</span>
+}</pre>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- I -->
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--first)">I</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--first)">Isolated (Independent)</div>
+          <div class="principle-name">Tests must not depend on each other or on shared state.</div>
+        </div>
+      </div>
+      <p class="principle-desc">
+        A test that passes in isolation but fails when run after another test is a ticking time bomb. Shared static state, shared databases, or test ordering assumptions all cause this. Each test must set up and tear down its own world.
+      </p>
+      <div class="callout bad-callout"><span class="callout-icon">⚠</span><span><strong>Common culprit:</strong> A static counter or singleton that one test increments, causing the next test's assertion to fail. Use <code>[SetUp]</code>/<code>[TearDown]</code> or fresh instances per test.</span></div>
+
+      <hr class="divider">
+
+      <!-- R -->
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--first)">R</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--first)">Repeatable</div>
+          <div class="principle-name">A test must produce the same result every run, on any machine.</div>
+        </div>
+      </div>
+      <p class="principle-desc">
+        Flaky tests — ones that sometimes pass and sometimes fail without code changes — are worse than no tests. They erode trust in the suite. Common causes: <code>DateTime.Now</code>, random values, network calls, environment-specific paths.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Non-Repeatable</span><span class="panel-filename">ExpiryTests.cs</span></div>
+          <pre><span class="comment">// ❌ Test passes today, fails tomorrow.
+// DateTime.Now makes the result time-dependent.</span>
+
+[Fact]
+<span class="kw">public void</span> <span class="fn">Token_IsExpired</span>()
+{
+    <span class="bad-line">var token = new Token(DateTime.Now.AddHours(-2));</span>
+    Assert.True(token.IsExpired());
+    <span class="comment">// Breaks if clock skew or timezone differs.</span>
+}</pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Repeatable — Injected Clock</span><span class="panel-filename">ExpiryTests.cs</span></div>
+          <pre><span class="comment">// ✅ Inject a deterministic IClock.
+// The test controls time — always consistent.</span>
+
+[Fact]
+<span class="kw">public void</span> <span class="fn">Token_IsExpired</span>()
+{
+    <span class="good-line">var clock = new FakeClock(</span>
+    <span class="good-line">    new DateTime(2026, 1, 1, 12, 0, 0));</span>
+    <span class="good-line">var token = new Token(</span>
+    <span class="good-line">    clock.Now.AddHours(-2), clock);</span>
+    <span class="good-line">Assert.True(token.IsExpired());</span>
+}</pre>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- S -->
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--first)">S</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--first)">Self-Validating</div>
+          <div class="principle-name">Tests must produce a clear pass or fail — no manual inspection required.</div>
+        </div>
+      </div>
+      <p class="principle-desc">
+        A test that writes output to the console and requires a developer to read it isn't a test — it's a manual check wrapped in test syntax. Use assertions. The result should be unambiguous: green or red.
+      </p>
+      <div class="callout bad-callout"><span class="callout-icon">⚠</span><span><strong>Anti-pattern:</strong> <code>Console.WriteLine(result)</code> inside a test with no <code>Assert</code> call. The test always passes — even when the output is wrong. If you need to inspect output, you need an assertion.</span></div>
+
+      <hr class="divider">
+
+      <!-- T -->
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--first)">T</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--first)">Timely</div>
+          <div class="principle-name">Write tests at the right time — ideally before or alongside the code.</div>
+        </div>
+      </div>
+      <p class="principle-desc">
+        Tests written long after the code are hard to write because the code wasn't designed for testability. Tests written before (TDD) or alongside code force good design decisions — you notice coupling and missing abstractions immediately because the test tells you.
+      </p>
+      <div class="callout note-callout"><span class="callout-icon">💡</span><span><strong>The Testing Pyramid:</strong> Many fast unit tests (FIRST principles apply here), fewer integration tests (real DB, real HTTP), minimal E2E tests (browser automation). The pyramid shape is about confidence-per-cost ratio — unit tests are cheapest and fastest.</span></div>
+
+    </div>
+  </div><!-- /principles-list -->
+</section>
+
+
+<!-- ════════════════════════════════ SECURITY ════════════════════════════════ -->
+<section class="chapter" id="security">
+  <div class="chapter-heading">
+    <span class="chapter-icon">🔐</span>
+    <h2 class="chapter-title" style="color: var(--sec);">CIA Triad &amp; OWASP Top 10</h2>
+  </div>
+  <p class="chapter-desc">
+    Security isn't a feature you add at the end — it's a lens you apply throughout design and implementation. The CIA Triad is the foundational model for what security actually means. The OWASP Top 10 is the canonical list of vulnerabilities every developer must know to avoid them.
+  </p>
+  <hr class="chapter-divider">
+
+  <div class="principles-list">
+
+    <!-- CIA -->
+    <div class="principle" style="animation-delay:0.05s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--sec)">CIA</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--sec)">The CIA Triad</div>
+          <div class="principle-name">Confidentiality · Integrity · Availability</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-green">foundational security model</span>
+        <span class="tag tag-green">applies to every system you build</span>
+      </div>
+      <div class="concept-grid">
+        <div class="concept-card" style="border-color: rgba(52,211,153,0.3)">
+          <h4 style="color:var(--sec)">Confidentiality</h4>
+          <p>Data is only accessible to those authorised to see it. Threats: data breaches, credential leaks, exposed APIs. Controls: encryption at rest and in transit (TLS), access control lists, least-privilege principles.</p>
+        </div>
+        <div class="concept-card" style="border-color: rgba(52,211,153,0.3)">
+          <h4 style="color:var(--sec)">Integrity</h4>
+          <p>Data is accurate and unaltered except by authorised processes. Threats: SQL injection modifying records, man-in-the-middle attacks. Controls: parameterised queries, checksums, signed tokens (JWT), audit logs.</p>
+        </div>
+        <div class="concept-card" style="border-color: rgba(52,211,153,0.3)">
+          <h4 style="color:var(--sec)">Availability</h4>
+          <p>Systems are accessible when needed by authorised users. Threats: DDoS, unhandled exceptions crashing services, misconfigured firewalls. Controls: rate limiting, health checks, redundancy, graceful error handling.</p>
+        </div>
+        <div class="concept-card" style="border-color: rgba(52,211,153,0.3)">
+          <h4 style="color:var(--sec)">Applying the Triad</h4>
+          <p>Ask of every feature: could this leak data (C)? Could this let data be modified unauthorised (I)? Could this cause downtime (A)? Any "yes" is a security requirement, not just a bug.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- OWASP Top 10 -->
+    <div class="principle" style="animation-delay:0.1s">
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--sec)">OW</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--sec)">OWASP Top 10</div>
+          <div class="principle-name">The ten most critical web application security risks — and how to prevent them.</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-green">OWASP 2021 edition</span>
+        <span class="tag tag-green">required knowledge for any dev role</span>
+      </div>
+      <p class="principle-desc">
+        The Open Worldwide Application Security Project publishes this list to focus developers on the vulnerabilities that cause the most real-world breaches. Know these — you will be asked about them in senior dev interviews.
+      </p>
+      <div class="panels single">
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">The 10 Critical Risks + Mitigations</span></div>
+          <pre><span class="note-line">A01 — Broken Access Control</span>
+<span class="comment">     Users acting outside intended permissions.
+     Fix: deny by default; check authorisation server-side every request.</span>
+
+<span class="note-line">A02 — Cryptographic Failures</span>
+<span class="comment">     Sensitive data exposed due to weak/missing encryption.
+     Fix: TLS everywhere, bcrypt for passwords, never roll your own crypto.</span>
+
+<span class="note-line">A03 — Injection (SQL, LDAP, OS command)</span>
+<span class="comment">     Untrusted data sent to an interpreter as a command.
+     Fix: parameterised queries, ORM usage, never string-concat SQL.</span>
+
+<span class="note-line">A04 — Insecure Design</span>
+<span class="comment">     Missing threat modelling and secure design patterns.
+     Fix: threat model early; apply defence in depth.</span>
+
+<span class="note-line">A05 — Security Misconfiguration</span>
+<span class="comment">     Default credentials, verbose error messages, open cloud storage.
+     Fix: security hardening checklists, remove defaults, suppress stack traces in prod.</span>
+
+<span class="note-line">A06 — Vulnerable &amp; Outdated Components</span>
+<span class="comment">     Libraries with known CVEs still running in production.
+     Fix: Dependabot / NuGet audit; patch regularly.</span>
+
+<span class="note-line">A07 — Identification &amp; Authentication Failures</span>
+<span class="comment">     Weak passwords, missing MFA, broken session management.
+     Fix: use a proven identity library (ASP.NET Identity, Auth0); enforce MFA.</span>
+
+<span class="note-line">A08 — Software &amp; Data Integrity Failures</span>
+<span class="comment">     Unsigned updates, deserialisation of untrusted data.
+     Fix: verify signatures; use safe deserialisation.</span>
+
+<span class="note-line">A09 — Security Logging &amp; Monitoring Failures</span>
+<span class="comment">     Breaches go undetected for months due to no alerting.
+     Fix: log auth events, failed access attempts; alert on anomalies.</span>
+
+<span class="note-line">A10 — Server-Side Request Forgery (SSRF)</span>
+<span class="comment">     App fetches a remote resource from attacker-controlled URL.
+     Fix: allowlist outbound URLs; validate &amp; sanitise all user-supplied URLs.</span></pre>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- SQL injection code example -->
+      <div class="principle-header">
+        <span class="principle-letter" style="color:var(--sec)">A03</span>
+        <div class="principle-title-group">
+          <div class="principle-label" style="color:var(--sec)">Deep Dive — A03: SQL Injection</div>
+          <div class="principle-name">The oldest, most famous, still happening vulnerability.</div>
+        </div>
+      </div>
+      <p class="principle-desc">
+        SQL injection is trivially preventable — yet it still appears in production codebases. It costs nothing to fix and everything when exploited. If you have any string-concatenated SQL anywhere in your ERP codebase, this is the one to audit first.
+      </p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Vulnerable — String Concat</span><span class="panel-filename">UserRepo.cs</span></div>
+          <pre><span class="comment">// ❌ Input: username = "' OR '1'='1"
+// Resulting query:
+// SELECT * FROM Users WHERE Name='' OR '1'='1'
+// Returns every user in the table.</span>
+
+<span class="kw">public</span> <span class="cls">User</span> <span class="fn">Find</span>(<span class="kw">string</span> username)
+{
+    <span class="bad-line">var sql = "SELECT * FROM Users " +</span>
+    <span class="bad-line">          "WHERE Name='" + username + "'";</span>
+    <span class="bad-line">return _db.ExecuteQuery(sql).FirstOrDefault();</span>
+}</pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header"><div class="panel-dot"></div><span class="panel-label">Safe — Parameterised</span><span class="panel-filename">UserRepo.cs</span></div>
+          <pre><span class="comment">// ✅ Parameter is treated as data, never as SQL.
+// Injected SQL is just a string — harmless.</span>
+
+<span class="kw">public</span> <span class="cls">User</span> <span class="fn">Find</span>(<span class="kw">string</span> username)
+{
+    <span class="comment">// Dapper:</span>
+    <span class="good-line">return _conn.QueryFirstOrDefault&lt;User&gt;(</span>
+    <span class="good-line">    "SELECT * FROM Users WHERE Name = @Name",</span>
+    <span class="good-line">    new { Name = username });</span>
+
+    <span class="comment">// Or EF Core (always parameterised):</span>
+    <span class="good-line">return _db.Users</span>
+    <span class="good-line">    .FirstOrDefault(u => u.Name == username);</span>
+}</pre>
+        </div>
+      </div>
+      <div class="callout bad-callout"><span class="callout-icon">⚠</span><span><strong>Classic attack:</strong> <code>' OR '1'='1</code> bypasses login. <code>'; DROP TABLE Users; --</code> deletes your data. Parameterised queries make these impossible — the database treats input as literal string values, never as executable SQL.</span></div>
+    </div>
+
+  </div><!-- /principles-list -->
+</section>
+
+
+<footer>
+  // software-engineering-principles &nbsp;·&nbsp; GRASP · DRY/YAGNI/KISS · 12-Factor · FIRST · CIA/OWASP &nbsp;·&nbsp; C# examples
+</footer>
+
+</body>
+</html>
