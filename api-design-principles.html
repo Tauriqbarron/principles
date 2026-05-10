@@ -20,22 +20,12 @@
     --good-border: #0a3d28;
     --accent: #7c6dfa;
     --code-bg: #0d0d18;
-
     --rest: #38bdf8;
-    --rest-bg: #001a26;
-    --rest-border: #003d5c;
     --graphql: #e535ab;
-    --graphql-bg: #1a0012;
-    --graphql-border: #3d0029;
     --versioning: #f59e0b;
-    --versioning-bg: #1a1200;
-    --versioning-border: #3d2d00;
     --errors: #fb7185;
-    --errors-bg: #1a0812;
-    --errors-border: #3d1030;
     --pagination: #a78bfa;
-    --pagination-bg: #0d0a1a;
-    --pagination-border: #2a1f4d;
+    --auth: #00e5a0;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -58,15 +48,15 @@
   .header-tag {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    letter-spacing: 0.2em;
     color: var(--accent);
-    margin-bottom: 16px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
     display: block;
   }
 
   h1 {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: clamp(40px, 6vw, 80px);
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.03em;
@@ -74,7 +64,7 @@
   }
 
   .header-sub {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--muted);
     max-width: 560px;
     line-height: 1.7;
@@ -131,9 +121,7 @@
     padding: 60px 40px 100px;
   }
 
-  section {
-    margin-bottom: 72px;
-  }
+  section { margin-bottom: 72px; }
 
   .section-header {
     margin-bottom: 32px;
@@ -164,77 +152,160 @@
     line-height: 1.8;
   }
 
+  /* Principle block */
   .principle {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
   }
 
   .principle-header {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    gap: 14px;
     margin-bottom: 14px;
   }
 
-  .principle-icon {
-    width: 36px;
-    height: 36px;
+  .principle-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
     flex-shrink: 0;
-    margin-top: 2px;
   }
 
-  .good .principle-icon { background: var(--good-bg); border: 1px solid var(--good-border); }
-  .bad .principle-icon  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  }
-  .rest .principle-icon { background: var(--rest-bg);  border: 1px solid var(--rest-border);  }
-  .graphql .principle-icon { background: var(--graphql-bg); border: 1px solid var(--graphql-border); }
-  .versioning .principle-icon { background: var(--versioning-bg); border: 1px solid var(--versioning-border); }
-  .errors .principle-icon { background: var(--errors-bg); border: 1px solid var(--errors-border); }
-  .pagination .principle-icon { background: var(--pagination-bg); border: 1px solid var(--pagination-border); }
-
-  .principle h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .good h3 { color: var(--good); }
-  .bad h3  { color: var(--bad);  }
-  .rest h3 { color: var(--rest); }
-  .graphql h3 { color: var(--graphql); }
-  .versioning h3 { color: var(--versioning); }
-  .errors h3 { color: var(--errors); }
-  .pagination h3 { color: var(--pagination); }
-
-  .principle p {
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.7;
-    padding-left: 52px;
-  }
-
-  .principle code {
+  .principle-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85em;
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .principle-name {
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--text);
   }
 
+  .principle-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 18px;
+    padding-left: 46px;
+  }
+
+  /* Panels */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-left: 46px;
+  }
+
+  .panel {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid;
+    border-color: inherit;
+  }
+
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border);  }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+
+  .panel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .panel.bad  .panel-dot { background: var(--bad);  }
+  .panel.good .panel-dot { background: var(--good); }
+
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .panel.bad  .panel-label { color: var(--bad);  }
+  .panel.good .panel-label { color: var(--good); }
+
+  .panel-filename {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .panel pre {
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 0;
+  }
+
+  /* Syntax colours */
+  .kw    { color: #c792ea; }  /* keyword */
+  .str   { color: #c3e88d; }  /* string */
+  .num   { color: #f78c6c; }  /* number */
+  .fn    { color: var(--text); }  /* identifier/func */
+  .cls   { color: #82aaff; }  /* class/type */
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad);  }
+  .good-line { color: var(--good); }
+
+  /* Callouts */
+  .callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+    margin-left: 46px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .callout-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad);  }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+
+  .bad-callout  .callout-icon { color: var(--bad);  }
+  .good-callout .callout-icon { color: var(--good); }
+
+  /* Badges */
   .badges {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
-    padding-left: 52px;
     flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-left: 46px;
   }
 
   .badge {
@@ -266,10 +337,7 @@
     color: var(--muted);
   }
 
-  .footer-links {
-    display: flex;
-    gap: 24px;
-  }
+  .footer-links { display: flex; gap: 24px; }
 
   .footer-links a {
     font-family: 'JetBrains Mono', monospace;
@@ -283,7 +351,9 @@
 
   @media (max-width: 640px) {
     header, main, footer, nav ul { padding-left: 20px; padding-right: 20px; }
-    .principle p, .badges { padding-left: 0; }
+    .principle-desc, .badges, .panels { padding-left: 0; }
+    .panels { grid-template-columns: 1fr; }
+    .callout { margin-left: 0; }
   }
 </style>
 </head>
@@ -298,19 +368,19 @@
 
 <nav>
   <ul>
-    <li><a href="#rest" class="active">REST</a></li>
+    <li><a href="#rest">REST</a></li>
     <li><a href="#graphql">GraphQL</a></li>
     <li><a href="#versioning">Versioning</a></li>
     <li><a href="#errors">Errors</a></li>
     <li><a href="#pagination">Pagination</a></li>
-    <li><a href="#auth">Authentication</a></li>
+    <li><a href="#auth">Auth</a></li>
   </ul>
 </nav>
 
 <main>
 
   <div class="intro">
-    A well-designed API is a product your consumers love. These principles apply to any HTTP API — whether REST, GraphQL, or a hybrid. They prioritse predictability, discoverability, and resilience.
+    A well-designed API is a product your consumers love. These principles apply to any HTTP API — whether REST, GraphQL, or a hybrid. They prioritise predictability, discoverability, and resilience.
   </div>
 
   <!-- REST -->
@@ -320,78 +390,167 @@
       <h2>Resource-Oriented Design</h2>
     </div>
 
-    <div class="principle good rest">
+    <!-- Principle 1 -->
+    <div class="principle" id="rest-nouns">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use nouns for resources, not verbs</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--rest);">REST — Nouns for Resources</div>
+          <div class="principle-name">Use nouns, not verbs, in URL paths</div>
+        </div>
       </div>
+      <p class="principle-desc">Endpoints represent resources. HTTP methods handle actions. Mixing verbs into URLs creates ambiguity and makes your API harder to reason about.</p>
       <div class="badges">
         <span class="badge badge-good">Correct</span>
         <span class="badge badge-good">GET /users</span>
         <span class="badge badge-good">POST /users</span>
       </div>
-      <p>Endpoints represent resources. HTTP methods handle actions. Keep URLs clean and predictable.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Verb in URL — Avoid</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ❌ Actions mixed into paths</span>
+<span class="bad-line">GET /getUsers</span>
+<span class="bad-line">POST /createUser</span>
+<span class="bad-line">POST /updateUserEmail</span>
+<span class="bad-line">DELETE /deleteUserById?id=42</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Noun + Method — Preferred</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ✓ HTTP methods carry the action</span>
+<span class="good-line">GET    /users</span>
+<span class="good-line">POST   /users</span>
+<span class="good-line">PATCH  /users/42</span>
+<span class="good-line">DELETE /users/42</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle bad rest">
+    <!-- Principle 2 -->
+    <div class="principle" id="rest-plural">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Never use verbs in URL paths</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--rest);">REST — Naming Convention</div>
+          <div class="principle-name">Use plural nouns consistently</div>
+        </div>
       </div>
+      <p class="principle-desc">Consistency beats personal preference. A uniform plural-noun convention means consumers never have to guess the form of a resource URL.</p>
       <div class="badges">
-        <span class="badge badge-bad">Wrong</span>
-        <span class="badge badge-bad">GET /getUsers</span>
-        <span class="badge badge-bad">POST /createUser</span>
-      </div>
-      <p>Verbs belong in HTTP methods, not URLs. Mixing them creates ambiguity and inconsistency.</p>
-    </div>
-
-    <div class="principle good rest">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use plural nouns consistently</h3>
-      </div>
-      <div class="badges">
-        <span class="badge badge-good">Correct</span>
         <span class="badge badge-good">GET /users/{id}</span>
         <span class="badge badge-good">DELETE /users/{id}</span>
       </div>
-      <p>Consistency beats personal preference. A uniform plural-noun convention means consumers never guess the form.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Mixed — Avoid</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ❌ Inconsistent: singular mixed with plural</span>
+GET <span class="bad-line">/user</span>          <span class="comment">// singular — why?</span>
+GET <span class="bad-line">/users/42/orders</span> <span class="comment">// plural</span>
+POST <span class="bad-line">/User</span>         <span class="comment">// capitalised — inconsistent</span>
+DELETE <span class="bad-line">/Users/42</span>   <span class="comment">// plural but capitalised</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Uniform plural — Preferred</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ✓ Consistent: always lowercase plural</span>
+<span class="good-line">GET    /users</span>
+<span class="good-line">GET    /users/42</span>
+<span class="good-line">GET    /users/42/orders</span>
+<span class="good-line">POST   /users</span>
+<span class="good-line">DELETE /users/42</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle good rest">
+    <!-- Principle 3 -->
+    <div class="principle" id="rest-methods">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Respect HTTP semantics</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--rest);">REST — HTTP Semantics</div>
+          <div class="principle-name">Respect HTTP method semantics</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">GET</span>
-        <span class="badge badge-good">POST</span>
-        <span class="badge badge-good">PUT</span>
-        <span class="badge badge-good">PATCH</span>
-        <span class="badge badge-good">DELETE</span>
+      <p class="principle-desc">Use the right method for the job. GET is safe and idempotent — proxies, browsers, and bots all cache it. Side effects belong to POST/PATCH/DELETE.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Wrong — GET with side effects</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ❌ GET must not have side effects</span>
+<span class="bad-line">GET /users/123/deactivate</span>
+<span class="comment">-- Proxies and browsers will cache this.
+-- Bots may trigger it. State has changed.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Correct — POST for actions</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ✓ POST for actions; correct status codes</span>
+<span class="good-line">POST   /users/123/deactivate</span>
+<span class="good-line">DELETE /users/123</span>
+<span class="good-line">PATCH  /users/123</span>  <span class="comment">// partial update</span>
+<span class="good-line">PUT    /users/123</span>  <span class="comment">// full replacement</span></pre>
+        </div>
       </div>
-      <p>Use the right method for the job: <code>GET</code> for reading, <code>POST</code> for creating, <code>PUT</code> for full replacement, <code>PATCH</code> for partial updates, <code>DELETE</code> for removal. Return the correct status codes — they carry meaning.</p>
+      <div class="callout bad-callout">
+        <span class="callout-icon">⚠</span>
+        <span>Caching proxies, CDNs, and browsers all assume GET is safe to cache. A GET that changes state will produce unpredictable behaviour across the internet.</span>
+      </div>
     </div>
 
-    <div class="principle bad rest">
+    <!-- Principle 4 -->
+    <div class="principle" id="rest-hierarchy">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Never use GET for state-changing operations</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">4</span>
+        <div>
+          <div class="principle-label" style="color: var(--rest);">REST — URL Structure</div>
+          <div class="principle-name">Limit URL nesting to two levels</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-bad">Wrong</span>
-        <span class="badge badge-bad">GET /users/123/deactivate</span>
+      <p class="principle-desc">Nested resources reflect ownership. Nesting beyond two levels creates brittle URLs that are painful for consumers and hard to maintain as your domain evolves.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Too deep — Avoid</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ❌ Three levels — fragile and verbose</span>
+GET <span class="bad-line">/orgs/{org_id}/teams/{team_id}/members/{user_id}/roles</span>
+<span class="comment">-- Any refactor breaks all consumer integrations.
+-- URL length becomes problematic.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Flat or two-level — Preferred</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ✓ Flat or two-level maximum</span>
+<span class="good-line">GET /users/{user_id}/orders</span>         <span class="comment">// one level — OK</span>
+<span class="good-line">GET /users/{user_id}/orders/{order_id}</span> <span class="comment">// two levels — OK</span>
+<span class="good-line">GET /roles/{role_id}</span>                <span class="comment">// flat — better for cross-resource access</span></pre>
+        </div>
       </div>
-      <p>GET requests are idempotent and safe — proxies, browsers, and bots all cache them. Side effects belong to POST/PATCH/DELETE.</p>
-    </div>
-
-    <div class="principle good rest">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Structure hierarchies logically</h3>
-      </div>
-      <p>Nested resources should reflect ownership: <code>GET /users/{id}/orders</code>. Limit nesting to 2 levels — deeper hierarchies become brittle.</p>
     </div>
 
   </section>
@@ -403,40 +562,210 @@
       <h2>Schema-First API Design</h2>
     </div>
 
-    <div class="principle good graphql">
+    <!-- Principle 1 -->
+    <div class="principle" id="graphql-schema">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Define a schema before writing resolvers</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--graphql);">GraphQL — Design</div>
+          <div class="principle-name">Design the schema before the resolvers</div>
+        </div>
       </div>
-      <p>A schema is a contract. Design it from the consumer's perspective first. Use <code>query</code>, <code>mutation</code>, and <code>subscription</code> root types clearly.</p>
+      <p class="principle-desc">A schema is a contract. Design it from the consumer's perspective first — define query, mutation, and subscription root types clearly.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Resolvers first — Avoid</span>
+            <span class="panel-filename">schema.gql</span>
+          </div>
+          <pre><span class="comment"># ❌ Resolver-driven design — schema is an afterthought
+# Resolvers written without a schema contract:</span>
+<span class="bad-line">const resolvers = {</span>
+<span class="bad-line">  user: () => db.users.findAll(),  // what's the shape?</span>
+<span class="bad-line">  // Clients have no contract to rely on.</span>
+<span class="bad-line">}</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Schema first — Preferred</span>
+            <span class="panel-filename">schema.gql</span>
+          </div>
+          <pre><span class="comment"># ✓ Schema is the contract — written first</span>
+<span class="good-line">type Query {</span>
+<span class="good-line">  user(id: ID!): User</span>
+<span class="good-line">  users(filter: UserFilter, limit: Int): [User!]!</span>
+<span class="good-line">}</span>
+<span class="good-line">type Mutation {</span>
+<span class="good-line">  createUser(input: CreateUserInput!): CreateUserPayload!</span>
+<span class="good-line">  deleteUser(id: ID!): DeleteUserPayload!</span>
+<span class="good-line">}</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle good graphql">
+    <!-- Principle 2 -->
+    <div class="principle" id="graphql-naming">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use meaningful, consistent naming</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--graphql);">GraphQL — Naming</div>
+          <div class="principle-name">Use camelCase for fields, past-tense for mutations</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">camelCase</span>
-        <span class="badge badge-good">Past tense mutations</span>
+      <p class="principle-desc">Field names in camelCase. Mutations use verb-like names in past tense: createUser, updateOrder, deletePost. This mirrors REST conventions and reads naturally.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Inconsistent naming — Avoid</span>
+            <span class="panel-filename">schema.gql</span>
+          </div>
+          <pre><span class="comment"># ❌ Inconsistent: PascalCase, verbs without tense</span>
+<span class="bad-line">type User {</span>
+<span class="bad-line">  FirstName: String      <span class="comment">// PascalCase — breaks convention</span></span>
+<span class="bad-line">  last_name: String      <span class="comment">// snake_case — breaks camelCase</span></span>
+<span class="bad-line">}</span>
+<span class="bad-line">type Mutation {</span>
+<span class="bad-line">  CreateUser(...): User  <span class="comment">// noun, not verb — reads like a query</span></span>
+<span class="bad-line">  Remove(id: ID!): Bool  <span class="comment">// vague; no input wrapper</span></span>
+<span class="bad-line">}</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">camelCase + past-tense — Preferred</span>
+            <span class="panel-filename">schema.gql</span>
+          </div>
+          <pre><span class="comment"># ✓ Consistent: camelCase fields, past-tense mutations</span>
+<span class="good-line">type User {</span>
+<span class="good-line">  firstName: String</span>
+<span class="good-line">  lastName: String</span>
+<span class="good-line">  emailAddress: String</span>
+<span class="good-line">}</span>
+<span class="good-line">type Mutation {</span>
+<span class="good-line">  createUser(input: CreateUserInput!): UserPayload!</span>
+<span class="good-line">  updateUser(id: ID!, input: UpdateUserInput!): UserPayload!</span>
+<span class="good-line">  deleteUser(id: ID!): DeletePayload!</span>
+<span class="good-line">}</span></pre>
+        </div>
       </div>
-      <p>Field names in <code>camelCase</code>. Mutations use verb-like names in past tense: <code>createUser</code>, <code>updateUser</code>, <code>deleteUser</code>.</p>
     </div>
 
-    <div class="principle bad graphql">
+    <!-- Principle 3 -->
+    <div class="principle" id="graphql-nesting">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Avoid deeply nested queries</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--graphql);">GraphQL — Performance</div>
+          <div class="principle-name">Avoid deeply nested queries — use DataLoader</div>
+        </div>
       </div>
-      <p>Nesting more than 3-4 levels causes N+1 resolver problems and poor performance. Use batch loading (DataLoader) for related entities.</p>
+      <p class="principle-desc">Nesting more than 3–4 levels causes N+1 resolver problems and poor performance. Use DataLoader for batch loading of related entities.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Deep nesting — Avoid</span>
+            <span class="panel-filename">query.graphql</span>
+          </div>
+          <pre><span class="comment"># ❌ N+1: each level fires a new DB query</span>
+<span class="bad-line">query {</span>
+<span class="bad-line">  users {</span>
+<span class="bad-line">    orders {</span>
+<span class="bad-line">      items {</span>
+<span class="bad-line">        product {</span>
+<span class="bad-line">          category {</span>
+<span class="bad-line">            vendor {</span>
+<span class="bad-line">              warehouses { ... }</span>
+<span class="bad-line">            }</span>
+<span class="bad-line">          }</span>
+<span class="bad-line">        }</span>
+<span class="bad-line">      }</span>
+<span class="bad-line">    }</span>
+<span class="bad-line">  }</span>
+<span class="bad-line">}</span>
+<span class="comment">-- 7 levels deep. Each level = N queries.
+-- 100 users × 3 orders × 5 items = 1500 queries.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">DataLoader batch — Preferred</span>
+            <span class="panel-filename">schema.gql</span>
+          </div>
+          <pre><span class="comment"># ✓ DataLoader batches and caches foreign keys
+const userOrdersLoader = new DataLoader(ids =>
+  <span class="good-line"> db.orders.where('user_id').in(ids).then(rows =></span>
+    rows.groupBy('user_id').map(userId => rowsForUser)
+  )
+);
+
+<span class="comment">// Query depth: max 3 levels, use references for more</span>
+<span class="good-line">query {</span>
+<span class="good-line">  users {</span>
+<span class="good-line">    orders {</span>
+<span class="good-line">      product { category { id name } }</span>
+<span class="good-line">    }</span>
+<span class="good-line">  }</span>
+<span class="good-line">}</span>
+<span class="comment">// Batching: 4 queries instead of 1500.</span></pre>
+        </div>
+      </div>
+      <div class="callout good-callout">
+        <span class="callout-icon">✓</span>
+        <span>DataLoader automatically batches multiple requests for the same entity into a single database query — use it for any foreign-key relationship in your schema.</span>
+      </div>
     </div>
 
-    <div class="principle good graphql">
+    <!-- Principle 4 -->
+    <div class="principle" id="graphql-inputs">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Always use input types for mutations</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">4</span>
+        <div>
+          <div class="principle-label" style="color: var(--graphql);">GraphQL — Mutations</div>
+          <div class="principle-name">Always use input types for mutations</div>
+        </div>
       </div>
-      <p>Don't use inline arguments in mutations. Define <code>input</code> types — they compose, version, and document better than flattened argument lists.</p>
+      <p class="principle-desc">Don't use inline arguments in mutations. Define <code>input</code> types — they compose, version, and document better than flattened argument lists. They also make it easier to add fields without breaking existing callers.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Inline args — Avoid</span>
+            <span class="panel-filename">schema.gql</span>
+          </div>
+          <pre><span class="comment"># ❌ Inline arguments — hard to extend, no composition</span>
+<span class="bad-line">type Mutation {</span>
+<span class="bad-line">  createUser(</span>
+<span class="bad-line">    name: String!</span>
+<span class="bad-line">    email: String!</span>
+<span class="bad-line">    age: Int</span>
+<span class="bad-line">    role: String</span>
+<span class="bad-line">    <span class="comment">// Adding 'address' here breaks existing callers</span></span>
+<span class="bad-line">  ): UserPayload!</span>
+<span class="bad-line">}</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Input type — Preferred</span>
+            <span class="panel-filename">schema.gql</span>
+          </div>
+          <pre><span class="comment"># ✓ Input type — extensible, composable, self-documenting</span>
+<span class="good-line">input CreateUserInput {</span>
+<span class="good-line">  name: String!</span>
+<span class="good-line">  email: String!</span>
+<span class="good-line">  age: Int</span>
+<span class="good-line">  role: UserRole</span>
+<span class="good-line">  address: AddressInput  <span class="comment">// additive — no breaking change</span></span>
+<span class="good-line">}</span>
+<span class="good-line">type Mutation {</span>
+<span class="good-line">  createUser(input: CreateUserInput!): UserPayload!</span>
+<span class="good-line">}</span></pre>
+        </div>
+      </div>
     </div>
 
   </section>
@@ -448,40 +777,112 @@
       <h2>API Evolution</h2>
     </div>
 
-    <div class="principle good versioning">
+    <!-- Principle 1 -->
+    <div class="principle" id="version-url">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Version in the URL path</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--versioning);">Versioning — Strategy</div>
+          <div class="principle-name">Version in the URL path</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">/v1/users</span>
-        <span class="badge badge-good">/v2/users</span>
+      <p class="principle-desc">Most consumers expect the version in the URL. It's explicit, bookmarkable, and easy to route. The simplest and most widely understood convention.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Header versioning — Avoid</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ❌ Version in header — invisible, unbookmarkable</span>
+GET /users
+<span class="bad-line">API-Version: 2</span>   <span class="comment">// Consumer must read docs to know this</span>
+<span class="bad-line">Accept: application/vnd.api+json; version=2</span>
+<span class="comment">-- Cannot bookmark or share the URL.
+-- Harder to route at the gateway level.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Path versioning — Preferred</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ✓ Version in path — visible, bookmarkable, routable</span>
+<span class="good-line">GET /v1/users</span>   <span class="comment">// explicit</span>
+<span class="good-line">GET /v2/users</span>   <span class="comment">// upgrade path is clear</span>
+<span class="good-line">DELETE /v1/users/42</span>
+<span class="comment">-- Any stakeholder can see the version in the URL.
+-- Gateways, load balancers, and consumers all benefit.</span></pre>
+        </div>
       </div>
-      <p>Most consumers expect version in the URL. It's explicit, bookmarkable, and easy to route. The simplest and most widely understood convention.</p>
     </div>
 
-    <div class="principle bad versioning">
+    <!-- Principle 2 -->
+    <div class="principle" id="version-breaking">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Never make breaking changes in a published version</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--versioning);">Versioning — Rules</div>
+          <div class="principle-name">Never make breaking changes in a published version</div>
+        </div>
       </div>
-      <p>If you must break, increment the version. Add only additive, non-breaking changes to a live version: new optional fields, new endpoints, new enum values.</p>
+      <p class="principle-desc">If you must break, increment the version. Only add additive, non-breaking changes to a live version: new optional fields, new endpoints, new enum values.</p>
+      <div class="callout bad-callout">
+        <span class="callout-icon">✗</span>
+        <span>Removing a field, changing a type, or renaming an endpoint are all breaking changes. They break existing clients without warning if they're in the same version.</span>
+      </div>
+      <div class="badges" style="padding-left: 0;">
+        <span class="badge badge-good">New optional field → non-breaking</span>
+        <span class="badge badge-bad">Remove field → breaking</span>
+        <span class="badge badge-bad">Change type → breaking</span>
+        <span class="badge badge-bad">Rename endpoint → breaking</span>
+      </div>
     </div>
 
-    <div class="principle good versioning">
+    <!-- Principle 3 -->
+    <div class="principle" id="version-sunset">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Sunset old versions gracefully</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--versioning);">Versioning — Lifecycle</div>
+          <div class="principle-name">Sunset old versions gracefully</div>
+        </div>
       </div>
-      <p>Announce deprecations in responses (<code>Deprecation</code> header or a <code>deprecated</code> field in the schema). Give consumers time — minimum 6 months before removal.</p>
-    </div>
-
-    <div class="principle bad versioning">
-      <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't version everything — only when you break</h3>
+      <p class="principle-desc">Announce deprecations in responses. Use the <code>Deprecation</code> header or a <code>deprecated</code> field in the schema. Give consumers time — minimum 6 months before removal.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">No warning — Avoid</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ❌ Version removed without notice</span>
+HTTP/1.1 404 Not Found
+{
+  <span class="bad-line">"error": "v1 is no longer supported"</span>
+}
+<span class="comment">-- Consumer had no time to migrate.
+-- Broken production integrations.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Graceful deprecation — Preferred</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ✓ Deprecation header + sunset date announced</span>
+HTTP/1.1 200 OK
+<span class="good-line">Deprecation: true</span>
+<span class="good-line">Sunset: Sat, 01 Jan 2026 00:00:00 GMT</span>
+<span class="good-line">Deprecation-Reason: "Use /v2/users instead"</span>
+{
+  "data": [...],
+  <span class="good-line">"deprecated": true,</span>
+  <span class="good-line">"sunsetDate": "2026-01-01",</span>
+  <span class="good-line">"migrationGuide": "/docs/v2/migration"</span>
+}</pre>
+        </div>
       </div>
-      <p>Not every change needs a version bump. Adding a new field to a response is non-breaking and requires no version change.</p>
     </div>
 
   </section>
@@ -493,52 +894,140 @@
       <h2>Predictable Error Responses</h2>
     </div>
 
-    <div class="principle good errors">
+    <!-- Principle 1 -->
+    <div class="principle" id="errors-envelope">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use a consistent error envelope</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--errors);">Errors — Shape</div>
+          <div class="principle-name">Use a consistent error envelope</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">code</span>
-        <span class="badge badge-good">message</span>
-        <span class="badge badge-good">details</span>
+      <p class="principle-desc">Every error response should follow the same shape: a machine-readable <code>code</code>, a human-readable <code>message</code>, and optional <code>details</code> for field-level validation errors.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Inconsistent shapes — Avoid</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ❌ Each endpoint returns a different error shape</span>
+<span class="bad-line">{ "error": "User not found" }</span>           <span class="comment">// endpoint A</span>
+<span class="bad-line">{ "message": "Invalid input", "code": 400 }</span> <span class="comment">// endpoint B</span>
+<span class="bad-line">{ "err": "validation_failed" }</span>         <span class="comment">// endpoint C</span>
+<span class="comment">-- Consumers can't write generic error handlers.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Uniform envelope — Preferred</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ✓ Every response — success or error — follows the same shape</span>
+<span class="good-line">{</span>
+<span class="good-line">  "code": "USER_NOT_FOUND",</span>
+<span class="good-line">  "message": "No user found with ID 42",</span>
+<span class="good-line">  "requestId": "req_7f3a2b9c",</span>
+<span class="good-line">  "details": [</span>
+<span class="good-line">    { "field": "id", "issue": "does not exist" }</span>
+<span class="good-line">  ]</span>
+<span class="good-line">}</span></pre>
+        </div>
       </div>
-      <p>Every error response should follow the same shape: a machine-readable <code>code</code>, a human-readable <code>message</code>, and optional <code>details</code> for field-level validation errors.</p>
     </div>
 
-    <div class="principle good errors">
+    <!-- Principle 2 -->
+    <div class="principle" id="errors-status">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use appropriate HTTP status codes</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--errors);">Errors — Status Codes</div>
+          <div class="principle-name">Use accurate HTTP status codes</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">200 OK</span>
-        <span class="badge badge-good">201 Created</span>
-        <span class="badge badge-good">400 Bad Request</span>
-        <span class="badge badge-good">401 Unauthorized</span>
-        <span class="badge badge-good">403 Forbidden</span>
-        <span class="badge badge-good">404 Not Found</span>
-        <span class="badge badge-good">422 Unprocessable Entity</span>
-        <span class="badge badge-good">429 Too Many Requests</span>
-        <span class="badge badge-good">500 Internal Server Error</span>
+      <p class="principle-desc">The status code is the first signal a consumer receives. Don't return 200 for errors. Don't return 500 for client mistakes. The code must be accurate.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">200 for errors — Avoid</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ❌ Status 200 with an error body — misleading</span>
+HTTP/1.1 <span class="bad-line">200 OK</span>
+{
+  <span class="bad-line">"success": false,</span>
+  <span class="bad-line">"error": "validation_failed"</span>
+}
+<span class="comment">-- Monitoring, proxies, and clients all see "OK".
+-- Error handling is buried in the body.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Accurate codes — Preferred</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ✓ Status code matches the error type</span>
+HTTP/1.1 <span class="good-line">400 Bad Request</span>
+{
+  "code": "VALIDATION_FAILED",
+  "message": "email must be a valid address"
+}
+<span class="comment">---</span>
+HTTP/1.1 <span class="good-line">404 Not Found</span>
+{
+  "code": "USER_NOT_FOUND",
+  "message": "No user with ID 42"
+}</pre>
+        </div>
       </div>
-      <p>Don't return 200 for errors. Don't return 500 for client mistakes. The status code is the first signal — make it accurate.</p>
     </div>
 
-    <div class="principle bad errors">
+    <!-- Principle 3 -->
+    <div class="principle" id="errors-production">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Never expose stack traces or internal details in production errors</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--errors);">Errors — Security</div>
+          <div class="principle-name">Never expose stack traces in production</div>
+        </div>
       </div>
-      <p>Internal errors (500s) should log full details server-side and return a generic message to clients. You control what the consumer sees.</p>
-    </div>
-
-    <div class="principle good errors">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Include a request ID in every response</h3>
+      <p class="principle-desc">Internal errors (500s) should log full details server-side and return a generic message to clients. You control what the consumer sees — always.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Stack trace exposed — Avoid</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ❌ Production error with stack trace</span>
+HTTP/1.1 <span class="bad-line">500 Internal Server Error</span>
+{
+  <span class="bad-line">"error": "Unhandled exception"</span>,
+  <span class="bad-line">"stack": "NullReferenceException: Object reference..."</span>,
+  <span class="bad-line">"query": "SELECT * FROM users WHERE id = ?"</span>
+}
+<span class="comment">-- Exposes DB schema, library versions, internal paths.
+-- Attackers use this for reconnaissance.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Generic error — Preferred</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ✓ Internal error logged; consumer sees generic message</span>
+HTTP/1.1 <span class="good-line">500 Internal Server Error</span>
+{
+  <span class="good-line">"code": "INTERNAL_ERROR",</span>
+  <span class="good-line">"message": "An unexpected error occurred. Reference: req_7f3a2b9c",</span>
+  <span class="good-line">"requestId": "req_7f3a2b9c"</span>
+}
+<span class="comment">-- Full details logged server-side with requestId.
+-- Consumer can't infer internal implementation.</span></pre>
+        </div>
       </div>
-      <p>Every request — success or error — should include a unique <code>X-Request-ID</code> header. This makes distributed tracing and support conversations tractable.</p>
     </div>
 
   </section>
@@ -550,76 +1039,218 @@
       <h2>Cursor & Offset Patterns</h2>
     </div>
 
-    <div class="principle good pagination">
+    <!-- Principle 1 -->
+    <div class="principle" id="pagination-cursor">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Prefer cursor-based pagination for large or frequently updated datasets</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--pagination);">Pagination — Type</div>
+          <div class="principle-name">Prefer cursor-based pagination for large or live datasets</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">after=cursor</span>
-        <span class="badge badge-good">first=N</span>
+      <p class="principle-desc">Cursors are stable across insertions — page N+1 won't include items that appeared between page loads. Essential for infinite feeds, real-time data, and any frequently updated dataset.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Offset pagination — Avoid</span>
+            <span class="panel-filename">GET /users?page=3&limit=20</span>
+          </div>
+          <pre><span class="comment"># ❌ Offset pagination — unstable on live data
+GET /users?<span class="bad-line">page=2&limit=20</span>
+
+<span class="comment">-- User 15 deletes their account.
+-- Page 2 now has only 19 items.
+-- A new user signs up and appears on page 3.
+-- Items shift between page loads — consumer confusion.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Cursor pagination — Preferred</span>
+            <span class="panel-filename">GET /users?after=cursor_abc&first=20</span>
+          </div>
+          <pre><span class="comment"># ✓ Cursor — stable across insertions</span>
+<span class="good-line">GET /users?after=cursor_abc&first=20</span>
+<span class="comment">-- cursor_abc encodes the position after the last item.
+-- New insertions before the cursor are invisible.
+-- Consumer sees consistent page contents.</span>
+
+<span class="comment"># Response envelope</span>
+{
+  "data": [...],
+  "pageInfo": {
+    <span class="good-line">"hasNextPage": true,</span>
+    <span class="good-line">"endCursor": "cursor_def"</span>
+  }
+}</pre>
+        </div>
       </div>
-      <p>Cursors are stable across insertions — page N+1 won't include items that appeared between page loads. Essential for infinite feeds and real-time data.</p>
     </div>
 
-    <div class="principle good pagination">
+    <!-- Principle 2 -->
+    <div class="principle" id="pagination-offset">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use offset pagination only for bounded, user-navigable lists</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--pagination);">Pagination — Use Case</div>
+          <div class="principle-name">Use offset pagination only for bounded, admin-style lists</div>
+        </div>
       </div>
-      <p>Appropriate for admin UIs, dropdown searches, or any scenario where jumping to a specific page is a legitimate consumer need.</p>
+      <p class="principle-desc">Offset pagination is appropriate for admin UIs, dropdown searches, or any scenario where jumping to a specific page is a legitimate consumer need. If the dataset is large or frequently updated, use cursors.</p>
     </div>
 
-    <div class="principle good pagination">
+    <!-- Principle 3 -->
+    <div class="principle" id="pagination-count">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Always include total count metadata</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--pagination);">Pagination — Metadata</div>
+          <div class="principle-name">Always include total count and hasNextPage</div>
+        </div>
       </div>
-      <p>Paginated responses should include <code>total</code> (or <code>totalCount</code>) and <code>hasNextPage</code> so consumers can render UI correctly.</p>
-    </div>
-
-    <div class="principle bad pagination">
-      <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't use page numbers as cursor values</h3>
+      <p class="principle-desc">Paginated responses must include <code>total</code> (or <code>totalCount</code>) and <code>hasNextPage</code> so consumers can render UI elements like page numbers, "Load more" buttons, and progress indicators correctly.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">No metadata — Avoid</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ❌ Response has no count — consumer can't render UI</span>
+{
+  <span class="bad-line">"data": [...],</span>
+  <span class="bad-line">"users": [...]</span>  <span class="comment">// inconsistent key names too</span>
+}
+<span class="comment">-- How many total results exist?
+-- Is there a next page?</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Rich metadata — Preferred</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ✓ Predictable envelope with total and pagination state</span>
+{
+  "data": [...],
+  <span class="good-line">"total": 3847,</span>
+  <span class="good-line">"limit": 20,</span>
+  <span class="good-line">"hasNextPage": true,</span>
+  <span class="good-line">"hasPreviousPage": false,</span>
+  <span class="good-line">"startCursor": "cursor_aaa",</span>
+  <span class="good-line">"endCursor": "cursor_abc"</span>
+}
+<span class="comment">-- Consumer can render: "Showing 1-20 of 3847"
+-- "Load more" button knows when to hide.</span></pre>
+        </div>
       </div>
-      <p>Page numbers break the moment data changes. A cursor should be an opaque, stable value — typically an encoded timestamp or ID, never a computed offset.</p>
     </div>
 
   </section>
 
-  <!-- Authentication -->
+  <!-- Auth -->
   <section id="auth">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--accent)">Authentication</span>
-      <h2>Auth Patterns</h2>
+      <span class="section-tag" style="color: var(--accent)">Auth</span>
+      <h2>Authentication Patterns</h2>
     </div>
 
-    <div class="principle good">
+    <!-- Principle 1 -->
+    <div class="principle" id="auth-bearer">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use Bearer tokens for API authentication</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--accent);">Auth — Transport</div>
+          <div class="principle-name">Use Bearer tokens, never put them in URLs</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">Authorization: Bearer &lt;token&gt;</span>
+      <p class="principle-desc">The standard HTTP auth header. Keep tokens out of URL query strings — they leak via server logs, browser history, CDN caches, and browser bookmarks.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Token in URL — Avoid</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ❌ Token in query string — exposed everywhere</span>
+GET <span class="bad-line">/users?token=eyJhbGciOiJIUzI1NiJ9...</span>
+<span class="comment">-- Appears in Apache/Nginx access logs.
+-- Appears in browser history.
+-- Appears in CDN cache keys.
+-- Appears in browser bookmarks if shared.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Bearer header — Preferred</span>
+            <span class="panel-filename">requests.http</span>
+          </div>
+          <pre><span class="comment"># ✓ Token in Authorization header — not in URLs</span>
+<span class="good-line">GET /users</span>
+<span class="good-line">Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...</span>
+<span class="comment">-- Not stored in URL logs by default.
+-- Not present in browser history.
+-- Automatically excluded from CDN cache keys.</span></pre>
+        </div>
       </div>
-      <p>The standard HTTP auth header. Keep tokens out of URL query strings — they leak via server logs, browser history, and CDN caches.</p>
     </div>
 
-    <div class="principle good">
+    <!-- Principle 2 -->
+    <div class="principle" id="auth-401-vs-403">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Distinguish 401 (unauthenticated) from 403 (unauthorised)</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--accent);">Auth — Codes</div>
+          <div class="principle-name">Distinguish 401 (unauthenticated) from 403 (unauthorised)</div>
+        </div>
       </div>
-      <p><code>401</code> means no valid credentials. <code>403</code> means credentials are valid but lack permission. Conflating them makes debugging hard for consumers.</p>
+      <p class="principle-desc"><code>401</code> means no valid credentials were provided. <code>403</code> means valid credentials were provided but the identity lacks permission. Conflating them makes debugging hard for consumers.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Conflated — Avoid</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ❌ Both cases return 403 — ambiguous</span>
+HTTP/1.1 <span class="bad-line">403 Forbidden</span>
+{ "error": "Access denied" }
+<span class="comment">-- Consumer can't tell: no credentials, or insufficient?
+-- Forces re-authentication when it's a permission problem.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Distinct codes — Preferred</span>
+            <span class="panel-filename">response.json</span>
+          </div>
+          <pre><span class="comment"># ✓ Clear distinction with actionable error codes</span>
+<span class="comment">-- No credentials:</span>
+HTTP/1.1 <span class="good-line">401 Unauthorized</span>
+{ "code": "MISSING_TOKEN", "message": "Provide a Bearer token" }
+
+<span class="comment">-- Valid credentials, insufficient permission:</span>
+HTTP/1.1 <span class="good-line">403 Forbidden</span>
+{ "code": "INSUFFICIENT_PERMISSION", "message": "Role 'viewer' cannot delete users" }</pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle bad">
+    <!-- Principle 3 -->
+    <div class="principle" id="auth-standards">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't roll your own auth — use standards</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--accent);">Auth — Approach</div>
+          <div class="principle-name">Never roll your own auth — use established standards</div>
+        </div>
       </div>
-      <p>OAuth 2.0, OIDC, JWT. If you're hand-rolling a session mechanism, you're almost certainly missing edge cases. Use battle-tested libraries and protocols.</p>
+      <p class="principle-desc">OAuth 2.0, OpenID Connect, and JWT are battle-tested protocols. If you're hand-rolling a session mechanism, you're almost certainly missing edge cases that lead to authentication bypasses.</p>
+      <div class="callout bad-callout">
+        <span class="callout-icon">✗</span>
+        <span>Home-grown auth is the most common source of critical vulnerabilities. Token forging, timing attacks, insecure session storage, and missing rotation are all things that libraries solve for you.</span>
+      </div>
     </div>
 
   </section>

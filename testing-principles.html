@@ -20,22 +20,12 @@
     --good-border: #0a3d28;
     --accent: #7c6dfa;
     --code-bg: #0d0d18;
-
     --pyramid: #f59e0b;
-    --pyramid-bg: #1a1200;
-    --pyramid-border: #3d2d00;
     --unit: #38bdf8;
-    --unit-bg: #001a26;
-    --unit-border: #003d5c;
     --integration: #34d399;
-    --integration-bg: #011a10;
-    --integration-border: #083d28;
     --e2e: #e535ab;
-    --e2e-bg: #1a0012;
-    --e2e-border: #3d0029;
     --mocking: #a78bfa;
-    --mocking-bg: #0d0a1a;
-    --mocking-border: #2a1f4d;
+    --coverage: #ffe066;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -58,15 +48,15 @@
   .header-tag {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    letter-spacing: 0.2em;
     color: var(--accent);
-    margin-bottom: 16px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
     display: block;
   }
 
   h1 {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: clamp(40px, 6vw, 80px);
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.03em;
@@ -74,7 +64,7 @@
   }
 
   .header-sub {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--muted);
     max-width: 560px;
     line-height: 1.7;
@@ -131,9 +121,7 @@
     padding: 60px 40px 100px;
   }
 
-  section {
-    margin-bottom: 72px;
-  }
+  section { margin-bottom: 72px; }
 
   .section-header {
     margin-bottom: 32px;
@@ -164,77 +152,158 @@
     line-height: 1.8;
   }
 
-  .principle {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-  }
+  /* Principle block */
+  .principle { margin-bottom: 40px; }
 
   .principle-header {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    gap: 14px;
     margin-bottom: 14px;
   }
 
-  .principle-icon {
-    width: 36px;
-    height: 36px;
+  .principle-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
     flex-shrink: 0;
-    margin-top: 2px;
   }
 
-  .good .principle-icon { background: var(--good-bg); border: 1px solid var(--good-border); }
-  .bad .principle-icon  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  }
-  .pyramid .principle-icon { background: var(--pyramid-bg); border: 1px solid var(--pyramid-border); }
-  .unit .principle-icon { background: var(--unit-bg); border: 1px solid var(--unit-border); }
-  .integration .principle-icon { background: var(--integration-bg); border: 1px solid var(--integration-border); }
-  .e2e .principle-icon { background: var(--e2e-bg); border: 1px solid var(--e2e-border); }
-  .mocking .principle-icon { background: var(--mocking-bg); border: 1px solid var(--mocking-border); }
-
-  .principle h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .good h3 { color: var(--good); }
-  .bad h3  { color: var(--bad);  }
-  .pyramid h3 { color: var(--pyramid); }
-  .unit h3 { color: var(--unit); }
-  .integration h3 { color: var(--integration); }
-  .e2e h3 { color: var(--e2e); }
-  .mocking h3 { color: var(--mocking); }
-
-  .principle p {
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.7;
-    padding-left: 52px;
-  }
-
-  .principle code {
+  .principle-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85em;
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .principle-name {
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--text);
   }
 
+  .principle-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 18px;
+    padding-left: 46px;
+  }
+
+  /* Panels */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-left: 46px;
+  }
+
+  .panel {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid;
+    border-color: inherit;
+  }
+
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border);  }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+
+  .panel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .panel.bad  .panel-dot { background: var(--bad);  }
+  .panel.good .panel-dot { background: var(--good); }
+
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .panel.bad  .panel-label { color: var(--bad);  }
+  .panel.good .panel-label { color: var(--good); }
+
+  .panel-filename {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .panel pre {
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 0;
+  }
+
+  /* Syntax colours */
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad);  }
+  .good-line { color: var(--good); }
+
+  /* Callouts */
+  .callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+    margin-left: 46px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .callout-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad);  }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+
+  .bad-callout  .callout-icon { color: var(--bad);  }
+  .good-callout .callout-icon { color: var(--good); }
+
+  /* Badges */
   .badges {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
-    padding-left: 52px;
     flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-left: 46px;
   }
 
   .badge {
@@ -266,10 +335,7 @@
     color: var(--muted);
   }
 
-  .footer-links {
-    display: flex;
-    gap: 24px;
-  }
+  .footer-links { display: flex; gap: 24px; }
 
   .footer-links a {
     font-family: 'JetBrains Mono', monospace;
@@ -283,7 +349,9 @@
 
   @media (max-width: 640px) {
     header, main, footer, nav ul { padding-left: 20px; padding-right: 20px; }
-    .principle p, .badges { padding-left: 0; }
+    .principle-desc, .badges, .panels { padding-left: 0; }
+    .panels { grid-template-columns: 1fr; }
+    .callout { margin-left: 0; }
   }
 </style>
 </head>
@@ -292,16 +360,16 @@
 <header>
   <span class="header-tag">Testing</span>
   <h1>Testing Principles</h1>
-  <p class="header-sub">What to test, how to test it, and how to know when you've written a good test. Covers the test pyramid, mocking philosophy, and coverage pragmatism.</p>
+  <p class="header-sub">Conventions for writing tests that give you confidence to ship — test pyramid, unit, integration, E2E, mocking, and coverage philosophy.</p>
   <div class="header-line"></div>
 </header>
 
 <nav>
   <ul>
-    <li><a href="#pyramid" class="active">Pyramid</a></li>
-    <li><a href="#unit">Unit Tests</a></li>
-    <li><a href="#integration">Integration Tests</a></li>
-    <li><a href="#e2e">End-to-End</a></li>
+    <li><a href="#pyramid">Pyramid</a></li>
+    <li><a href="#unit">Unit</a></li>
+    <li><a href="#integration">Integration</a></li>
+    <li><a href="#e2e">E2E</a></li>
     <li><a href="#mocking">Mocking</a></li>
     <li><a href="#coverage">Coverage</a></li>
   </ul>
@@ -310,38 +378,73 @@
 <main>
 
   <div class="intro">
-    Tests are a communication medium. A good test documents what the code does, what edge cases are handled, and what the intended behaviour is. Tests that don't communicate clearly are liabilities — they break for the wrong reasons and hide real bugs.
+    Tests are a communication contract with your future self. Write tests that are fast, deterministic, and reveal intent — tests that make refactoring safe rather than tests that just assert current implementation.
   </div>
 
   <!-- Test Pyramid -->
   <section id="pyramid">
     <div class="section-header">
       <span class="section-tag" style="color: var(--pyramid)">Test Pyramid</span>
-      <h2>The Foundation: Fast, Focused, Many</h2>
+      <h2>The Foundation of a Healthy Test Strategy</h2>
     </div>
 
-    <div class="principle good pyramid">
+    <!-- Principle 1 -->
+    <div class="principle" id="pyramid-shape">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Write tests in this order: unit → integration → e2e</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--pyramid);">Pyramid — Shape</div>
+          <div class="principle-name">More unit tests than integration tests than E2E tests</div>
+        </div>
       </div>
-      <p>Unit tests are fast, cheap, and precise. Write the most of those. Integration tests verify that parts work together. E2E tests verify critical user journeys — sparingly.</p>
+      <p class="principle-desc">The test pyramid isn't just a diagram — it's an economic constraint. Unit tests are fast and cheap to write and maintain. E2E tests are slow, brittle, and expensive. If you invert the pyramid, your test suite will slow you down, not speed you up.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Ice-cream cone — Avoid</span>
+            <span class="panel-filename">test-count.txt</span>
+          </div>
+          <pre><span class="comment"># ❌ Inverted pyramid — slow, expensive to run
+<span class="bad-line">E2E tests:       150  (slow, 5-30 min each)
+Integration:     80   (medium, 500ms-5s each)
+Unit tests:      40   (fast, &lt;10ms each)</span>
+<span class="comment">-- CI takes 45 minutes.
+-- Flaky E2E tests block deployments.
+-- Developers stop running tests locally.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Healthy pyramid — Preferred</span>
+            <span class="panel-filename">test-count.txt</span>
+          </div>
+          <pre><span class="comment"># ✓ Pyramid: fast feedback, expensive tests at the top
+<span class="good-line">Unit tests:      400  (fast, &lt;10ms each)    ~70%
+Integration:     120  (medium, 100ms-1s)  ~20%
+E2E tests:       30   (slow, 30s-5m each)  ~10%</span>
+<span class="comment">-- Full suite runs in under 5 minutes.
+-- E2E tests cover only critical user journeys.
+-- Fast feedback loop keeps developers in flow.</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle bad pyramid">
+    <!-- Principle 2 -->
+    <div class="principle" id="pyramid-critique">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't build an ice-cream cone or hourglass</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--pyramid);">Pyramid — Purpose</div>
+          <div class="principle-name">Each layer tests a different concern, not the same thing in different places</div>
+        </div>
       </div>
-      <p>Too many E2E tests: slow, brittle, expensive to maintain. Too many integration tests: medium cost, medium brittleness. The pyramid shape exists for a reason — it reflects cost and feedback speed.</p>
-    </div>
-
-    <div class="principle good pyramid">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Tests should run in isolation</h3>
+      <p class="principle-desc">If your unit tests and E2E tests assert the same things, you have redundancy, not coverage. Each layer should test what the other layers cannot test — unit tests for logic, integration for data flow, E2E for critical user journeys.</p>
+      <div class="badges">
+        <span class="badge badge-good">Unit: logic &amp; edge cases</span>
+        <span class="badge badge-good">Integration: data flow &amp; I/O</span>
+        <span class="badge badge-good">E2E: critical user journeys</span>
       </div>
-      <p>No test should depend on another test running before it. Randomise test order. Parallelise where possible. A test that fails only when run in suite X is a hidden time bomb.</p>
     </div>
 
   </section>
@@ -350,42 +453,163 @@
   <section id="unit">
     <div class="section-header">
       <span class="section-tag" style="color: var(--unit)">Unit Tests</span>
-      <h2>Fast Feedback on Small Logic</h2>
+      <h2>Fast, Isolated, Meaningful</h2>
     </div>
 
-    <div class="principle good unit">
+    <!-- Principle 1 -->
+    <div class="principle" id="unit-one-thing">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>One concept per test</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--unit);">Unit — Scope</div>
+          <div class="principle-name">Test one concept per test function</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">Arrange → Act → Assert</span>
+      <p class="principle-desc">A test that checks 10 things at once is a test that hides 9 potential failures. Each test should have a single, clear reason to fail. If you can't name your test after the behaviour it verifies, the test is doing too much.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Kitchen-sink test — Avoid</span>
+            <span class="panel-filename">order.test.js</span>
+          </div>
+          <pre><span class="comment"># ❌ One test checks everything</span>
+<span class="bad-line">test('order workflow', () =&gt; {</span>
+<span class="bad-line">  const order = createOrder();</span>
+<span class="bad-line">  order.addItem(item);</span>
+<span class="bad-line">  expect(order.items.length).toBe(1);</span>
+<span class="bad-line">  order.applyDiscount('SAVE10');</span>
+<span class="bad-line">  expect(order.total).toBe(90);</span>
+<span class="bad-line">  order.status = 'shipped';</span>
+<span class="bad-line">  expect(order.status).toBe('shipped');</span>
+<span class="bad-line">  order.cancel();</span>
+<span class="bad-line">  expect(order.status).toBe('cancelled');</span>
+<span class="bad-line">  expect(order.refund).toBe(90);</span>
+<span class="bad-line">})</span>
+<span class="comment">-- If the discount fails, the rest never runs.
+-- Failure message: "order workflow" — which part?</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">One concept per test — Preferred</span>
+            <span class="panel-filename">order.test.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Each test is a single, named behaviour</span>
+<span class="good-line">test('addItem increases item count by one', () =&gt; {</span>
+<span class="good-line">  const order = createOrder();</span>
+<span class="good-line">  order.addItem(item);</span>
+<span class="good-line">  expect(order.items).toHaveLength(1);</span>
+<span class="good-line">})</span>
+<span class="good-line">test('SAVE10 reduces total by 10%', () =&gt; {</span>
+<span class="good-line">  const order = createOrder({ total: 100 });</span>
+<span class="good-line">  order.applyDiscount('SAVE10');</span>
+<span class="good-line">  expect(order.total).toBe(90);</span>
+<span class="good-line">})</span>
+<span class="good-line">test('cancel sets status to cancelled', () =&gt; {</span>
+<span class="good-line">  const order = createOrder();</span>
+<span class="good-line">  order.cancel();</span>
+<span class="good-line">  expect(order.status).toBe('cancelled');</span>
+<span class="good-line">})</span></pre>
+        </div>
       </div>
-      <p>Each test should verify one behaviour. If you find yourself writing "and also..." in a test name, split it. Readable test names act as documentation: <code>it_returns_404_when_user_not_found</code>.</p>
     </div>
 
-    <div class="principle good unit">
+    <!-- Principle 2 -->
+    <div class="principle" id="unit-deterministic">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Test behaviour, not implementation</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--unit);">Unit — Reliability</div>
+          <div class="principle-name">Tests must be deterministic — no randomness, no time dependencies</div>
+        </div>
       </div>
-      <p>Tests that know how the code is implemented break when you refactor — even if behaviour is preserved. Test inputs and outputs. Don't test private methods, internal state, or constructor calls.</p>
+      <p class="principle-desc">A test that sometimes passes and sometimes fails is worse than no test — it erodes trust in the entire suite. Mock the clock, freeze time, seed randomness. A flaky test should be treated as a broken test.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Non-deterministic — Avoid</span>
+            <span class="panel-filename">token.test.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Random expiry — test sometimes fails</span>
+<span class="bad-line">test('token is valid for 24 hours', () =&gt; {</span>
+<span class="bad-line">  const token = generateToken({ ttl: 24 * 60 * 60 });</span>
+<span class="bad-line">  const now = Date.now();</span>
+<span class="bad-line">  const in25hrs = now + 25 * 60 * 60 * 1000;</span>
+<span class="comment">  // ❌ Uses real clock — flakiness depends on when this runs</span>
+<span class="bad-line">  expect(isTokenValid(token, { at: in25hrs })).toBe(false);</span>
+<span class="bad-line">})</span>
+<span class="comment">-- Passes on fast machines, fails on slow ones.
+-- Fails when system clock is adjusted.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Frozen time — Preferred</span>
+            <span class="panel-filename">token.test.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Deterministic — time is controlled and explicit</span>
+<span class="good-line">test('token is invalid after TTL expires', () =&gt; {</span>
+<span class="good-line">  const fixedNow = new Date('2025-01-01T12:00:00Z');</span>
+<span class="good-line">  const token = generateToken({</span>
+<span class="good-line">    ttl: 24 * 60 * 60,</span>
+<span class="good-line">    issuedAt: fixedNow,</span>
+<span class="good-line">  });</span>
+<span class="good-line">  const expiredTime = new Date('2025-01-02T12:00:01Z');</span>
+<span class="good-line">  expect(isTokenValid(token, { at: expiredTime })).toBe(false);</span>
+<span class="good-line">})</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle bad unit">
+    <!-- Principle 3 -->
+    <div class="principle" id="unit-readable">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't assert on dates, random values, or time without freezing them</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--unit);">Unit — Readability</div>
+          <div class="principle-name">Test intent, not implementation</div>
+        </div>
       </div>
-      <p>Flaky tests are worse than no tests. Freeze time, seed randomness, mock the clock. A test that fails 5% of the time will be ignored 100% of the time.</p>
-    </div>
-
-    <div class="principle good unit">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use descriptive, full-sentence test names</h3>
+      <p class="principle-desc">Tests that assert implementation details break on every refactor, even when behaviour is preserved. Tests should describe <em>what the code does</em>, not <em>how it does it</em>. When refactoring changes the internals without changing behaviour, tests should not need to change.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Implementation detail — Avoid</span>
+            <span class="panel-filename">user.test.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Tests how, not what — breaks on refactor</span>
+<span class="bad-line">test('user is saved to cache on login', async () =&gt; {</span>
+<span class="bad-line">  const user = { id: 1, name: 'Alice' };</span>
+<span class="bad-line">  await login(user);</span>
+<span class="comment">  // ❌ Hardcoded cache key format — any refactor of the</span>
+<span class="comment">  // cache key strategy breaks this test unnecessarily</span>
+<span class="bad-line">  expect(cache.set).toHaveBeenCalledWith(</span>
+<span class="bad-line">    'user:1',</span>
+<span class="bad-line">    expect.anything()</span>
+<span class="bad-line">  );</span>
+<span class="bad-line">})</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Behaviour-based — Preferred</span>
+            <span class="panel-filename">user.test.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Tests what — survives refactor of internals</span>
+<span class="good-line">test('authenticated user is retrieved from cache on subsequent requests', async () =&gt; {</span>
+<span class="good-line">  const user = { id: 1, name: 'Alice' };</span>
+<span class="good-line">  await login(user);</span>
+<span class="comment">  // ✓ Reads as documentation: user data is cached after login</span>
+<span class="good-line">  const cached = await getUser(1);</span>
+<span class="good-line">  expect(cached.name).toBe('Alice');</span>
+<span class="good-line">  // No cache.set call asserted — implementation detail
+  // Changing cache key format won't break this test.
+}</span></pre>
+        </div>
       </div>
-      <p>Test names are documentation. <code>test_user_with_negative_balance_cannot_withdraw</code> is better than <code>testWithdraw</code>. When a test fails in a report, the name should explain what broke.</p>
     </div>
 
   </section>
@@ -393,65 +617,137 @@
   <!-- Integration Tests -->
   <section id="integration">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--integration)">Integration Tests</span>
-      <h2>Verifying That Parts Work Together</h2>
+      <span class="section-tag" style="color: var(--integration)">Integration</span>
+      <h2>Test the Assembly, Not the Parts</h2>
     </div>
 
-    <div class="principle good integration">
+    <!-- Principle 1 -->
+    <div class="principle" id="integration-real">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Test the boundary between your code and the outside world</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--integration);">Integration — Fidelity</div>
+          <div class="principle-name">Use real databases, real queues — not mocks</div>
+        </div>
       </div>
-      <p>Your database queries, HTTP clients, file system calls — these are where integration tests live. Verify that your code correctly queries, sends, and receives from real dependencies.</p>
+      <p class="principle-desc">The whole point of an integration test is to verify that the interfaces between components work correctly. Mocking the database defeats the purpose. Use testcontainers, in-memory databases, or a dedicated test database instance.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Mocked DB — Avoid</span>
+            <span class="panel-filename">order-repo.test.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Mocks hide real DB interface problems</span>
+<span class="bad-line">jest.mock('../db');</span>
+<span class="bad-line">test('order is saved', async () =&gt; {</span>
+<span class="bad-line">  db.query.mockResolvedValue([{ id: 1 }]);</span>
+<span class="comment">  // ✅ Test passes — but did the SQL actually work?</span>
+<span class="comment">  // Does the column name match? Does the type coercion work?</span>
+<span class="comment">  // Is the transaction isolation level correct?</span>
+<span class="bad-line">  const result = await saveOrder({ name: 'Order 1' });</span>
+<span class="bad-line">  expect(result.id).toBe(1);</span>
+<span class="bad-line">})</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Real DB — Preferred</span>
+            <span class="panel-filename">order-repo.test.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Testcontainers — real PostgreSQL, real queries</span>
+<span class="good-line">test('order is saved and retrieved correctly', async () =&gt; {</span>
+<span class="good-line">  const container = await new PostgreSqlContainer().start();</span>
+<span class="good-line">  const repo = new OrderRepository(container.getConnection());</span>
+<span class="comment">  // ✅ Column names, types, constraints — all verified against real DB</span>
+<span class="good-line">  const saved = await repo.save({ name: 'Order 1', total: 99.99 });</span>
+<span class="good-line">  expect(saved.id).toBeDefined();</span>
+<span class="good-line">  const retrieved = await repo.findById(saved.id);</span>
+<span class="good-line">  expect(retrieved.total).toBe(99.99);</span>
+<span class="good-line">  await container.stop();</span>
+<span class="good-line">})</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle good integration">
+    <!-- Principle 2 -->
+    <div class="principle" id="integration-scope">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use real databases in integration tests — not mocks</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--integration);">Integration — Scope</div>
+          <div class="principle-name">Integration tests cover a service boundary end-to-end</div>
+        </div>
       </div>
-      <p>If you mock the database, you're not testing integration. Use test containers, in-memory databases (for simple cases), or a dedicated test schema. The point is to catch query bugs, constraint violations, and transaction issues.</p>
-    </div>
-
-    <div class="principle bad integration">
-      <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't mock what you own</h3>
-      </div>
-      <p>If you wrote the code, you should test it directly. Mocks hide bugs in the seams between your own modules. Save mocks for third-party services and infrastructure you don't control.</p>
+      <p class="principle-desc">An integration test should exercise the entire stack of a service — from the HTTP handler to the database — without mocking any layer. If you mock something inside the service boundary, you don't have an integration test, you have a unit test with extra steps.</p>
     </div>
 
   </section>
 
-  <!-- E2E -->
+  <!-- E2E Tests -->
   <section id="e2e">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--e2e)">End-to-End</span>
-      <h2>Critical User Journeys, Not Everything</h2>
+      <span class="section-tag" style="color: var(--e2e)">E2E</span>
+      <h2>Critical Paths Only</h2>
     </div>
 
-    <div class="principle good e2e">
+    <!-- Principle 1 -->
+    <div class="principle" id="e2e-critical">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Test the happy path and the one edge case that matters</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--e2e);">E2E — Scope</div>
+          <div class="principle-name">Only test critical user journeys as E2E tests</div>
+        </div>
       </div>
-      <p>E2E tests are expensive. Choose the scenarios that represent real user workflows — signup, purchase, login. If a scenario is important enough to have an E2E test, it's important enough to have full coverage below it.</p>
+      <p class="principle-desc">E2E tests are expensive to write, slow to run, and fragile. You cannot afford to have 200 of them. Choose 20–30 flows that represent the most important things your users do — sign-up, login, checkout, invite a friend. Everything else is covered by lower layers.</p>
+      <div class="badges">
+        <span class="badge badge-good">Sign-up and email verification</span>
+        <span class="badge badge-good">Login and logout</span>
+        <span class="badge badge-good">Core transaction flows</span>
+      </div>
     </div>
 
-    <div class="principle bad e2e">
+    <!-- Principle 2 -->
+    <div class="principle" id="e2e-selectors">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't E2E test happy paths that unit and integration tests already cover</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--e2e);">E2E — Selectors</div>
+          <div class="principle-name">Use test-specific data attributes, not CSS selectors</div>
+        </div>
       </div>
-      <p>If unit tests already verify that a form validates email correctly, an E2E test duplicating that is waste. E2E tests exist to catch integration failures — not to re-verify business logic.</p>
-    </div>
+      <p class="principle-desc">E2E tests that use CSS selectors or XPath break on every design change — even when the behaviour is correct. Use dedicated <code>data-testid</code> attributes or semantic HTML roles. The design team can refactor freely without breaking your tests.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">CSS selector — Avoid</span>
+            <span class="panel-filename">login.spec.js</span>
+          </div>
+          <pre><span class="comment"># ❌ CSS selectors break on design changes</span>
+<span class="bad-line">test('login button is clickable', async () =&gt; {</span>
+<span class="bad-line">  await page.click('.login-form &gt; div:nth-child(4) &gt; button');</span>
+<span class="comment">  // ❌ Any CSS refactor breaks this test.</span>
+<span class="bad-line">  await expect(page.locator('.login-form')).toBeVisible();</span>
+<span class="bad-line">})</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">data-testid — Preferred</span>
+            <span class="panel-filename">login.spec.js</span>
+          </div>
+          <pre><span class="comment"># ✓ data-testid — stable across design refactors</span>
+<span class="good-line">&lt;button data-testid="login-submit" type="submit"&gt;Sign In&lt;/button&gt;</span>
 
-    <div class="principle good e2e">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>E2E tests must be deterministic</h3>
+<span class="good-line">test('login button is clickable', async () =&gt; {</span>
+<span class="good-line">  await page.click('[data-testid="login-submit"]');</span>
+<span class="good-line">  await expect(page.locator('[data-testid="login-submit"]')).toBeEnabled();</span>
+<span class="good-line">})</span>
+<span class="comment">-- Design refactor: move button anywhere in DOM — test still passes.</span></pre>
+        </div>
       </div>
-      <p>Use realistic test data. Avoid shared state. Never test with production data. An E2E test that fails due to data issues is noise — noise destroys trust in the test suite.</p>
     </div>
 
   </section>
@@ -459,32 +755,103 @@
   <!-- Mocking -->
   <section id="mocking">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--mocking)">Mocking Philosophy</span>
-      <h2>Controlled Uncertainty</h2>
+      <span class="section-tag" style="color: var(--mocking)">Mocking</span>
+      <h2>Control What You Own, Trust What You Don't</h2>
     </div>
 
-    <div class="principle good mocking">
+    <!-- Principle 1 -->
+    <div class="principle" id="mocking-principle">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Mock external services, not your own code</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--mocking);">Mocking — Rule</div>
+          <div class="principle-name">Mock external dependencies — not your own modules</div>
+        </div>
       </div>
-      <p>Stripe API, Twilio, a downstream microservice — these should be mocked. Your own modules that you own and control should be tested directly or with test-specific implementations.</p>
+      <p class="principle-desc">If you mock your own internal modules, you're not testing your code — you're testing your mocks. Mock the database client, the HTTP client, the cache client. But the classes and functions within your own codebase should be tested for real.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Mock own service — Avoid</span>
+            <span class="panel-filename">order-service.test.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Mocking internal modules — what's actually being tested?</span>
+<span class="bad-line">jest.mock('../order-repository');</span>
+<span class="bad-line">jest.mock('../email-service');</span>
+<span class="bad-line">test('order is placed', async () =&gt; {</span>
+<span class="bad-line">  orderRepository.save.mockResolvedValue({ id: 1 });</span>
+<span class="bad-line">  emailService.send.mockResolvedValue();</span>
+<span class="comment">  // ❌ This is testing nothing — all real logic is mocked away.</span>
+<span class="bad-line">  await orderService.placeOrder({ itemId: 1 });</span>
+<span class="bad-line">  expect(orderRepository.save).toHaveBeenCalled();</span>
+<span class="bad-line">})</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Mock external — Preferred</span>
+            <span class="panel-filename">order-service.test.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Only external I/O is mocked — real logic is exercised</span>
+<span class="good-line">jest.mock('../email-service');</span>  <span class="comment">// external: ✅ mock</span>
+<span class="good-line">// order-repository: real — ✅ integration test</span>
+<span class="good-line">test('placeOrder saves order and sends confirmation email', async () =&gt; {</span>
+<span class="good-line">  emailService.send.mockResolvedValue();</span>
+<span class="comment">  // ✅ Real repository: SQL queries, constraints, transactions all exercised</span>
+<span class="good-line">  const order = await orderService.placeOrder({ itemId: 1, userId: 42 });</span>
+<span class="good-line">  expect(order.id).toBeDefined();</span>
+<span class="good-line">  expect(emailService.send).toHaveBeenCalledWith(</span>
+<span class="good-line">    expect.objectContaining({ to: expect.any(String), template: 'order-confirmed' })</span>
+<span class="good-line">  );</span>
+<span class="good-line">})</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle bad mocking">
+    <!-- Principle 2 -->
+    <div class="principle" id="mocking-verification">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't over-specify mocks</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--mocking);">Mocking — Anti-pattern</div>
+          <div class="principle-name">Don't verify implementation details of mocked interactions</div>
+        </div>
       </div>
-      <p>Mocking every method call and every argument creates fragile tests that break on harmless refactors. Mock only what you need to control — verify behaviour at the boundary, not implementation details.</p>
-    </div>
-
-    <div class="principle good mocking">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Verify interactions on mocks — but also verify outputs</h3>
+      <p class="principle-desc">Verifying that a mock was called with specific arguments is a form of testing implementation. If you refactor the internal call sequence — even without changing behaviour — the test breaks. Verify outcomes, not interactions.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Interaction test — Avoid</span>
+            <span class="panel-filename">payment.test.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Tests call order, not outcome</span>
+<span class="bad-line">test('payment flow calls services in correct order', async () =&gt; {</span>
+<span class="bad-line">  await paymentService.process(card);</span>
+<span class="comment">  // ❌ This breaks if you add logging between two calls</span>
+<span class="comment">  // even though the final outcome is identical</span>
+<span class="bad-line">  expect(validateCard).toHaveBeenCalledBefore(chargeCard);</span>
+<span class="bad-line">  expect(chargeCard).toHaveBeenCalledBefore(sendReceipt);</span>
+<span class="bad-line">})</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Outcome test — Preferred</span>
+            <span class="panel-filename">payment.test.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Tests outcome, not call order</span>
+<span class="good-line">test('processPayment charges card and sends receipt', async () =&gt; {</span>
+<span class="good-line">  const result = await paymentService.process({</span>
+<span class="good-line">    card, amount: 99.99, customerId: 'cust_123'</span>
+<span class="good-line">  });</span>
+<span class="comment">  // ✅ Verifies the final outcome — doesn't care about call order</span>
+<span class="good-line">  expect(result.status).toBe('charged');</span>
+<span class="good-line">  expect(result.receiptEmail).toBe('alice@example.com');</span>
+<span class="good-line">})</span></pre>
+        </div>
       </div>
-      <p>Asserting that a method was called is useful but not sufficient. Always also assert on the return value or final state. A mock that was called but with wrong arguments passes the interaction check but fails the real purpose.</p>
     </div>
 
   </section>
@@ -492,32 +859,74 @@
   <!-- Coverage -->
   <section id="coverage">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--accent)">Coverage</span>
-      <h2>Metrics That Help, Not Hinder</h2>
+      <span class="section-tag" style="color: var(--coverage)">Coverage</span>
+      <h2>Meaningful Coverage, Not Vanity Metrics</h2>
     </div>
 
-    <div class="principle good">
+    <!-- Principle 1 -->
+    <div class="principle" id="coverage-meaningful">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use coverage to find gaps, not to judge teams</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--coverage);">Coverage — Philosophy</div>
+          <div class="principle-name">High coverage does not mean well-tested code</div>
+        </div>
       </div>
-      <p>Coverage is a heuristic — it tells you which lines were never visited. It doesn't say whether the tests that visited those lines were meaningful. Use it to find untested branches, not to set a required percentage.</p>
+      <p class="principle-desc">You can have 100% line coverage with tests that assert nothing meaningful. A single sprawling test that calls every line once satisfies the metric but provides zero confidence. Coverage is a lower bound indicator, not a quality signal.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Vanity coverage — Avoid</span>
+            <span class="panel-filename">order.test.js</span>
+          </div>
+          <pre><span class="comment"># ❌ 100% line coverage — but what does it test?</span>
+<span class="bad-line">test('order service', () =&gt; {</span>
+<span class="bad-line">  const r = orderService;</span>
+<span class="bad-line">  expect(r).toBeDefined();</span>
+<span class="comment">  // ✅ 100% line coverage of order.js
+  // ❌ Zero edge cases tested
+  // ❌ Zero error paths tested
+  // ❌ Zero boundary conditions tested</span>
+<span class="bad-line">})</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Meaningful tests — Preferred</span>
+            <span class="panel-filename">order.test.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Fewer lines covered — but every edge case is tested</span>
+<span class="good-line">test('zero-quantity order throws InvalidQuantityError', () =&gt; {</span>
+<span class="good-line">  expect(() =&gt; createOrder({ quantity: 0 })).toThrow(InvalidQuantityError);</span>
+<span class="good-line">})</span>
+<span class="good-line">test('negative price order throws InvalidPriceError', () =&gt; {</span>
+<span class="good-line">  expect(() =&gt; createOrder({ price: -1 })).toThrow(InvalidPriceError);</span>
+<span class="good-line">})</span>
+<span class="good-line">test('order with maximum quantity is accepted', () =&gt; {</span>
+<span class="good-line">  const order = createOrder({ quantity: 10000 });</span>
+<span class="good-line">  expect(order.quantity).toBe(10000);</span>
+<span class="good-line">})</span>
+<span class="comment">-- Lower line coverage than the vanity test.
+-- Higher confidence in correctness.</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle bad">
+    <!-- Principle 2 -->
+    <div class="principle" id="coverage-branch">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't chase 100% coverage — it buys false confidence</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--coverage);">Coverage — Metric</div>
+          <div class="principle-name">Use branch coverage, not just line coverage</div>
+        </div>
       </div>
-      <p>100% coverage means every line was executed at least once. It says nothing about whether assertions were correct, whether edge cases were handled, or whether the tests are checking the right things. A poorly written test can achieve 100% coverage while missing a critical bug.</p>
-    </div>
-
-    <div class="principle good">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Aim for meaningful coverage of critical paths</h3>
+      <p class="principle-desc">Line coverage measures whether a line ran. Branch coverage measures whether every branch in a conditional was exercised — both the <code>if</code> and the <code>else</code>. A test suite with 100% branch coverage is meaningfully more trustworthy than one with 100% line coverage.</p>
+      <div class="badges">
+        <span class="badge badge-good">Line coverage: did this line run?</span>
+        <span class="badge badge-bad">Branch coverage: did both paths of every if/else run?</span>
       </div>
-      <p>Identify the 20% of the codebase that causes 80% of the bugs and incidents. Ensure those paths — payment logic, auth, data mutations — have thorough test coverage. Everything else can be lighter.</p>
     </div>
 
   </section>

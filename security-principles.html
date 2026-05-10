@@ -20,22 +20,11 @@
     --good-border: #0a3d28;
     --accent: #7c6dfa;
     --code-bg: #0d0d18;
-
-    --defense: #f59e0b;
-    --defense-bg: #1a1200;
-    --defense-border: #3d2d00;
+    --defence: #f59e0b;
     --owasp: #fb7185;
-    --owasp-bg: #1a0812;
-    --owasp-border: #3d1030;
-    --validation: #38bdf8;
-    --validation-bg: #001a26;
-    --validation-border: #003d5c;
-    --secrets: #a78bfa;
-    --secrets-bg: #0d0a1a;
-    --secrets-border: #2a1f4d;
-    --auth: #34d399;
-    --auth-bg: #011a10;
-    --auth-border: #083d28;
+    --validation: #a78bfa;
+    --secrets: #ffe066;
+    --auth: #38bdf8;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -58,15 +47,15 @@
   .header-tag {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    letter-spacing: 0.2em;
     color: var(--accent);
-    margin-bottom: 16px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
     display: block;
   }
 
   h1 {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: clamp(40px, 6vw, 80px);
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.03em;
@@ -74,7 +63,7 @@
   }
 
   .header-sub {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--muted);
     max-width: 560px;
     line-height: 1.7;
@@ -131,9 +120,7 @@
     padding: 60px 40px 100px;
   }
 
-  section {
-    margin-bottom: 72px;
-  }
+  section { margin-bottom: 72px; }
 
   .section-header {
     margin-bottom: 32px;
@@ -164,77 +151,158 @@
     line-height: 1.8;
   }
 
-  .principle {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-  }
+  /* Principle block */
+  .principle { margin-bottom: 40px; }
 
   .principle-header {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    gap: 14px;
     margin-bottom: 14px;
   }
 
-  .principle-icon {
-    width: 36px;
-    height: 36px;
+  .principle-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
     flex-shrink: 0;
-    margin-top: 2px;
   }
 
-  .good .principle-icon { background: var(--good-bg); border: 1px solid var(--good-border); }
-  .bad .principle-icon  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  }
-  .defense .principle-icon { background: var(--defense-bg); border: 1px solid var(--defense-border); }
-  .owasp .principle-icon { background: var(--owasp-bg); border: 1px solid var(--owasp-border); }
-  .validation .principle-icon { background: var(--validation-bg); border: 1px solid var(--validation-border); }
-  .secrets .principle-icon { background: var(--secrets-bg); border: 1px solid var(--secrets-border); }
-  .auth .principle-icon { background: var(--auth-bg); border: 1px solid var(--auth-border); }
-
-  .principle h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .good h3 { color: var(--good); }
-  .bad h3  { color: var(--bad);  }
-  .defense h3 { color: var(--defense); }
-  .owasp h3 { color: var(--owasp); }
-  .validation h3 { color: var(--validation); }
-  .secrets h3 { color: var(--secrets); }
-  .auth h3 { color: var(--auth); }
-
-  .principle p {
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.7;
-    padding-left: 52px;
-  }
-
-  .principle code {
+  .principle-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85em;
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .principle-name {
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--text);
   }
 
+  .principle-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 18px;
+    padding-left: 46px;
+  }
+
+  /* Panels */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-left: 46px;
+  }
+
+  .panel {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .panel.bad  { border-color: var(--bad-border); }
+  .panel.good { border-color: var(--good-border); }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid;
+    border-color: inherit;
+  }
+
+  .panel.bad  .panel-header { background: var(--bad-bg);  border-color: var(--bad-border);  }
+  .panel.good .panel-header { background: var(--good-bg); border-color: var(--good-border); }
+
+  .panel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .panel.bad  .panel-dot { background: var(--bad);  }
+  .panel.good .panel-dot { background: var(--good); }
+
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .panel.bad  .panel-label { color: var(--bad);  }
+  .panel.good .panel-label { color: var(--good); }
+
+  .panel-filename {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .panel pre {
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 0;
+  }
+
+  /* Syntax colours */
+  .kw    { color: #c792ea; }
+  .str   { color: #c3e88d; }
+  .num   { color: #f78c6c; }
+  .fn    { color: var(--text); }
+  .cls   { color: #82aaff; }
+  .cmt, .comment { color: var(--muted); font-style: italic; }
+  .bad-line  { color: var(--bad);  }
+  .good-line { color: var(--good); }
+
+  /* Callouts */
+  .callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+    margin-left: 46px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .callout-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .bad-callout  { background: var(--bad-bg);  border: 1px solid var(--bad-border);  color: var(--bad);  }
+  .good-callout { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
+
+  .bad-callout  .callout-icon { color: var(--bad);  }
+  .good-callout .callout-icon { color: var(--good); }
+
+  /* Badges */
   .badges {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
-    padding-left: 52px;
     flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-left: 46px;
   }
 
   .badge {
@@ -266,10 +334,7 @@
     color: var(--muted);
   }
 
-  .footer-links {
-    display: flex;
-    gap: 24px;
-  }
+  .footer-links { display: flex; gap: 24px; }
 
   .footer-links a {
     font-family: 'JetBrains Mono', monospace;
@@ -283,7 +348,9 @@
 
   @media (max-width: 640px) {
     header, main, footer, nav ul { padding-left: 20px; padding-right: 20px; }
-    .principle p, .badges { padding-left: 0; }
+    .principle-desc, .badges, .panels { padding-left: 0; }
+    .panels { grid-template-columns: 1fr; }
+    .callout { margin-left: 0; }
   }
 </style>
 </head>
@@ -292,56 +359,113 @@
 <header>
   <span class="header-tag">Security</span>
   <h1>Security Principles</h1>
-  <p class="header-sub">Defence in depth, OWASP awareness, secure defaults, and the habits that keep systems and users safe — from input validation to secrets management.</p>
+  <p class="header-sub">Conventions for building secure software — defence in depth, OWASP awareness, input validation, secrets management, and authentication patterns.</p>
   <div class="header-line"></div>
 </header>
 
 <nav>
   <ul>
-    <li><a href="#defense" class="active">Defense in Depth</a></li>
-    <li><a href="#owasp">OWASP Mindset</a></li>
-    <li><a href="#validation">Input Validation</a></li>
+    <li><a href="#defence">Defence</a></li>
+    <li><a href="#owasp">OWASP</a></li>
+    <li><a href="#validation">Validation</a></li>
     <li><a href="#secrets">Secrets</a></li>
-    <li><a href="#auth">Auth &amp; Sessions</a></li>
-    <li><a href="#defaults">Secure Defaults</a></li>
+    <li><a href="#auth">Auth</a></li>
   </ul>
 </nav>
 
 <main>
 
   <div class="intro">
-    Security is not a feature you add at the end — it's a property that emerges from every decision made during design and implementation. These principles apply across any stack or language. They prioritse layered defence, minimal trust, and assuming every input is hostile until proven otherwise.
+    Security is not a feature you add at the end — it's a property that emerges from every layer of your system being designed with adversarial thinking. These principles apply across the full stack, from the database to the frontend.
   </div>
 
-  <!-- Defense in Depth -->
-  <section id="defense">
+  <!-- Defence in Depth -->
+  <section id="defence">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--defense)">Defense in Depth</span>
-      <h2>Never Rely on One Layer</h2>
+      <span class="section-tag" style="color: var(--defence)">Defence in Depth</span>
+      <h2>Never Rely on a Single Security Control</h2>
     </div>
 
-    <div class="principle good defense">
+    <!-- Principle 1 -->
+    <div class="principle" id="defence-layers">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Assume every layer can be breached</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--defence);">Defence — Strategy</div>
+          <div class="principle-name">Layer your defences — don't rely on one control</div>
+        </div>
       </div>
-      <p>Networks get scanned. Firewalls get misconfigured. Servers get compromised. Design each layer assuming the ones outside it have already failed. If an attacker gets read access to your database, can they read passwords? If they get code execution, can they move laterally?</p>
+      <p class="principle-desc">Every security control can fail. A firewall without input validation is one bypass away from compromise. Network security without application-level checks is one zero-day away from lateral movement. Stack controls so that failure of any single layer doesn't mean total failure.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Single control — Avoid</span>
+            <span class="panel-filename">architecture.drawio</span>
+          </div>
+          <pre><span class="comment"># ❌ Network perimeter is the only defence
+<span class="bad-line">Internet → [Firewall] → [App Server] → [Database]</span>
+<span class="comment">-- If attacker bypasses the firewall (e.g., via a compromised VPN),
+-- there is nothing stopping them from running arbitrary SQL.
+-- No input validation. No query parametrisation. No WAF.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Layered controls — Preferred</span>
+            <span class="panel-filename">architecture.drawio</span>
+          </div>
+          <pre><span class="comment"># ✓ Multiple layers: any one failure is caught by the next
+<span class="good-line">Internet → [WAF] → [API Gateway (rate limit)] → [App Server (validation)] → [ORM (parameterised)] → [Database</span>
+<span class="comment">-- WAF blocks known attack patterns
+-- Rate limiting stops credential stuffing
+-- App-level validation catches malformed input
+-- ORM parameterisation stops SQL injection even if bypassed
+-- Database user has minimal privileges</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle good defense">
+    <!-- Principle 2 -->
+    <div class="principle" id="defence-least-privilege">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Apply controls at each boundary</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--defence);">Defence — Principle</div>
+          <div class="principle-name">Apply least privilege at every layer</div>
+        </div>
       </div>
-      <p>Validate input at the API layer, not just the frontend. Sanitise at the rendering layer. Enforce authorisation at the service layer. Each trust boundary is an opportunity to stop an attacker — don't concentrate all controls at the outer edge.</p>
-    </div>
-
-    <div class="principle bad defense">
-      <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't rely on security through obscurity</h3>
+      <p class="principle-desc">Every process, user, and service should run with the minimum permissions required to do its job. If a service is compromised, least privilege limits what the attacker can do with it.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Excessive privilege — Avoid</span>
+            <span class="panel-filename">docker-compose.yml</span>
+          </div>
+          <pre><span class="comment"># ❌ Database user has admin privileges</span>
+<span class="bad-line">DB_USER=all_apps</span>
+<span class="bad-line">DB_PRIVILEGES=ALL PRIVILEGES</span>
+<span class="comment"># ❌ App runs as root in container</span>
+<span class="bad-line">USER root</span>
+<span class="comment">-- Compromise of the app = database admin.
+-- Container escape = host root.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Least privilege — Preferred</span>
+            <span class="panel-filename">docker-compose.yml</span>
+          </div>
+          <pre><span class="comment"># ✓ Each service has only the privileges it needs</span>
+<span class="good-line">DB_USER=app_readonly</span>
+<span class="good-line">DB_PRIVILEGES=SELECT ON orders, users</span>
+<span class="good-line">DB_WRITE_USER=app_writer</span>
+<span class="good-line">DB_WRITE_PRIVILEGES=INSERT, UPDATE, DELETE ON orders</span>
+<span class="comment"># ✓ App container runs as non-root</span>
+<span class="good-line">USER node</span>  <span class="comment"># uid 1000, no sudo, no /etc write</span></pre>
+        </div>
       </div>
-      <p>Hidden admin URLs, unpublished API endpoints, obfuscated JavaScript — these slow down casual attackers for minutes. They add nothing against a determined adversary. Design as if your source code is public.</p>
     </div>
 
   </section>
@@ -349,77 +473,218 @@
   <!-- OWASP -->
   <section id="owasp">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--owasp)">OWASP Mindset</span>
-      <h2>The OWASP Top 10 Is a Starting Point</h2>
+      <span class="section-tag" style="color: var(--owasp)">OWASP</span>
+      <h2>Know and Mitigate the OWASP Top 10</h2>
     </div>
 
-    <div class="principle good owasp">
+    <!-- Principle 1 -->
+    <div class="principle" id="owasp-broken-auth">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Know the OWASP Top 10 by heart</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--owasp);">OWASP — A07:2021</div>
+          <div class="principle-name">Broken authentication is the most exploited attack surface</div>
+        </div>
       </div>
-      <p>Broken Access Control, Cryptographic Failures, Injection, Insecure Design, Security Misconfiguration, Vulnerable Components, Auth Failures, Data Integrity Failures, Logging Failures, SSRF. These categories cover the majority of real-world vulnerabilities.</p>
-    </div>
-
-    <div class="principle good owasp">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Threat-model before writing code</h3>
-      </div>
+      <p class="principle-desc">Weak credential storage, missing MFA, predictable session tokens, and missing brute-force protections account for the majority of breaches. Treat authentication as the highest-risk code in your system.</p>
       <div class="badges">
-        <span class="badge badge-good">STRIDE</span>
-        <span class="badge badge-good">Attack trees</span>
+        <span class="badge badge-bad">Broken auth: 80%+ of breach root causes</span>
+        <span class="badge badge-good">MFA enforcement</span>
+        <span class="badge badge-good">Password hashing: Argon2id / bcrypt</span>
+        <span class="badge badge-good">Rate-limited login endpoints</span>
       </div>
-      <p>For significant features, model the threats before implementation. What does the attacker want? What can they control? What assumptions is the code making? Ask these questions in design, not after a breach.</p>
     </div>
 
-    <div class="principle bad owasp">
+    <!-- Principle 2 -->
+    <div class="principle" id="owasp-injection">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't trust third-party components blindly</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--owasp);">OWASP — A03:2021</div>
+          <div class="principle-name">Injection is never acceptable — parameterise everything</div>
+        </div>
       </div>
-      <p>The average codebase has hundreds of dependencies. Each one is an attack surface. Pin versions, subscribe to security advisories, scan dependencies regularly. A vulnerability in a transitive dependency is still your vulnerability.</p>
+      <p class="principle-desc">SQL injection remains one of the most exploited vulnerabilities. It is entirely preventable. Every query that incorporates user input must use parameterised queries — no exceptions, no legacy exceptions.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">String concatenation — Avoid</span>
+            <span class="panel-filename">user-repo.js</span>
+          </div>
+          <pre><span class="comment"># ❌ String concatenation — SQL injection wide open</span>
+<span class="bad-line">const query = `SELECT * FROM users WHERE email = '${email}'`;</span>
+<span class="comment">-- Input: ' OR '1'='1
+-- Result: SELECT * FROM users WHERE email = '' OR '1'='1'
+-- Returns all users.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Parameterised — Preferred</span>
+            <span class="panel-filename">user-repo.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Parameterised query — user input is never interpreted as SQL</span>
+<span class="good-line">const query = 'SELECT * FROM users WHERE email = $1';</span>
+<span class="good-line">const result = await db.query(query, [email]);</span>
+<span class="comment">-- Input: ' OR '1'='1
+-- Result: selects user with literal email address "'; DROP TABLE..."
+-- No injection. No data returned.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Principle 3 -->
+    <div class="principle" id="owasp-ssrf">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--owasp);">OWASP — A10:2021</div>
+          <div class="principle-name">Never make server-side requests to user-controlled URLs</div>
+        </div>
+      </div>
+      <p class="principle-desc">SSRF (Server-Side Request Forgery) lets an attacker make your server fetch arbitrary URLs — including internal services like <code>http://169.254.169.254/</code> (cloud metadata), <code>file:///etc/passwd</code>, or internal APIs behind a firewall.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Raw URL fetch — Avoid</span>
+            <span class="panel-filename">webhook.js</span>
+          </div>
+          <pre><span class="comment"># ❌ URL taken directly from user input — SSRF wide open</span>
+<span class="bad-line">app.get('/fetch', async (req, res) =&gt; {</span>
+<span class="bad-line">  const { url } = req.query;</span>
+<span class="bad-line">  const response = await fetch(url);  <span class="comment">// fetches ANY URL</span></span>
+<span class="bad-line">  res.json(await response.json());</span>
+<span class="bad-line">});</span>
+<span class="comment">-- Attacker: ?url=http://169.254.169.254/latest/meta-data/
+-- Attacker: ?url=file:///etc/passwd
+-- Attacker: ?url=http://localhost:5432/</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Allowlist + fetch — Preferred</span>
+            <span class="panel-filename">webhook.js</span>
+          </div>
+          <pre><span class="comment"># ✓ URL validated and resolved to a controlled target</span>
+<span class="good-line">const ALLOWED_HOSTS = ['api.github.com', 'hooks.slack.com'];</span>
+<span class="good-line">app.get('/fetch', async (req, res) =&gt; {</span>
+<span class="good-line">  const { url } = req.query;</span>
+<span class="good-line">  const parsed = new URL(url);</span>
+<span class="good-line">  if (!ALLOWED_HOSTS.includes(parsed.hostname)) {</span>
+<span class="good-line">    return res.status(400).json({ error: 'Disallowed host' });</span>
+<span class="good-line">  }</span>
+<span class="good-line">  const response = await fetch(url);</span>
+<span class="good-line">  res.json(await response.json());</span>
+<span class="good-line">});</span></pre>
+        </div>
+      </div>
     </div>
 
   </section>
 
-  <!-- Input Validation -->
+  <!-- Validation -->
   <section id="validation">
     <div class="section-header">
       <span class="section-tag" style="color: var(--validation)">Input Validation</span>
-      <h2>All Input Is Hostile Until Proven Otherwise</h2>
+      <h2>Validate on Entry, Encode on Exit</h2>
     </div>
 
-    <div class="principle good validation">
+    <!-- Principle 1 -->
+    <div class="principle" id="validation-trust">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Validate and sanitise at every trust boundary</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--validation);">Validation — Rule</div>
+          <div class="principle-name">Never trust any data source — validate everything</div>
+        </div>
       </div>
-      <p>Form submissions, API payloads, URL parameters, headers, cookies, uploaded files — all of it. Validation is not optional. Implement it consistently at every entry point, not just the most obvious ones.</p>
+      <p class="principle-desc">Request bodies, URL parameters, headers, cookies, environment variables, database reads, and third-party API responses — none of them are trusted by default. Every boundary is a place where malicious data can enter. Validate at the trust boundary, not just at the surface.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Trusted assumption — Avoid</span>
+            <span class="panel-filename">user-controller.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Database is trusted — it shouldn't be</span>
+<span class="bad-line">app.get('/user/:id', async (req, res) =&gt; {</span>
+<span class="comment">  // ❌ No validation of req.params.id</span>
+<span class="bad-line">  const user = await db.query(</span>
+<span class="bad-line">    `SELECT * FROM users WHERE id = ${req.params.id}`</span>
+<span class="comment">  // Another SQL injection vector — now from a "trusted" source</span>
+<span class="bad-line">  );</span>
+<span class="bad-line">  res.json(user);</span>
+<span class="bad-line">});</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Validate at boundary — Preferred</span>
+            <span class="panel-filename">user-controller.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Validate at every trust boundary</span>
+<span class="good-line">app.get('/user/:id', async (req, res) =&gt; {</span>
+<span class="good-line">  const id = parseInt(req.params.id, 10);</span>
+<span class="good-line">  if (isNaN(id) || id &lt; 1) {</span>
+<span class="good-line">    return res.status(400).json({ error: 'Invalid user ID' });</span>
+<span class="good-line">  }</span>
+<span class="good-line">  const query = 'SELECT * FROM users WHERE id = $1';</span>
+<span class="good-line">  const result = await db.query(query, [id]);</span>
+<span class="good-line">  res.json(result.rows[0]);</span>
+<span class="good-line">});</span></pre>
+        </div>
+      </div>
     </div>
 
-    <div class="principle good validation">
+    <!-- Principle 2 -->
+    <div class="principle" id="validation-negative">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Use allowlists, not denylists</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--validation);">Validation — Approach</div>
+          <div class="principle-name">Don't use denylists — use allowlists</div>
+        </div>
       </div>
-      <p>It's easier to say what's valid than what's invalid. For structured input, define the acceptable values, formats, and ranges precisely. Denylists miss edge cases — allowlists enforce correctness by default.</p>
-    </div>
-
-    <div class="principle bad validation">
-      <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Never trust client-side validation alone</h3>
+      <p class="principle-desc">A denylist tries to block known bad values. An allowlist defines what is known good and rejects everything else. Denylists are a losing battle — attackers will find bypasses. Allowlists make the attack surface explicit and small.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Denylist — Avoid</span>
+            <span class="panel-filename">validator.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Denylist: attacker finds what you didn't think of</span>
+<span class="bad-line">const BLOCKED = ['script', 'onerror', 'onload', 'javascript'];</span>
+<span class="bad-line">function sanitise(input) {</span>
+<span class="bad-line">  for (const term of BLOCKED) {</span>
+<span class="bad-line">    if (input.includes(term)) input = input.replace(term, '');</span>
+<span class="bad-line">  }</span>
+<span class="bad-line">  return input;</span>
+<span class="bad-line">}</span>
+<span class="comment">-- Bypass: &lt;img src=x onerror=alert(1)&gt;
+-- Bypass: &lt;scr&lt;script&gt; -- space-encoded, Unicode homoglyphs...
+-- There are infinite bypasses for any denylist.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Allowlist — Preferred</span>
+            <span class="panel-filename">validator.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Allowlist: only known-safe values pass</span>
+<span class="good-line">const ALLOWED_ROLES = new Set(['admin', 'editor', 'viewer']);</span>
+<span class="good-line">function validateRole(role) {</span>
+<span class="good-line">  if (!ALLOWED_ROLES.has(role)) {</span>
+<span class="good-line">    throw new ValidationError(`Role '${role}' is not allowed`);</span>
+<span class="good-line">  }</span>
+<span class="good-line">  return role;</span>
+<span class="good-line">}</span>
+<span class="comment">-- No bypass possible. Anything not explicitly allowed is rejected.
+-- Attack surface is the size of the allowlist, nothing more.</span></pre>
+        </div>
       </div>
-      <p>Client-side validation is for UX, not security. An attacker can disable JavaScript, craft raw requests, or use a proxy to send anything. Every validation must be enforced server-side.</p>
-    </div>
-
-    <div class="principle good validation">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Context-output-encode</h3>
-      </div>
-      <p>Data must be encoded for its destination. HTML-encode before rendering in HTML. SQL-escape for queries (or better, use parameterised queries). URL-encode for URL parameters. Shell-escape before passing to a command shell. Wrong encoding is how XSS and injection happen.</p>
     </div>
 
   </section>
@@ -427,129 +692,174 @@
   <!-- Secrets -->
   <section id="secrets">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--secrets)">Secrets Management</span>
-      <h2>Never in Code, Never in Logs</h2>
+      <span class="section-tag" style="color: var(--secrets)">Secrets</span>
+      <h2>Never Ship a Secret</h2>
     </div>
 
-    <div class="principle good secrets">
+    <!-- Principle 1 -->
+    <div class="principle" id="secrets-hardcoded">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Store secrets in environment variables or a vault</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--secrets);">Secrets — Storage</div>
+          <div class="principle-name">Secrets do not belong in source code, environment files, or logs</div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge badge-good">ENV vars</span>
-        <span class="badge badge-good">HashiCorp Vault</span>
-        <span class="badge badge-good">AWS Secrets Manager</span>
+      <p class="principle-desc">Hardcoded secrets in source code end up in git history — even after deletion. They leak in CI logs, error reports, Slack messages, and screenshots. The only safe place for a secret is a secrets manager: AWS Secrets Manager, Vault, GCP Secret Manager, or 1Password CLI.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Hardcoded secret — Avoid</span>
+            <span class="panel-filename">config.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Secret in source code — in git history forever</span>
+<span class="bad-line">const DB_PASSWORD = 'super-secret-password-123';</span>
+<span class="bad-line">const STRIPE_KEY = 'sk_live_4ft8a9...';</span>
+<span class="comment">-- Even after deletion, git history retains the secret.
+-- Anyone who ever cloned the repo has the secrets.
+-- Appears in git diffs during code review.
+-- Appears in CI/CD logs.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Secrets manager — Preferred</span>
+            <span class="panel-filename">config.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Secrets injected at runtime from a secrets manager</span>
+<span class="good-line">import { getSecret } from './secrets-manager';</span>
+<span class="good-line">const config = {</span>
+<span class="good-line">  dbPassword: await getSecret('prod/db/password'),</span>
+<span class="good-line">  stripeKey:    await getSecret('prod/stripe/key'),</span>
+<span class="good-line">};</span>
+<span class="comment">-- No secrets in source code. No secrets in git history.
+-- Secrets rotated via the manager — no code changes needed.
+-- Local dev: use .env.local (gitignored). Production: secrets manager.</span></pre>
+        </div>
       </div>
-      <p>Secrets belong in a secrets manager, injected at runtime. They should never appear in source code, container images, config files committed to git, or log streams.</p>
     </div>
 
-    <div class="principle bad secrets">
+    <!-- Principle 2 -->
+    <div class="principle" id="secrets-rotation">
       <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Never commit secrets — scan for them</h3>
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--secrets);">Secrets — Lifecycle</div>
+          <div class="principle-name">Design for secret rotation without downtime</div>
+        </div>
       </div>
-      <p>Use a pre-commit hook or CI step with <code>git-secrets</code>, <code>trufflehog</code>, or similar. A secret in git is a breach — assume it's compromised the moment it's committed, even if you later remove it.</p>
-    </div>
-
-    <div class="principle good secrets">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Rotate secrets regularly and after every suspected compromise</h3>
-      </div>
-      <p>Rotation limits the blast radius of a leaked credential. Build systems that support rotation without downtime — key rotation should be a routine operation, not an emergency.</p>
+      <p class="principle-desc">Every secret should be rotatable without redeploying or restarting the application. Design your auth and database credential systems so that rotation is a no-op event. Short-lived, rotatable credentials limit the blast radius of a leaked secret.</p>
     </div>
 
   </section>
 
-  <!-- Auth & Sessions -->
+  <!-- Auth -->
   <section id="auth">
     <div class="section-header">
-      <span class="section-tag" style="color: var(--auth)">Auth &amp; Sessions</span>
-      <h2>Identity Is the Perimeter</h2>
+      <span class="section-tag" style="color: var(--auth)">Auth</span>
+      <h2>Authentication and Session Management</h2>
     </div>
 
-    <div class="principle good auth">
+    <!-- Principle 1 -->
+    <div class="principle" id="auth-hashing">
       <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Hash passwords with a purpose-built algorithm</h3>
+        <span class="principle-number" style="background: var(--bad-bg); border: 1px solid var(--bad-border); color: var(--bad);">1</span>
+        <div>
+          <div class="principle-label" style="color: var(--auth);">Auth — Storage</div>
+          <div class="principle-name">Never store passwords in plaintext — use a purpose-built password hash</div>
+        </div>
       </div>
+      <p class="principle-desc">bcrypt, Argon2id, and scrypt are designed for password hashing — they are slow by design, making brute-force attacks expensive. MD5, SHA-256, and SHA-512 are fast hashes designed for data integrity, not password storage. They are trivial to brute-force on modern hardware.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Fast hash — Avoid</span>
+            <span class="panel-filename">auth.js</span>
+          </div>
+          <pre><span class="comment"># ❌ SHA-256 is fast — GPU cracks 10B hashes/sec</span>
+<span class="bad-line">const hash = crypto</span>
+<span class="bad-line">  .createHash('sha256')</span>
+<span class="bad-line">  .update(password)</span>
+<span class="bad-line">  .digest('hex');</span>
+<span class="comment">-- Rainbow tables make this instantaneous for short passwords.
+-- A single RTX 4090 can try 10 billion SHA-256 per second.
+-- "Password123" cracks in milliseconds.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">bcrypt / Argon2id — Preferred</span>
+            <span class="panel-filename">auth.js</span>
+          </div>
+          <pre><span class="comment"># ✓ bcrypt — slow by design, configurable work factor</span>
+<span class="good-line">import bcrypt from 'bcrypt';</span>
+<span class="good-line">const hash = await bcrypt.hash(password, <span class="good-line">12</span>);  <span class="comment">// cost factor: 12 = ~300ms</span>
+<span class="good-line">const match = await bcrypt.compare(password, hash);</span>
+<span class="comment">-- 12 rounds: a single guess takes ~300ms.
+-- 10 billion guesses: ~95 years.
+-- Work factor increases with hardware — plan for future increases.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Principle 2 -->
+    <div class="principle" id="auth-session">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">2</span>
+        <div>
+          <div class="principle-label" style="color: var(--auth);">Auth — Sessions</div>
+          <div class="principle-name">Use short-lived, rotating session tokens with server-side validation</div>
+        </div>
+      </div>
+      <p class="principle-desc">Sessions should have a reasonable lifetime — typically 24 hours for most applications. Tokens should be rotated on each authentication event. Every request must validate the session server-side; never trust a token without verification.</p>
+      <div class="panels">
+        <div class="panel bad">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Long-lived token — Avoid</span>
+            <span class="panel-filename">session.js</span>
+          </div>
+          <pre><span class="comment"># ❌ Session never expires — stolen token = permanent access</span>
+<span class="bad-line">jwt.sign({ userId }, 'secret', {});  <span class="comment">// no expiry — permanent until rotated</span></span>
+<span class="comment">-- Token stolen in a man-in-the-middle attack = account takeover forever.
+-- No way to invalidate without a blacklist.</span></pre>
+        </div>
+        <div class="panel good">
+          <div class="panel-header">
+            <div class="panel-dot"></div>
+            <span class="panel-label">Short TTL + rotation — Preferred</span>
+            <span class="panel-filename">session.js</span>
+          </div>
+          <pre><span class="comment"># ✓ Short-lived tokens with refresh rotation</span>
+<span class="good-line">jwt.sign(</span>
+<span class="good-line">  { userId, sessionId },</span>
+<span class="good-line">  SECRET,</span>
+<span class="good-line">  { expiresIn: '15m' }   <span class="comment">// short-lived access token</span></span>
+<span class="good-line">);</span>
+<span class="comment">-- Refresh token rotation: each use issues a new refresh token.
+-- Old refresh token is invalidated — replay attacks are blocked.
+-- If a refresh token is leaked after rotation, it's already invalid.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Principle 3 -->
+    <div class="principle" id="auth-mfa">
+      <div class="principle-header">
+        <span class="principle-number" style="background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good);">3</span>
+        <div>
+          <div class="principle-label" style="color: var(--auth);">Auth — MFA</div>
+          <div class="principle-name">Enforce MFA for all privileged accounts</div>
+        </div>
+      </div>
+      <p class="principle-desc">Passwords alone are not enough for privileged accounts — admin panels, production access, CI/CD systems. TOTP (authenticator apps) and hardware keys (WebAuthn/FIDO2) provide strong second factors. SMS-based OTP is discouraged due to SIM-swap vulnerability.</p>
       <div class="badges">
-        <span class="badge badge-good">bcrypt</span>
-        <span class="badge badge-good">argon2</span>
-        <span class="badge badge-good">scrypt</span>
+        <span class="badge badge-good">TOTP: authenticator apps (Authy, 1Password)</span>
+        <span class="badge badge-good">WebAuthn: hardware keys (YubiKey), biometrics</span>
+        <span class="badge badge-bad">SMS OTP: SIM-swap vulnerable</span>
       </div>
-      <p>Never use MD5, SHA1, or plain SHA-256 for passwords. Use bcrypt, argon2, or scrypt — they are designed to be slow against brute-force attacks. Hash with a per-user salt.</p>
-    </div>
-
-    <div class="principle good auth">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Enforce authorisation at every request — not just authentication</h3>
-      </div>
-      <p>Authentication answers "who are you?". Authorisation answers "are you allowed to do this?". A logged-in user can still attempt actions on resources they don't own. Every mutation must check that the authenticated identity has permission.</p>
-    </div>
-
-    <div class="principle bad auth">
-      <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't use predictable or sequential session IDs</h3>
-      </div>
-      <p>Session IDs must be unguessable. Use cryptographically secure random generators. Never encode meaningful data in the session identifier — it's opaque to the client by design.</p>
-    </div>
-
-    <div class="principle good auth">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Set secure cookie attributes</h3>
-      </div>
-      <div class="badges">
-        <span class="badge badge-good">HttpOnly</span>
-        <span class="badge badge-good">Secure</span>
-        <span class="badge badge-good">SameSite=Strict</span>
-      </div>
-      <p>Auth tokens in cookies require <code>HttpOnly</code> (no JS access), <code>Secure</code> (HTTPS only), and <code>SameSite</code> to prevent CSRF and XSS token theft.</p>
-    </div>
-
-  </section>
-
-  <!-- Secure Defaults -->
-  <section id="defaults">
-    <div class="section-header">
-      <span class="section-tag" style="color: var(--accent)">Secure Defaults</span>
-      <h2>Make the Secure Choice the Easy Choice</h2>
-    </div>
-
-    <div class="principle good">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Default to least privilege</h3>
-      </div>
-      <p>Every process, user, and system should run with the minimum permissions it needs. Database accounts used by web apps should not be database admins. CI pipelines should not have production write access unless necessary.</p>
-    </div>
-
-    <div class="principle good">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Fail securely — deny by default</h3>
-      </div>
-      <p>When something goes wrong — an exception, a missing config, an unknown input — the safe behaviour should be to deny. Don't fall back to permissive modes on error. A failing closed system is safer than a failing open one.</p>
-    </div>
-
-    <div class="principle bad">
-      <div class="principle-header">
-        <div class="principle-icon">✗</div>
-        <h3>Don't skip TLS in non-production environments</h3>
-      </div>
-      <p>Testing with plain HTTP in staging teaches bad habits and creates security debt. If your app works only over plain HTTP, it will be deployed with plain HTTP. Use valid certificates everywhere — Let's Encrypt is free.</p>
-    </div>
-
-    <div class="principle good">
-      <div class="principle-header">
-        <div class="principle-icon">✓</div>
-        <h3>Log security events — but never log secrets or credentials</h3>
-      </div>
-      <p>Auth failures, privilege escalations, admin actions, and data access should be logged. But never log passwords, tokens, API keys, or full PII. Use structured logs with a redaction step in your logging pipeline.</p>
     </div>
 
   </section>
