@@ -26,7 +26,14 @@ Just open any `.html` file in your browser. No build step, no dependencies.
 Any AI working on projects that follow these principles should read the relevant HTML file before planning or reviewing code.
 
 ### Hermes Agent
-The `principle-aware-planning` skill auto-enforces these principles during plan creation. The `principle-aware-issue-review` skill audits issues against them.
+The `principle-anchored-review` skill audits code, PRs and plans against these documents, and `principle-anchored-planning` anchors plans to them. `INDEX.md` routes from the situation you are in to the principle and the exact anchor to read, and `playbooks/` holds the workflows that apply them step by step.
+
+### Other agents
+`AGENTS.md` is the machine-readable entry point. Point any agent at it, and at `INDEX.md` for situation-based routing.
+
+## Provenance
+
+`INDEX.md`, `index.json` and `playbooks/` derive from [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan (MIT). See [CREDITS.md](CREDITS.md).
 
 ## Contributing
 

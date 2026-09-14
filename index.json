@@ -1,0 +1,212 @@
+{
+  "_source": {
+    "name": "pstack",
+    "repo": "https://github.com/cursor/plugins/tree/main/pstack",
+    "author": "Lauren Tan",
+    "license": "MIT",
+    "retrieved": "2026-09-14",
+    "borrowed": "The 23 principle names, and the trigger text in the `trigger` field (verbatim from each pstack SKILL.md description). The `short`, `rule`, `home` and `closest` fields are this repository's own work.",
+    "note": "A `home` of null means the library has no page that covers this principle. Do not cite one; say the principle is agent-conduct, argued from this index rather than from a page."
+  },
+  "_usage": "Source of truth for INDEX.md. Regenerate with: python scripts/build_index.py. A `home.anchor` must appear verbatim in `home.file` or the build fails.",
+  "principles": [
+    {
+      "name": "prove-it-works",
+      "short": "after finishing a task, before declaring done",
+      "trigger": "Apply after completing a task, before declaring done. Verify against the real artifact (run the feature, read the actual value, inspect the diff), not a proxy, self-report, or 'it compiles.'",
+      "rule": "Verify against the real artifact: run the feature, read the value, inspect the diff. Never a proxy, a self-report, or 'it compiles'.",
+      "home": null,
+      "closest": "testing-principles.html: \"Real DB — Preferred\""
+    },
+    {
+      "name": "guard-the-context-window",
+      "short": "context filling up with large outputs or repeated reads",
+      "trigger": "Apply when context is filling up: large outputs, long files, repeated reads, fan-out planning. Route bulk to subagents; keep summaries in the main thread, not raw payloads.",
+      "rule": "Route bulk to subagents and keep reduced findings in the main thread, never raw payloads.",
+      "home": null
+    },
+    {
+      "name": "never-block-on-the-human",
+      "short": "tempted to ask 'should I do X?' on reversible work",
+      "trigger": "Apply when tempted to ask 'should I do X?' on reversible work. Proceed, present the result, let the human course-correct after the fact; reserve confirmation for irreversible actions.",
+      "rule": "On reversible work, proceed and present the result. Reserve confirmation for irreversible actions.",
+      "home": null
+    },
+    {
+      "name": "build-the-lever",
+      "short": "non-trivial or bulk work: edits, migrations, checks",
+      "trigger": "Apply to any non-trivial work, not just bulk work: edits, migrations, analyses, checks. Build the tool that does it or proves it (codemod, script, generator, or a skill your subagents follow) instead of working by hand. The tool is the artifact a reviewer can rerun.",
+      "rule": "Build the tool that does the work or proves it, rather than doing bulk work by hand. The tool is the artifact a reviewer can rerun.",
+      "home": null
+    },
+    {
+      "name": "encode-lessons-in-structure",
+      "short": "writing the same instruction a second time",
+      "trigger": "Apply when you catch yourself writing the same instruction a second time, or notice a recurring correction. Encode the rule as a lint, metadata flag, runtime check, or script instead of more text.",
+      "rule": "A rule written twice becomes a lint, flag, check or script, not more prose.",
+      "home": null
+    },
+    {
+      "name": "attack-the-premise",
+      "short": "two fixes sharing one premise failed the same gate",
+      "trigger": "Apply when two or more fixes that share one premise have failed the same gate. Take a census of which actors hold the imbalance before the next fix, then question the premise instead of writing another fix that assumes it.",
+      "rule": "When two fixes sharing one premise fail the same gate, census which actors hold the imbalance and question the premise instead of writing a third fix that assumes it.",
+      "home": null,
+      "closest": "code-review-principles.html: \"Review the Intent, Not Just the Implementation\""
+    },
+    {
+      "name": "fix-root-causes",
+      "short": "debugging a symptom",
+      "trigger": "Apply when debugging. Trace each symptom to its root cause and fix it there; reproduce first, ask why until you reach it, resist nil-check guards that silence crashes.",
+      "rule": "Trace each symptom to its root cause and fix it there. Reproduce first, and resist the nil-check guard that only silences the crash.",
+      "home": null,
+      "closest": "error-handling-principles.html: \"Errors Should Gain Context as They Bubble Up\""
+    },
+    {
+      "name": "make-operations-idempotent",
+      "short": "designing commands or loops that run amid crashes and retries",
+      "trigger": "Apply when designing commands, lifecycle steps, or processing loops that run amid crashes, restarts, and retries. Converge to the same end state regardless of partial prior runs.",
+      "rule": "Commands, lifecycle steps and loops converge to the same end state regardless of partial prior runs.",
+      "home": null,
+      "closest": "database-principles.html: \"After — Explicit Transaction\""
+    },
+    {
+      "name": "separate-before-serializing-shared-state",
+      "short": "concurrent actors writing the same file, branch or key",
+      "trigger": "Apply when concurrent actors might write to the same file, branch, key, or state object. Eliminate the sharing first; serialize structurally only when one shared writer is a real invariant.",
+      "rule": "Eliminate the sharing first. Serialize only when one shared writer is a real invariant rather than a convenience.",
+      "home": null
+    },
+    {
+      "name": "experience-first",
+      "short": "product, UX or feature-scope tradeoffs",
+      "trigger": "Apply when product, UX, or feature-scope tradeoffs come up. Choose user delight over implementation convenience; ship fewer polished features over more rough ones.",
+      "rule": "Choose user delight over implementation convenience. Fewer polished features beat more rough ones.",
+      "home": null
+    },
+    {
+      "name": "exhaust-the-design-space",
+      "short": "novel UI or architecture decision with no precedent",
+      "trigger": "Apply when facing a novel UI interaction or architectural decision with no precedent in the codebase. Build 2-3 competing prototypes and compare side by side before committing.",
+      "rule": "With no precedent in the codebase, build two or three competing prototypes and compare them side by side before committing.",
+      "home": null
+    },
+    {
+      "name": "foundational-thinking",
+      "short": "before writing logic: core types, data structures, ordering",
+      "trigger": "Apply before writing logic: choosing core types and data structures, sequencing scaffold-vs-feature work, asking what concurrent actors share. Get the data structures right so downstream code becomes obvious.",
+      "rule": "Get the core types and data structures right before the logic. Downstream code should then be obvious.",
+      "home": null
+    },
+    {
+      "name": "laziness-protocol",
+      "short": "refactoring, sizing a diff, tempted to add a layer",
+      "trigger": "Apply when refactoring, evaluating diff size, or tempted to add abstractions, layers, or signal threading. Bias toward deletion and the smallest change that solves the problem.",
+      "rule": "Bias to deletion, and to the smallest change that solves the problem. If a maintainer would find it exhausting, it is the wrong solution.",
+      "home": {
+        "file": "software-principles.html",
+        "anchor": "DRY · YAGNI · KISS"
+      }
+    },
+    {
+      "name": "subtract-before-you-add",
+      "short": "sequencing an addition, refactor or rewrite",
+      "trigger": "Apply when sequencing an addition, refactor, or rewrite. Remove dead code, redundant validators, and stub references first, then build on the simpler base.",
+      "rule": "Remove dead code, redundant validators and stub references first, then build on the simpler base.",
+      "home": {
+        "file": "refactoring-principles.html",
+        "anchor": "Leave the Code Cleaner Than You Found It"
+      }
+    },
+    {
+      "name": "minimize-reader-load",
+      "short": "code that is hard to trace, or shaping code for a reader",
+      "trigger": "Apply when reviewing or shaping code that's hard to trace. Count layers between question and answer, and hidden state in the reader's head; collapse one-caller wrappers and shrink mutable scope.",
+      "rule": "Count the layers between question and answer, and the hidden state in a reader's head. Collapse one-caller wrappers and shrink mutable scope.",
+      "home": {
+        "file": "naming-conventions.html",
+        "anchor": "Clarity Is More Important Than Brevity"
+      }
+    },
+    {
+      "name": "model-the-domain",
+      "short": "stateful logic, heavy branching, a shape repeated across files",
+      "trigger": "Apply when writing stateful logic, or when code branches a lot or repeats a shape assumption across files. Encode the domain in a structure instead of scattered conditionals.",
+      "rule": "Encode the domain in a structure instead of repeating a shape assumption as scattered conditionals.",
+      "home": {
+        "file": "naming-conventions.html",
+        "anchor": "Name for the Domain — Not the Implementation"
+      }
+    },
+    {
+      "name": "boundary-discipline",
+      "short": "wiring validation, error handling or a framework adapter",
+      "trigger": "Apply when wiring validation, error handling, or framework adapters. Concentrate guards at system boundaries (CLI, config, network, external APIs); trust internal types and keep business logic in pure functions.",
+      "rule": "Concentrate guards at system boundaries (CLI, config, network, external APIs). Trust internal types and keep business logic in pure functions.",
+      "home": {
+        "file": "error-handling-principles.html",
+        "anchor": "Detect Errors at the Boundary — Not Deep in the Logic"
+      }
+    },
+    {
+      "name": "type-system-discipline",
+      "short": "designing types or reviewing a signature in a typed language",
+      "trigger": "Apply when designing types, reviewing a function signature, or writing code in any statically-typed language. Make illegal states unrepresentable, brand semantic primitives, parse external data at boundaries, refuse to lie to the compiler, exhaust variants, derive from authoritative schemas.",
+      "rule": "Make illegal states unrepresentable, brand semantic primitives, parse external data at boundaries, exhaust variants, and never lie to the compiler.",
+      "home": {
+        "file": "error-handling-principles.html",
+        "anchor": "Errors Are Types — Give Them Structure"
+      }
+    },
+    {
+      "name": "test-behavior-not-implementation",
+      "short": "writing, changing or keeping a test",
+      "trigger": "Apply when you write, change, or keep a test. Call the code the way its users do and assert the result they observe against a literal expected value. If the test would still pass when every imported function returns undefined, rewrite the assertion or delete the test.",
+      "rule": "Call the code the way its users do and assert the observed result against a literal. If it passes when every import returns undefined, rewrite or delete it.",
+      "home": {
+        "file": "testing-principles.html",
+        "anchor": "Behaviour-based — Preferred"
+      }
+    },
+    {
+      "name": "sequence-verifiable-units",
+      "short": "multi-step work, and how commits or PRs are stacked",
+      "trigger": "Apply to multi-step work (sweeps, migrations, runs of similar edits) and to how you stack commits and PRs. Break work into small units that each end in a verifiable state, check each before the next, and order delivery so the sequence proves itself to a reviewer.",
+      "rule": "Break work into small units that each end in a verifiable state, check each before the next, and order delivery so the sequence proves itself to a reviewer.",
+      "home": {
+        "file": "git-workflow-principles.html",
+        "anchor": "Atomic commits — Preferred"
+      }
+    },
+    {
+      "name": "migrate-callers-then-delete-legacy-apis",
+      "short": "introducing a new internal API while old callers exist",
+      "trigger": "Apply when introducing a new internal API while old callers still exist. Migrate callers and delete the old API in the same wave instead of preserving compatibility layers.",
+      "rule": "Migrate the callers and delete the old API in the same wave. Do not keep a compatibility layer alive.",
+      "home": {
+        "file": "refactoring-principles.html",
+        "anchor": "Strangler fig — Preferred"
+      }
+    },
+    {
+      "name": "outcome-oriented-execution",
+      "short": "planned rewrites with explicit phase boundaries",
+      "trigger": "Apply during planned rewrites and migrations with explicit phase boundaries. Converge on the target architecture; don't preserve smooth intermediate states with throwaway compatibility code.",
+      "rule": "Converge on the target architecture. Do not spend effort preserving a smooth intermediate state.",
+      "home": {
+        "file": "testing-principles.html",
+        "anchor": "Outcome test — Preferred"
+      }
+    },
+    {
+      "name": "redesign-from-first-principles",
+      "short": "integrating a new requirement into an existing design",
+      "trigger": "Apply when integrating a new requirement into an existing design. Redesign as if the requirement had been a foundational assumption from day one, instead of bolting it on.",
+      "rule": "Redesign as if the new requirement had been a day-one assumption, instead of bolting it onto the current shape.",
+      "home": {
+        "file": "architecture-principles.html",
+        "anchor": "Start Simple — The Monolith Is Not a Mistake"
+      }
+    }
+  ]
+}
